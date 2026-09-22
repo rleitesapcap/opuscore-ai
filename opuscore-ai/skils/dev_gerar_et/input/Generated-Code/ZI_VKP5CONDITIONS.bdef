@@ -1,0 +1,52 @@
+" Created By     : Capgemini SAP AI - Code Generation Engine
+" Created On     : 03-07-2026
+" Convention     : Workbook ABAP_Move2S4_Final.docx
+
+managed implementation in class ZCL_BP_VKP5CONDITIONS unique;
+strict ( 2 );
+with draft;
+
+define behavior for ZI_VKP5CONDITIONS alias VKP5Conditions
+persistent table a304
+draft table ZVKP5CONDITIONS_D
+etag master LastChangedDate
+lock master total etag LastChangedDate
+authorization master( global )
+
+{
+  field ( readonly )
+   Application,
+   CreationDate,
+   CreatedBy,
+   SystemDate;
+
+  field ( numbering : managed )
+   ConditionRecord;
+
+  create;
+  update;
+  delete;
+
+  draft action Edit;
+  draft action Activate optimized;
+  draft action Discard;
+  draft action Resume;
+  draft determine action Prepare;
+
+  action UpdateCondition result [1] $self;
+
+  validation ValidateConditionData on save { create; update; }
+  validation ValidateDates on save { create; update; }
+
+  determination SetDefaultValues on modify { create; }
+
+  mapping for a304
+  {
+    Application = kappl;
+    ConditionType = kschl;
+    ConditionRecord = knumh;
+    SalesOrganization = vkorg;
+    DistributionChannel = vtweg;
+    Material = matnr;
+  }
+}

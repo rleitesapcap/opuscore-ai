@@ -1,0 +1,15 @@
+websockets
+requests
+python-dotenv==1.2.2
+asyncio
+openai
+langchain_openai
+langchain-core
+tenacity
+langchain-anthropic
+load_dotenv
+websocket-client
+aiohttp 
+rank-bm25
+pymupdf
+sentence-transformers

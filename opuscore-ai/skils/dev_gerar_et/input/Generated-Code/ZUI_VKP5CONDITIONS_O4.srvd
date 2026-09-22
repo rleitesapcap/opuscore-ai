@@ -1,0 +1,12 @@
+" Created By     : Capgemini SAP AI - Code Generation Engine
+" Created On     : 03-07-2026
+" Convention     : Workbook ABAP_Move2S4_Final.docx
+
+@EndUserText.label: 'Service Definition for VKP5 Conditions'
+
+define service ZUI_VKP5CONDITIONS_O4 {
+  expose ZC_VKP5CONDITIONS as VKP5Conditions;
+}
+
+// @OData.publish: true
+// Use this annotation to automatically generate the service binding

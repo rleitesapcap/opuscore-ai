@@ -1,0 +1,22 @@
+" Created By     : Capgemini SAP AI - Code Generation Engine
+" Created On     : 03-07-2026
+" Convention     : Workbook ABAP_Move2S4_Final.docx
+
+projection;
+strict ( 2 );
+use draft;
+
+define behavior for ZC_VKP5CONDITIONS alias VKP5ConditionsProjection
+{
+  use create;
+  use update;
+  use delete;
+
+  use action Edit;
+  use action Activate;
+  use action Discard;
+  use action Resume;
+  use action Prepare;
+
+  use action UpdateCondition;
+}

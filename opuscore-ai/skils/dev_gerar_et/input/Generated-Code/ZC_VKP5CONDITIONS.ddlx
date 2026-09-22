@@ -1,0 +1,138 @@
+" Created By     : Capgemini SAP AI - Code Generation Engine
+" Created On     : 03-07-2026
+" Convention     : Workbook ABAP_Move2S4_Final.docx
+
+@Metadata.layer: #CORE
+@UI: {
+  headerInfo: {
+    typeName: 'Condition',
+    typeNamePlural: 'VKP5 Conditions',
+    title: { type: #STANDARD, value: 'ConditionRecord' }
+  },
+  presentationVariant: [{
+    sortOrder: [{ by: 'ConditionRecord', direction: #DESC }],
+    visualizations: [{type: #AS_LINEITEM}]
+  }]
+}
+
+annotate view ZC_VKP5CONDITIONS with
+{
+  @UI.facet: [
+    {
+      id: 'GeneralInfo',
+      type: #COLLECTION,
+      label: 'General Information'
+    },
+    {
+      id: 'BasicData',
+      type: #FIELDGROUP_REFERENCE,
+      parentId: 'GeneralInfo',
+      label: 'Basic Data',
+      targetQualifier: 'BasicData'
+    },
+    {
+      id: 'ConditionData',
+      type: #FIELDGROUP_REFERENCE,
+      parentId: 'GeneralInfo',
+      label: 'Condition Details',
+      targetQualifier: 'ConditionData'
+    }
+  ]
+
+  @UI: {
+    lineItem: [{ position: 10, importance: #HIGH }],
+    identification: [{ position: 10 }],
+    fieldGroup: [{ qualifier: 'BasicData', position: 10 }]
+  }
+  ConditionRecord;
+
+  @UI: {
+    lineItem: [{ position: 20, importance: #HIGH }],
+    identification: [{ position: 20 }],
+    fieldGroup: [{ qualifier: 'BasicData', position: 20 }]
+  }
+  ConditionType;
+
+  @UI: {
+    lineItem: [{ position: 30, importance: #HIGH }],
+    identification: [{ position: 30 }],
+    fieldGroup: [{ qualifier: 'BasicData', position: 30 }]
+  }
+  ConditionTypeDescription;
+
+  @UI: {
+    lineItem: [{ position: 40, importance: #MEDIUM }],
+    identification: [{ position: 40 }],
+    fieldGroup: [{ qualifier: 'BasicData', position: 40 }]
+  }
+  SalesOrganization;
+
+  @UI: {
+    lineItem: [{ position: 50, importance: #MEDIUM }],
+    fieldGroup: [{ qualifier: 'BasicData', position: 50 }]
+  }
+  DistributionChannel;
+
+  @UI: {
+    lineItem: [{ position: 60, importance: #HIGH }],
+    fieldGroup: [{ qualifier: 'BasicData', position: 60 }]
+  }
+  Material;
+
+  @UI: {
+    lineItem: [{ position: 70, importance: #HIGH }],
+    fieldGroup: [{ qualifier: 'ConditionData', position: 10 }]
+  }
+  ConditionAmount;
+
+  @UI: {
+    lineItem: [{ position: 80, importance: #MEDIUM }],
+    fieldGroup: [{ qualifier: 'ConditionData', position: 20 }]
+  }
+  ConditionUnit;
+
+  @UI: {
+    lineItem: [{ position: 90, importance: #MEDIUM }],
+    fieldGroup: [{ qualifier: 'ConditionData', position: 30 }]
+  }
+  ValidFrom;
+
+  @UI: {
+    lineItem: [{ position: 100, importance: #MEDIUM }],
+    fieldGroup: [{ qualifier: 'ConditionData', position: 40 }]
+  }
+  ValidTo;
+
+  @UI: {
+    fieldGroup: [{ qualifier: 'ConditionData', position: 50 }]
+  }
+  PricingUnit;
+
+  @UI: {
+    fieldGroup: [{ qualifier: 'ConditionData', position: 60 }]
+  }
+  ConditionPricingUnit;
+
+  @UI: {
+    fieldGroup: [{ qualifier: 'BasicData', position: 70 }]
+  }
+  CreationDate;
+
+  @UI: {
+    fieldGroup: [{ qualifier: 'BasicData', position: 80 }]
+  }
+  CreatedBy;
+
+  // Hidden technical fields
+  @UI.hidden: true
+  Application;
+  
+  @UI.hidden: true
+  LastChangedDate;
+  
+  @UI.hidden: true
+  LastChangedBy;
+  
+  @UI.hidden: true
+  SystemDate;
+}
