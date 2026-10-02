@@ -1,0 +1,350 @@
+
+
+"*********************************************************************
+" Capgemini - Brazil
+"*********************************************************************
+" Data Execução: 	16/09/2026
+" Autor: Capgemini SAP
+" Projeto: MOVE2S4
+"*********************************************************************
+
+
+*&---------------------------------------------------------------------*
+*&  Include           ZRMM_CADASTRO_PRECO_F00
+*&---------------------------------------------------------------------*
+
+*----------------------------------------------------------------------*
+*  PROCESSO PRINCIPAL - INICIO
+*----------------------------------------------------------------------*
+
+** LIMPAR TODOS OS DADOS
+PERFORM f_clear_geral.
+
+** VERIFICAR NECESSIDADE DE BLOQUEAR DOIS PROCESSAMENTOS
+PERFORM f_bloqueio_processamento.
+
+** SELECIONAR DADOS DO HARDCODE
+PERFORM f_selecao_hardcode.
+
+CALL SCREEN 1000.
+
+** DESBLOQUEAR DADOS
+PERFORM f_desbloqueio_processamento.
+
+*----------------------------------------------------------------------*
+*  PROCESSO PRINCIPAL - FIM
+*----------------------------------------------------------------------*
+
+*&---------------------------------------------------------------------*
+*&      FORM  F_SELECAO_HARDCODE
+*&---------------------------------------------------------------------*
+FORM f_selecao_hardcode .
+
+** BUSCAR DADOS
+  rg_mm_008_006_uname = zcl_parametros=>get_param( iv_processo = 'MM_008_007_UNAME' iv_name = 'UNAME' ).
+  rg_mm_monitor_ktokk = zcl_parametros=>get_param( iv_processo = 'MM_SD_MONITOR_ADM_PRECO_001' iv_name = 'KTOKK' ).
+
+* POSICIONA USUÁRIO LIBERADO POR HARDCODE
+  CLEAR: lg_mm_008_006_uname.
+
+  SORT rg_mm_008_006_uname BY low.
+
+  READ TABLE rg_mm_008_006_uname
+        INTO lg_mm_008_006_uname
+        WITH KEY low = sy-uname BINARY SEARCH.
+
+  IF sy-subrc NE 0.
+    CLEAR: lg_mm_008_006_uname.
+
+  ENDIF.
+
+* PROCURAR GRUPO DE CONTAS - Z005 GERENTE
+  CLEAR: lg_mm_monitor_ktokk.
+
+  LOOP AT rg_mm_monitor_ktokk INTO lg_mm_monitor_ktokk FROM 1 TO 1.
+    EXIT.
+  ENDLOOP.
+
+  IF sy-subrc NE 0.
+    lg_mm_monitor_ktokk-sign    = 'I'.
+    lg_mm_monitor_ktokk-option  = 'EQ'.
+    lg_mm_monitor_ktokk-low     = 'Z005'.
+  ENDIF.
+
+ENDFORM.                    " F_SELECAO_HARDCODE
+
+*&---------------------------------------------------------------------*
+*&      FORM  F_BLOQUEIO_PROCESSAMENTO
+*&---------------------------------------------------------------------*
+FORM f_bloqueio_processamento .
+
+** PROCESSAR FUNÇÃO DE BLOQUEIO
+  CALL FUNCTION 'ENQUEUE_EZOMM_JOB_PROCES'
+    EXPORTING
+      mode_syst      = 'E'
+      mandt          = sy-mandt
+      slset          = sy-slset
+      cprog          = sy-cprog
+      x_slset        = ' '
+      x_cprog        = ' '
+      _scope         = '2'
+      _wait          = ' '
+      _collect       = ' '
+    EXCEPTIONS
+      foreign_lock   = 1
+      system_failure = 2
+      OTHERS         = 3.
+
+** SE NÃO CONSEGUIR BLOQUEAR NÃO PODE CONTINUAR
+  IF sy-subrc <> 0.
+
+    "NÃO É PERMITIDO EXECUTAR MAIS DE UM PROCESSO AO MESMO TEMPO.
+    MESSAGE s899(mm) WITH TEXT-005 TEXT-006 DISPLAY LIKE 'S'.
+    LEAVE LIST-PROCESSING.
+
+
+  ENDIF.
+
+ENDFORM.                    " F_BLOQUEIO_PROCESSAMENTO
+
+*&---------------------------------------------------------------------*
+*&      FORM  F_DESBLOQUEIO_PROCESSAMENTO
+*&---------------------------------------------------------------------*
+FORM f_desbloqueio_processamento .
+
+* PROCESSAR DESBLOQUEIO DO PROCESSAMENTO
+  CALL FUNCTION 'DEQUEUE_EZOMM_JOB_PROCES'
+    EXPORTING
+      mode_syst = 'E'
+      mandt     = sy-mandt
+      slset     = sy-slset
+      cprog     = sy-cprog
+      x_slset   = ' '
+      x_cprog   = ' '
+      _scope    = '3'
+      _synchron = ' '
+      _collect  = ' '.
+
+ENDFORM.                    " F_DESBLOQUEIO_PROCESSAMENTO
+
+*&---------------------------------------------------------------------*
+*&      FORM  F_PROCESSO_TELA
+*&---------------------------------------------------------------------*
+FORM f_processo_tela .
+
+  DATA: vl_tabloc TYPE sy-ucomm.
+
+** ANALISAR SE IRÁ TROCAR DE TELA
+  IF sy-ucomm EQ c_tab_geral-tab1 OR
+     sy-ucomm EQ c_tab_geral-tab2 OR
+     sy-ucomm EQ c_tab_geral-tab3 OR
+     sy-ucomm EQ c_tab_geral-tab4 OR
+     sy-ucomm EQ c_tab_geral-tab5.
+
+** VERIFICA SE EFETUOU PROCESSO PARA TROCAR DE PROCESSO
+    IF ok_tabold NE sy-ucomm.
+
+      CLEAR: vl_tabloc.
+      vl_tabloc = sy-ucomm.
+
+*** PERGUNTAR PARA ELIMINAR
+      CALL FUNCTION 'POPUP_TO_CONFIRM'
+        EXPORTING
+          titlebar              = TEXT-t07 "DESEJA MUDAR DE PROCESSO !!!
+          text_question         = TEXT-t08 "CONFIRMAR MUDAR DE PROCESSO ?
+          text_button_1         = c_sim
+          text_button_2         = c_nao
+          default_button        = c_1
+          display_cancel_button = c_x
+          start_column          = 10
+          start_row             = 2
+        IMPORTING
+          answer                = vg_answer
+        EXCEPTIONS
+          text_not_found        = 1
+          OTHERS                = 2.
+
+      "SE A RESPOSTA FOR 'SIM'
+      IF sy-subrc  EQ 0 AND vg_answer EQ c_1.
+        CLEAR: ok_tabnew.
+        ok_tabnew = vl_tabloc.
+        CLEAR: vl_tabloc.
+        save_ok  = c_enter.
+        PERFORM f_limpar_dados.
+
+      ELSE.
+        ok_tabnew = ok_tabold.
+
+      ENDIF. "IF SY-SUBRC  EQ 0 AND
+
+    ELSE.
+      ok_tabold = sy-ucomm.
+      ok_tabnew = sy-ucomm.
+
+    ENDIF. "IF OK_TAB EQ SY-UCOMM.
+
+  ENDIF. "IF SY-UCOMM EQ C_TAB_GERAL-TAB1 OR
+
+** ANALISAR PROCESSAMENTO FORÇADO
+  IF save_ok IS NOT INITIAL.
+    save_okpr = save_ok.
+
+  ELSE.
+    save_okpr = sy-ucomm.
+
+  ENDIF.
+
+** ANALISAR TIPO DE AÇÃO PARA PROCESSAR
+  CASE save_okpr.
+
+    WHEN c_salve.
+      save_ok = save_okpr.
+      CLEAR: sy-ucomm.
+
+    WHEN c_enter.
+      save_ok = save_okpr.
+      CLEAR: sy-ucomm.
+
+** FUNÇÕES GERAIS DO PROGRAMA
+    WHEN c_back.
+** VERIFICA SE É ADMINISTRADOR, SE FOR
+** PERGUNTA SE DESEJA SAIR E JÁ GRAVOU
+** DADOS
+      IF vg_aut_1003 IS INITIAL AND
+         vg_aut_1004 IS INITIAL AND
+        vg_aut_1005 IS INITIAL AND
+         vg_aut_1003 IS INITIAL AND
+         vg_aut_1002 IS INITIAL AND
+         vg_aut_1001 IS INITIAL.
+        PERFORM f_confirmar_sair.
+
+      ELSE.
+
+        LEAVE PROGRAM.
+
+      ENDIF.
+
+    WHEN c_exit.
+** VERIFICA SE É ADMINISTRADOR, SE FOR
+** PERGUNTA SE DESEJA SAIR E JÁ GRAVOU
+** DADOS
+      IF vg_aut_1003 IS INITIAL AND
+         vg_aut_1004 IS INITIAL AND
+         vg_aut_1003 IS INITIAL AND
+         vg_aut_1005 IS INITIAL AND
+         vg_aut_1002 IS INITIAL AND
+         vg_aut_1001 IS INITIAL.
+        PERFORM f_confirmar_sair.
+
+      ELSE.
+
+        LEAVE PROGRAM.
+
+      ENDIF.
+
+    WHEN c_cancel.
+** VERIFICA SE É ADMINISTRADOR, SE FOR
+** PERGUNTA SE DESEJA SAIR E JÁ GRAVOU
+** DADOS
+      IF vg_aut_1003 IS INITIAL AND
+         vg_aut_1004 IS INITIAL AND
+         vg_aut_1003 IS INITIAL AND
+        vg_aut_1005 IS INITIAL AND
+         vg_aut_1002 IS INITIAL AND
+         vg_aut_1001 IS INITIAL.
+        PERFORM f_confirmar_sair.
+
+      ELSE.
+
+        LEAVE PROGRAM.
+
+      ENDIF.
+
+    WHEN OTHERS.
+      save_ok = save_okpr.
+
+  ENDCASE.
+
+ENDFORM.                    " F_PROCESSO_TELA
+*&---------------------------------------------------------------------*
+*&      Form  F_LIMPAR_DADOS
+*&---------------------------------------------------------------------*
+FORM f_limpar_dados .
+
+* TABELA INTERNA
+  REFRESH:
+  tg_itab,
+  tg_bloq,
+  tg_raprp,
+  tg_raprl,
+  tg_caprp,
+  tg_caprl,
+  tg_saprp,
+  tg_saprl,
+  tg_usera,
+  tg_lfa1.
+
+* ESTRUTURA
+  CLEAR:
+  eg_bloq,
+  eg_itab,
+  screen_wa,
+  eg_raprp,
+  eg_raprl,
+  eg_caprp,
+  eg_caprl,
+  eg_saprp,
+  eg_saprl,
+  eg_usera,
+  eg_lfa1.
+
+* VARIAVEIS
+  CLEAR:
+  vg_aut_1004,
+  vg_aut_1005,
+  vg_aut_1003,
+  vg_aut_1002,
+  vg_aut_1001,
+  vg_sel_1001,
+  vg_answer,
+  vg_sort,
+  vg_prtl,
+  vg_capr,
+  vg_sapr.
+
+* TABLE CONTROL
+  REFRESH:
+  g_tc_1002_itab,
+  g_tc_1003_itab,
+  g_tc_1004_itab.
+
+  CLEAR:
+  g_tc_1002_wa,
+  g_tc_1002_copied,
+  g_tc_1002_lines,
+  g_tc_1003_wa,
+  g_tc_1003_copied,
+  g_tc_1003_lines,
+  g_tc_1004_wa,
+  g_tc_1004_copied,
+  g_tc_1004_lines.
+
+  REFRESH CONTROL 'TC_1002' FROM SCREEN '1002'.
+  REFRESH CONTROL 'TC_1003' FROM SCREEN '1003'.
+  REFRESH CONTROL 'TC_1004' FROM SCREEN '1004'.
+
+
+ENDFORM.                    " F_LIMPAR_DADOS
+*&---------------------------------------------------------------------*
+*&      Form  F_CLEAR_GERAL
+*&---------------------------------------------------------------------*
+FORM f_clear_geral .
+
+  CLEAR: vg_aut_1003,
+         vg_aut_1004,
+         vg_aut_1003,
+         vg_aut_1002,
+         vg_aut_1001.
+
+
+ENDFORM.                    " F_CLEAR_GERAL

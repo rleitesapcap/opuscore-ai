@@ -15,7 +15,7 @@ Um único processo (backend FastAPI) sobe a API **e** serve o frontend.
 - Uma chave de LLM (Anthropic ou xAI) **ou** Ollama/AIP local rodando
 
 ## 2. Descompactar
-
+## Novos Campos
 ```bash
 unzip opuscore-ai.zip
 cd opuscore-ai

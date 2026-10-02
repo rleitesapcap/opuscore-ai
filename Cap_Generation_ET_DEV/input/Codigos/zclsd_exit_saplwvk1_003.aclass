@@ -1,0 +1,1055 @@
+class ZCLSD_EXIT_SAPLWVK1_003 definition
+  public
+  final
+  create public .
+
+public section.
+
+  interfaces YIFXX_CHECK_EXIT .
+
+  class-methods USER_EXIT_EXECUTE
+    importing
+      !PI_KALP_UPDKZ type KALP-UPDKZ
+      !PI_I_KALP type KALP
+      !PI_I_VORGA type PISVR-VORGA
+      !PI_I_GLOB type GLOB
+    exporting
+      !PE_I_ERRO type ERRO_TEMP .
+protected section.
+private section.
+
+  class-methods USER_EXIT_OLD_CODE
+    importing
+      !PI_KALP_UPDKZ type KALP-UPDKZ
+      !PI_I_KALP type KALP
+      !PI_I_VORGA type PISVR-VORGA
+      !PI_I_GLOB type GLOB
+    exporting
+      !PE_I_ERRO type ERRO_TEMP .
+ENDCLASS.
+
+
+
+CLASS ZCLSD_EXIT_SAPLWVK1_003 IMPLEMENTATION.
+
+
+  METHOD user_exit_execute.
+
+"*********************************************************************
+" Capgemini - Brazil
+"*********************************************************************
+" Data Execução: 	17/09/2026
+" Autor:      Capgemini SAP
+" Projeto:              MOVE2S4
+"*********************************************************************
+
+***********************************************************************
+*                                                                     *
+*      *********************************************************      *
+*      *                +---------------------+                *      *
+*      *                | LEROY MERLIN BRASIL |                *      *
+*      *                +---------------------+                *      *
+*      *********************************************************      *
+*                                                                     *
+***********************************************************************
+*---------------------------------------------------------------------*
+*** Dados do Obejto                                                   *
+*---------------------------------------------------------------------*
+* Nome  : ZCLSD_EXIT_SAPLWVK1_003                                     *
+* Título: Exit VKP5                                                   *
+* Autor : Fabiano Bartholomeu (51030312)                              *
+* Data  : 31.05.2021                                                  *
+*                                                                     *
+* Objetivos:                                                          *
+*   Rotinas customizadas para a transação VKP5                        *
+*                                                                     *
+* Demanda:                                                            *
+*   CC.6630 - Liberação de exceção total para alguns usuários         *
+*     (Pricing) alterarem preços para qualquer dia                    *
+*                                                                     *
+*---------------------------------------------------------------------+
+*** Histórico das modificações                                        |
+*---------------------------------------------------------------------+
+*#####+########+###################+##################+###############+
+* Seq |Data    |Autor              |Código Demanda    | Usuário       |
+*#####+########+###################+##################+###############+
+* 01! |31052021|Fabiano Bartholomeu|CC.6630           |51030312       |
+*   Adequação para o modelo OO                                        |
+*-----+--------+-------------------+------------------+---------------*
+
+    " Check if Exti is Active
+    CHECK zcl_check_exit=>check_active_exit(
+      EXPORTING
+        iv_type      = zcl_check_exit=>c_type_exit
+        iv_name      = 'EXIT_SAPLWVK1_003'
+        iv_extension = 'ZXVKPU04' ).
+
+    user_exit_old_code(
+      EXPORTING
+        pi_kalp_updkz = pi_kalp_updkz
+        pi_i_kalp     = pi_i_kalp
+        pi_i_vorga    = pi_i_vorga
+        pi_i_glob     = pi_i_glob
+      IMPORTING
+        pe_i_erro     = pe_i_erro ).
+
+    " Para cada nova regra, insira abaixo novos
+    " métodos para as mesmas.
+
+  ENDMETHOD.
+
+
+  METHOD user_exit_old_code.
+
+    "*********************************************************************
+    " Capgemini - Brazil
+    "*********************************************************************
+    " Data Execução: 	17/09/2026
+    " Autor:      Capgemini SAP
+    " Projeto:              MOVE2S4
+    "*********************************************************************
+
+
+*&---------------------------------------------------------------------*
+*&  Include           ZXVKPU04
+*&---------------------------------------------------------------------*
+*&---------------------------------------------------------------------*
+**"----------------------------------------------------------------------
+**"*"Lokale Schnittstelle:
+**"  IMPORTING
+**"     VALUE(PI_KALP_UPDKZ) LIKE  KALP-UPDKZ
+**"     VALUE(PI_I_KALP) LIKE  KALP STRUCTURE  KALP
+**"     VALUE(PI_I_VORGA) LIKE  PISVR-VORGA OPTIONAL
+**"     REFERENCE(PI_I_GLOB) TYPE  GLOB OPTIONAL
+**"  EXPORTING
+**"     VALUE(PE_I_ERRO) LIKE  ERRO_TEMP STRUCTURE  ERRO_TEMP
+**"----------------------------------------------------------------------
+*
+*
+*
+*
+*&---------------------------------------------------------------------*
+* CC_ENH_009 - 51011260 - Início
+*---+--------+----------------+---------------------------------------+
+*002|20032013|Marcela Paparelli| Contrl. Campos Forçagem              |
+*---+--------+----------------+---------------------------------------+
+*003|01082013|Arquimedes Campos| Ajustes performance                  |
+*---+--------+----------------+---------------------------------------+
+*004|07052014|Marcio Oliveira  | Verifica data incio validade VKP5    |
+*---+--------+----------------+---------------------------------------+
+*005|07102014|Marcela Paparelli| DM0078 Verifica Unid. Medida         |
+*---+--------+----------------+---------------------------------------+
+*006|07082016|Anderson Tessitori| Custo Logístico Calculado           |
+*---+--------+----------------+---------------------------------------+
+*007|06022019|Genilton Soares  | Decreto RS - Restituição ST          |
+*---+--------+----------------+---------------------------------------+
+*008|14082019|Rafael Carvalho  | Squad Preço - VKP5 Loja              |
+*---------------------------------------------------------------------*
+*09!|11022020|Fabiano Bart.    | Campos ZSTV e ZSTP                   |
+*---------------------------------------------------------------------*
+*10!|18052021|Fabiano Bartholomeu| CC.6627 - Nova regra user exceção  |
+*---------------------------------------------------------------------*
+*011|28072021|Isvi Rosa        | CC.715 - Pricing Custo Transferência |
+*---------------------------------------------------------------------*
+*012|16112021|Luiz Otavio      | CC.7774 - Transit Point              |
+*---------------------------------------------------------------------*
+*013|16112021|Leandro Chagas   | CC.7956 - Dump Lista Trabalho compras|
+*---------------------------------------------------------------------*
+*014|30102024|                 | ICMS Desonerado - Ajuste price ZPC007|
+*---------------------------------------------------------------------*
+*015|17072025|Anderson Tessitori|PRIC.2727 - Novos campos - ZPRA/ZPRAD|
+*---------------------------------------------------------------------*
+
+* Declaração: Tabelas Internas
+*---------------------------------------------------------------------*
+
+    CONSTANTS c_10000 TYPE char10 VALUE '10000.000'.
+    CONSTANTS c_1000 TYPE char10 VALUE '1.000'.
+
+    DATA: tg_kalp  TYPE TABLE OF kalp,
+          tg_ekomv TYPE TABLE OF komv.
+
+*---------------------------------------------------------------------*
+* Declaração: Estruturas
+*---------------------------------------------------------------------*
+
+    DATA: eg_ekomv      TYPE komv,
+          eg_ekomv_zpb0 TYPE komv, "MRO
+          eg_ekomv_zpc1 TYPE komv, "MRO
+          eg_ekomv_zpc2 TYPE komv, "MRO
+          eg_t001w      TYPE t001w, "MRO
+          eg_wrf1       TYPE wrf1, "MRO
+          eg_stat_preco TYPE ztmmc_stat_preco. " Versão 004
+
+*---------------------------------------------------------------------*
+* Declaração: Ranges
+*---------------------------------------------------------------------*
+    DATA: lr_ekals    TYPE RANGE OF ekals,
+          lr_vkals    TYPE RANGE OF vkals,
+          lr_ekals_cl TYPE RANGE OF ekals,
+          lr_regio    TYPE RANGE OF regio,
+          lr_regio2   TYPE RANGE OF regio,
+          lr_werks    TYPE RANGE OF werks_d.
+
+*---------------------------------------------------------------------*
+* Declaração: Variáveis e Constantes
+*---------------------------------------------------------------------*
+    DATA: vl_matnr      TYPE  mara-matnr,
+          vl_in_me      TYPE  mara-meins,
+          vl_out_me     TYPE  mara-meins,
+          vl_icmi       TYPE komv-kbetr,
+          vl_menge_in   TYPE  ekpo-menge,
+          vl_menge_out  TYPE  ekpo-menge,
+          vl_workday    LIKE sy-datum,
+          vl_last_matnr TYPE mara-matnr,
+          vl_msgv1      TYPE  symsgv,
+          vl_msgv2      TYPE  symsgv,
+          vl_msgv3      TYPE  symsgv,
+          vl_msgv4      TYPE  symsgv,
+          vl_werks      TYPE werks_d,
+          vl_kunnr      TYPE kunnr.
+
+    CONSTANTS: c_icmi(4) TYPE c VALUE 'ICMI',
+               c_zbht(4) TYPE c VALUE 'ZBHT',
+               c_zpb0(4) TYPE c VALUE 'ZPB0',
+               c_zpc1(4) TYPE c VALUE 'ZPC1',
+               c_zpc2(4) TYPE c VALUE 'ZPC2',
+               c_ztp1(4) TYPE c VALUE 'ZTP1',
+               c_bx40(4) TYPE c VALUE 'BX40',
+               c_istd(4) TYPE c VALUE 'ISTD',
+               c_isic(4) TYPE c VALUE 'ISIC',
+               c_c       TYPE c VALUE 'C',
+               c_f       TYPE c VALUE 'F'.
+
+    CONSTANTS: lc_vkp5   TYPE c LENGTH 4 VALUE 'VKP5',
+               lc_zpc007 TYPE c LENGTH 6 VALUE 'ZPC007'.
+
+    FIELD-SYMBOLS: <fs_kalp>    TYPE w_tt_kalp,
+                   <fs_ekomv>   TYPE ANY TABLE,
+                   <fs_wa_kalp> TYPE kalp.
+
+
+    DATA: lt_users_lib TYPE zcsd_users_lib.
+
+*---------------------------------------------------------------------*
+* Declaração: Field-Symbols
+*---------------------------------------------------------------------*
+
+    IF pi_i_vorga IS INITIAL.
+    ENDIF.
+
+    IF pi_kalp_updkz IS INITIAL.
+    ENDIF.
+
+    IF tg_kalp IS INITIAL.
+    ENDIF.
+
+    UNASSIGN: <fs_kalp>, <fs_ekomv>, <fs_wa_kalp>.
+    REFRESH: tg_kalp[], tg_ekomv[].
+    CLEAR: eg_ekomv,
+           vl_last_matnr.  " Versão 004
+
+*Versão <004> Verificaáo do preço ZPB0 igual a 0.00 para evitar
+    IF pi_i_glob-ekerv = 'Z3' AND
+       sy-tcode = lc_vkp5.
+
+      IF pi_i_kalp-ekpgr IS INITIAL.
+
+*Alimenta LOG de erro`com tipo E para eliminação do item na tela
+        pe_i_erro = CORRESPONDING #( pi_i_kalp ).
+
+        pe_i_erro-msgid = 'S#'.
+        pe_i_erro-msgty = 'E'.
+        pe_i_erro-msgno = '252'.
+        pe_i_erro-msgv1 = 'Preço de Compra igual a 0,00.'.
+        pe_i_erro-msgv2 = 'Eliminado do cálculo!'.
+
+*Mensagem
+        vl_msgv1 = |{ pi_i_kalp-matnr }|.
+        vl_msgv2 = pi_i_kalp-lifnr.
+        vl_msgv3 = pi_i_kalp-werks.
+        vl_msgv4 = TEXT-001. "'Preço de Compra igual a 0,00. Eliminado do cálculo!'.
+
+        CALL FUNCTION 'POPUP_DISPLAY_MESSAGE'
+          EXPORTING
+            titel = 'Aviso'
+            msgid = 'S#'
+            msgty = 'I'
+            msgno = '252'
+            msgv1 = vl_msgv1
+            msgv2 = vl_msgv2
+            msgv3 = vl_msgv3
+            msgv4 = vl_msgv4.
+
+*Não processa mais o item
+        EXIT.
+      ENDIF.
+    ENDIF.
+
+    ASSIGN ('(SAPLWVK1)g_t_kalp[]') TO <fs_kalp>. "#EC CI_SUBRC  Verifica embaixo se associou..
+    ASSIGN ('(SAPLWVK1)g_t_ekomv[]') TO <fs_ekomv>.      "#EC CI_SUBRC.
+
+
+    IF <fs_kalp> IS ASSIGNED
+        AND <fs_ekomv> IS ASSIGNED.
+
+      tg_kalp[]  = <fs_kalp>[].
+      tg_ekomv[] = <fs_ekomv>[].
+
+      SORT tg_ekomv BY kposn kschl kherk. "003 - Incluído
+
+      lr_ekals = zcl_parametros=>get_param( iv_processo = 'MM_009_01_EKALS' iv_name = 'EKALS' ).
+      lr_vkals = zcl_parametros=>get_param( iv_processo = 'MM_009_02_VKALS' iv_name = 'VKALS' ).
+
+      LOOP AT <fs_kalp> ASSIGNING <fs_wa_kalp>.
+
+        CHECK <fs_wa_kalp>-kposn EQ pi_i_kalp-kposn.
+
+
+*Verificar a data de ínicio da validade dos preços conforme
+
+        IF sy-tcode = lc_vkp5. "Transação
+
+          CASE sy-ucomm.     "Comandos
+            WHEN space OR 'NO' OR 'BUCH' OR 'OKAY' OR 'ENTE' OR
+                 'A+' OR 'A-'.
+
+*Controla processamento por material por causa d paginação da VKP5
+              IF vl_last_matnr <> <fs_wa_kalp>-matnr.
+
+                vl_last_matnr = <fs_wa_kalp>-matnr.
+
+                CALL FUNCTION 'ZFMM_CHECK_CONDITION_DATE'
+                  EXPORTING
+                    i_vkkab        = <fs_wa_kalp>-vkkab
+                    i_uname        = sy-uname
+                  IMPORTING
+                    e_stat_preco   = eg_stat_preco
+                    e_workday      = vl_workday
+                    et_users_lib   = lt_users_lib
+                  EXCEPTIONS
+                    calendar_error = 1
+                    no_check       = 2
+                    OTHERS         = 3.
+
+                IF sy-subrc <> 0.
+* Implement suitable error handling here
+                ELSE.
+
+
+**********************************************************************
+*                         Change History                             *
+*                                                                    *
+**********************************************************************
+* Date         Reference       Author                                *
+*====================================================================*
+*    Realizar validação quando o usuário não for de loja             *
+**********************************************************************
+                  TRY.
+                      IF zclsd_price_enhancement=>get_instance( )->is_relevant_reason( pi_i_glob-livar ) EQ abap_false.
+
+*Verifica data e hora da tentativa de precificação, para usuário comum, avise
+*e trava a VKP5
+                        IF vl_workday <> <fs_wa_kalp>-vkkab
+                         AND NOT line_exists( lt_users_lib[ userlib = sy-uname ] ).
+*Verifica data da tentativa de precificação, para usuário comum, avisa
+*e trava a VKP5
+                          pe_i_erro = CORRESPONDING #( <fs_wa_kalp> ).
+
+                          pe_i_erro-msgid = 'S#'.
+                          pe_i_erro-msgty = 'I'.
+                          pe_i_erro-msgno = 252.
+                          pe_i_erro-msgv1 = |{ <fs_wa_kalp>-vkkab }|.
+                          pe_i_erro-msgv2 = 'não permite precificação!'.
+                          pe_i_erro-msgv3 = 'Próxima data válida é:'.
+                          pe_i_erro-msgv4 = |{ vl_workday }|.
+
+                          vl_msgv1 = |{ <fs_wa_kalp>-vkkab }|.
+                          vl_msgv2 = 'não permite precificação!'.
+                          vl_msgv3 = 'Próxima data válida é:'.
+                          vl_msgv4 = |{ vl_workday }|.
+
+*Liberação de exceção total para alguns
+*usuários (Pricing) alterarem preços para qualquer dia
+                          IF zclsd_zesd_precos_leroy_6630=>check_is_active( ) = 'X'.
+                            DATA lr_uname TYPE RANGE OF uname.
+                            lr_uname = zcl_parametros=>get_param( iv_processo = zclsd_zesd_precos_leroy_6630=>c_hard_code_id iv_name = 'UNAME' ).
+                            DELETE lr_uname WHERE low = '*'.
+                          ENDIF.
+                          IF lr_uname IS NOT INITIAL AND sy-uname IN lr_uname.
+                          ELSE.
+                            MESSAGE i252(s#) WITH vl_msgv1 vl_msgv2 vl_msgv3 vl_msgv4.
+                          ENDIF.
+
+                        ENDIF.
+                      ENDIF.
+
+                  ENDTRY.
+
+                ENDIF.
+
+              ENDIF.
+
+            WHEN OTHERS.
+          ENDCASE.
+        ENDIF.
+
+        CLEAR eg_ekomv. " Filipe - 25/07/2013.
+        IF <fs_wa_kalp>-ekals IN lr_ekals AND NOT <fs_wa_kalp>-vkals IN lr_vkals AND NOT pi_i_kalp-kaleb = '03'.
+
+          CLEAR eg_ekomv.
+
+          READ TABLE tg_ekomv INTO eg_ekomv WITH KEY kposn = <fs_wa_kalp>-kposn
+                                                     kschl = c_icmi
+                                                     BINARY SEARCH.
+
+          IF sy-subrc EQ 0.
+
+            <fs_wa_kalp>-vkp03 = eg_ekomv-kbetr.
+            <fs_wa_kalp>-paepr = eg_ekomv-kbetr.
+          ENDIF.
+
+        ELSEIF pi_i_kalp-kaleb = '03'.
+          CLEAR eg_ekomv.
+          READ TABLE tg_ekomv INTO eg_ekomv WITH KEY kposn = <fs_wa_kalp>-kposn
+                                                     kschl = c_icmi
+                                                     BINARY SEARCH.
+
+
+          vl_icmi = eg_ekomv-kbetr.
+
+          IF sy-subrc EQ 0 AND NOT <fs_wa_kalp>-vkals EQ 'ZPVF05' AND NOT pi_i_kalp-kaleb = '03'.
+            <fs_wa_kalp>-vkp03 = eg_ekomv-kbetr.
+          ENDIF.
+
+        ELSE.
+
+          CLEAR eg_ekomv.
+
+          READ TABLE tg_ekomv INTO eg_ekomv WITH KEY kposn = <fs_wa_kalp>-kposn
+                                                     kschl = c_zbht
+                                                     BINARY SEARCH. "003 - Incluído
+          IF sy-subrc EQ 0.
+
+            CLEAR eg_ekomv_zpb0.
+
+            READ TABLE tg_ekomv INTO eg_ekomv_zpb0 WITH KEY kposn = <fs_wa_kalp>-kposn
+                                                            kschl = c_zpb0
+                                                            BINARY SEARCH. "003 - Incluído
+
+            IF sy-subrc = 0.
+*Verifica se as unidades são iguais ZPB0 e ZBHT
+              IF  eg_ekomv_zpb0-kmein = <fs_wa_kalp>-vrkme.
+
+*Conversão condições - denominador (divisor) UMCond.em UMB
+                IF  eg_ekomv_zpb0-kumne = 0 OR eg_ekomv_zpb0-kumne = 1.
+* Quantidade é maior que 1
+                  <fs_wa_kalp>-vkp02 = eg_ekomv-kawrt.
+                  IF sy-tcode = lc_vkp5. "Transação
+                    IF pi_i_kalp-mgame > c_1000. "'1.000'.
+
+                      MESSAGE e899(mm) WITH TEXT-002. "'Material sem conversão, ajustar o registro info!'.
+                    ELSE.
+                      IF ( eg_ekomv_zpb0-kumza GT 1 ) AND ( eg_ekomv_zpb0-kumne GT 0 ).
+                        eg_ekomv-kawrt = eg_ekomv-kawrt * eg_ekomv_zpb0-kumza.
+                        <fs_wa_kalp>-vkp02 = eg_ekomv-kawrt / eg_ekomv_zpb0-kumne .
+                      ELSE.
+                        <fs_wa_kalp>-vkp02 = eg_ekomv-kawrt.
+                      ENDIF.
+                    ENDIF.
+                  ENDIF.
+                ELSE.
+                  IF eg_ekomv_zpb0-kumza GT 1.
+                    eg_ekomv-kawrt = eg_ekomv-kawrt * eg_ekomv_zpb0-kumza.
+                  ENDIF.
+                  <fs_wa_kalp>-vkp02 = eg_ekomv-kawrt / eg_ekomv_zpb0-kumne .
+                ENDIF.
+              ELSE.
+*Se for diferente, o valor deverá ser convertido para unidade de venda.
+
+                CLEAR: vl_matnr, vl_in_me, vl_out_me, vl_menge_in, vl_menge_out. " Filipe - 25/07/2013.
+
+                vl_matnr =  <fs_wa_kalp>-matnr.
+                vl_in_me =  eg_ekomv_zpb0-kmein.
+                vl_out_me = <fs_wa_kalp>-vrkme.
+                vl_menge_in  = c_10000."'10000.000'.
+
+                CALL FUNCTION 'MD_CONVERT_MATERIAL_UNIT'
+                  EXPORTING
+                    i_matnr              = vl_matnr
+                    i_in_me              = vl_in_me
+                    i_out_me             = vl_out_me
+                    i_menge              = vl_menge_in
+                  IMPORTING
+                    e_menge              = vl_menge_out
+                  EXCEPTIONS
+                    error_in_application = 1
+                    error                = 2
+                    OTHERS               = 3.
+                IF sy-subrc <> 0.
+
+                  MESSAGE e899(mm) WITH TEXT-003. "'Unid. Medida da condição existente não existe.'.
+                ENDIF.
+
+
+                IF vl_menge_out IS  INITIAL.
+                  vl_menge_out = 1.
+
+                ENDIF.
+
+*Conversão condições - denominador (divisor) UMCond.em UMB
+                IF ( eg_ekomv_zpb0-kumne = 0 OR eg_ekomv_zpb0-kumne = 1 ) AND eg_ekomv_zpb0-kumza = 1.
+                  <fs_wa_kalp>-vkp02 = ( ( eg_ekomv-kawrt / vl_menge_out ) * 10000 ) / eg_ekomv_zpb0-kumne.
+
+                ELSE.
+                  <fs_wa_kalp>-vkp02 =  ( ( ( eg_ekomv-kawrt  * eg_ekomv_zpb0-kumza ) / eg_ekomv_zpb0-kumne ) / vl_menge_out ) * 10000. " ) / ( eg_ekomv_zpb0-kumne * eg_ekomv_zpb0-kumza ).
+
+                ENDIF.
+
+              ENDIF.
+
+            ELSE.
+
+            ENDIF.
+
+          ENDIF.
+        ENDIF.                                                                     "MRO "003 - Incluído
+* 002 - Controle campos de forçagem
+
+        SELECT SINGLE regio FROM t001w INTO @DATA(lv_regio) WHERE werks EQ @<fs_wa_kalp>-werks. "#EC CI_SUBRC
+
+        lr_regio = zcl_parametros=>get_param( iv_processo = 'SD_CC_2532_REGIO_RECUP_ST' iv_name = 'REGIO' ).
+        lr_regio2 = zcl_parametros=>get_param( iv_processo = 'SD_CC.7426_CAL_TRAN_POINT' iv_name = 'REGIO' ).
+
+
+        DELETE lr_regio  WHERE option EQ 'CP'.
+        DELETE lr_regio2 WHERE option EQ 'CP'.
+        IF ( lv_regio IN lr_regio AND NOT lr_regio[] IS INITIAL ) OR
+           ( lv_regio IN lr_regio2 AND NOT lr_regio2[] IS INITIAL ) .
+
+          IF <fs_wa_kalp>-ekals IN lr_ekals.
+            READ TABLE tg_ekomv ASSIGNING FIELD-SYMBOL(<fs_ekomv_bx40>) WITH KEY kposn = <fs_wa_kalp>-kposn
+                                                            kschl = c_bx40
+                                                            BINARY SEARCH.
+*         Buscar exastiva da alíquota interna de ICMS
+            IF sy-subrc EQ 0 AND <fs_ekomv_bx40>-kwert GT 0.
+              READ TABLE tg_ekomv ASSIGNING FIELD-SYMBOL(<fs_ekomv_istd>) WITH KEY kposn = <fs_wa_kalp>-kposn
+                                                              kschl = c_istd
+                                                              BINARY SEARCH.
+              IF sy-subrc EQ 0.
+                DATA(lv_icms_aliq) = <fs_ekomv_istd>-kbetr.
+              ELSE.
+                READ TABLE tg_ekomv ASSIGNING FIELD-SYMBOL(<fs_ekomv_isic>) WITH KEY kposn = <fs_wa_kalp>-kposn
+                                                                kschl = c_isic
+                                                                BINARY SEARCH.
+                IF sy-subrc EQ 0.
+                  lv_icms_aliq = <fs_ekomv_isic>-kbetr.
+                ENDIF.
+              ENDIF.
+              IF lv_icms_aliq IS INITIAL.
+                SELECT land1,shipfrom,shipto,validfrom,rate
+                  FROM j_1btxic1 INTO TABLE @DATA(lt_icms)
+                 WHERE land1    EQ 'BR'
+                   AND shipfrom EQ @lv_regio
+                   AND shipto   EQ @lv_regio.
+                IF sy-subrc EQ 0.
+                  DELETE lt_icms WHERE validfrom GT sy-datum.
+                  SORT lt_icms BY validfrom ASCENDING. "#EC CI_SORTLOOP
+                  IF NOT lt_icms[] IS INITIAL.
+                    lv_icms_aliq = lt_icms[ 1 ]-rate.
+                  ENDIF.
+                ENDIF.
+              ENDIF.
+              IF lv_icms_aliq GT 0.
+*                <fs_wa_kalp>-zstp = ( <fs_ekomv_bx40>-kwert * lv_icms_aliq ) / 1000.
+              ENDIF.
+            ENDIF.
+
+          ELSE.
+
+            READ TABLE tg_ekomv ASSIGNING FIELD-SYMBOL(<fs_komv_ztp1>)
+                                              WITH KEY kposn = <fs_wa_kalp>-kposn
+                                                       kschl = c_ztp1
+                                                       BINARY SEARCH.
+            IF sy-subrc EQ 0 AND <fs_komv_ztp1>-kawrt GT 0.
+              DATA(lv_kawrt) = <fs_komv_ztp1>-kawrt.
+              IF eg_ekomv_zpb0-kumza GT 1.
+                lv_kawrt = <fs_komv_ztp1>-kawrt * eg_ekomv_zpb0-kumza.
+              ENDIF.
+              IF eg_ekomv_zpb0-kumne <> 0.
+*                <fs_wa_kalp>-zstp = lv_kawrt / eg_ekomv_zpb0-kumne.
+              ELSE.
+*                <fs_wa_kalp>-zstp = 0.
+              ENDIF.
+            ENDIF.
+          ENDIF.
+        ENDIF.
+
+        CLEAR eg_ekomv.
+        READ TABLE tg_ekomv INTO eg_ekomv WITH KEY kposn = <fs_wa_kalp>-kposn
+                                                   kschl = c_zpb0
+                                                   kherk = c_c
+                                                   BINARY SEARCH.
+        IF sy-subrc EQ 0.
+*          <fs_wa_kalp>-vkp04 = c_f.
+        ENDIF.
+* 002 - Controle campos de forçagem
+
+*SM – Fornecedor sem ST destino com ST ORIGEM
+*Leitura da condição ZPC1 quando operação de coompra
+        IF <fs_wa_kalp>-ekapp = 'M'.
+
+          CLEAR eg_ekomv_zpc1. "Filipe - 25/07/2013.
+
+          READ TABLE tg_ekomv INTO eg_ekomv_zpc1 WITH KEY kposn = <fs_wa_kalp>-kposn
+                                                          kschl = c_zpc1
+                                                   BINARY SEARCH. "003 - Incluído
+
+          IF sy-subrc = 0.
+*Verifica se as unidades são iguais ZPB0 e ZBHT
+
+*Conversão condições - denominador (divisor) UMCond.em UMB
+            IF  eg_ekomv_zpb0-kumne = 0 OR eg_ekomv_zpb0-kumne = 1.
+
+              IF vl_menge_out NE 0.
+*                <fs_wa_kalp>-vkp06 = ( eg_ekomv_zpc1-kawrt / vl_menge_out ) * eg_ekomv_zpb0-kpein.
+
+              ELSE.
+                IF ( eg_ekomv_zpb0-kumza GT 1 ) AND ( eg_ekomv_zpb0-kumne GT 0 ).
+                  eg_ekomv_zpc1-kawrt = eg_ekomv_zpc1-kawrt * eg_ekomv_zpb0-kumza.
+*                  <fs_wa_kalp>-vkp06 = eg_ekomv_zpc1-kawrt / eg_ekomv_zpb0-kumne .
+                ELSE.
+*                  <fs_wa_kalp>-vkp06 =  eg_ekomv_zpc1-kawrt.
+                ENDIF.
+              ENDIF.
+
+            ELSE.
+              IF eg_ekomv_zpb0-kumza GT 1.
+                eg_ekomv_zpc1-kawrt = eg_ekomv_zpc1-kawrt * eg_ekomv_zpb0-kumza.
+              ENDIF.
+*              <fs_wa_kalp>-vkp06 = eg_ekomv_zpc1-kawrt / eg_ekomv_zpb0-kumne .
+            ENDIF.
+          ELSE.
+*Se for diferente, o valor deverá ser convertido para unidade de venda.
+
+            CLEAR: vl_matnr, vl_in_me, vl_out_me, vl_menge_in, vl_menge_out. " Filipe - 25/07/2013.
+
+            vl_matnr =  <fs_wa_kalp>-matnr.
+            vl_in_me =  eg_ekomv_zpc1-kmein.
+            vl_out_me = <fs_wa_kalp>-vrkme.
+            vl_menge_in  = c_10000."'10000.000'.
+
+            CALL FUNCTION 'MD_CONVERT_MATERIAL_UNIT'
+              EXPORTING
+                i_matnr              = vl_matnr
+                i_in_me              = vl_in_me
+                i_out_me             = vl_out_me
+                i_menge              = vl_menge_in
+              IMPORTING
+                e_menge              = vl_menge_out
+              EXCEPTIONS
+                error_in_application = 1
+                error                = 2
+                OTHERS               = 3.
+            IF sy-subrc <> 0.
+              CLEAR vl_menge_out.
+            ENDIF.
+
+            IF vl_menge_out IS  INITIAL.
+              vl_menge_out = 1.
+            ENDIF.
+
+*Conversão condições - denominador (divisor) UMCond.em UMB
+            IF ( eg_ekomv_zpb0-kumne = 0 OR eg_ekomv_zpb0-kumne = 1 ) AND eg_ekomv_zpb0-kumza = 1.
+*              <fs_wa_kalp>-vkp06 = ( ( eg_ekomv_zpc1-kawrt / vl_menge_out ) * 10000 ) / eg_ekomv_zpb0-kumne.
+            ELSE.
+*              <fs_wa_kalp>-vkp06 =  ( ( ( eg_ekomv_zpc1-kawrt  * eg_ekomv_zpb0-kumza ) / eg_ekomv_zpb0-kumne ) / vl_menge_out ) * 10000.
+            ENDIF.
+
+          ENDIF.
+
+          CLEAR: eg_ekomv_zpc2.
+
+          READ TABLE tg_ekomv INTO eg_ekomv_zpc2 WITH KEY kposn = <fs_wa_kalp>-kposn
+                                                          kschl = c_zpc2
+                                                          BINARY SEARCH.
+
+          IF sy-subrc = 0.
+*Verifica se as unidades são iguais ZPB0 e ZBHT
+
+*Conversão condições - denominador (divisor) UMCond.em UMB
+            IF  eg_ekomv_zpb0-kumne = 0 OR eg_ekomv_zpb0-kumne = 1.
+
+              IF vl_menge_out NE 0 .
+*                <fs_wa_kalp>-vkp07 = ( eg_ekomv_zpc2-kawrt / vl_menge_out ) * eg_ekomv_zpb0-kpein.
+              ELSE.
+                IF ( eg_ekomv_zpb0-kumza GT 1 ) AND ( eg_ekomv_zpb0-kumne GT 0 ).
+                  eg_ekomv_zpc2-kawrt = eg_ekomv_zpc2-kawrt * eg_ekomv_zpb0-kumza.
+*                  <fs_wa_kalp>-vkp07 = eg_ekomv_zpc2-kawrt / eg_ekomv_zpb0-kumne .
+                ELSE.
+*                  <fs_wa_kalp>-vkp07 =  eg_ekomv_zpc2-kawrt.
+                ENDIF.
+              ENDIF.
+
+            ELSE.
+              IF eg_ekomv_zpb0-kumza GT 1.
+                eg_ekomv_zpc2-kawrt = eg_ekomv_zpc2-kawrt * eg_ekomv_zpb0-kumza.
+              ENDIF.
+*              <fs_wa_kalp>-vkp07 = eg_ekomv_zpc2-kawrt / eg_ekomv_zpb0-kumne .
+            ENDIF.
+          ELSE.
+*Se for diferente, o valor deverá ser convertido para unidade de venda.
+
+            CLEAR: vl_matnr, vl_in_me, vl_out_me, vl_menge_in, vl_menge_out. " Filipe - 25/07/2013.
+
+            vl_matnr     = <fs_wa_kalp>-matnr.
+            vl_in_me     = eg_ekomv_zpc2-kmein.
+            vl_out_me    = <fs_wa_kalp>-vrkme.
+            vl_menge_in  = c_10000.
+
+            CALL FUNCTION 'MD_CONVERT_MATERIAL_UNIT'
+              EXPORTING
+                i_matnr              = vl_matnr
+                i_in_me              = vl_in_me
+                i_out_me             = vl_out_me
+                i_menge              = vl_menge_in
+              IMPORTING
+                e_menge              = vl_menge_out
+              EXCEPTIONS
+                error_in_application = 1
+                error                = 2
+                OTHERS               = 3.
+            IF sy-subrc <> 0.
+              CLEAR vl_menge_out.
+            ENDIF.
+
+            IF vl_menge_out IS  INITIAL.
+              vl_menge_out = 1.
+            ENDIF.
+
+*Conversão condições - denominador (divisor) UMCond.em UMB
+            IF ( eg_ekomv_zpb0-kumne = 0 OR eg_ekomv_zpb0-kumne = 1 ) AND eg_ekomv_zpb0-kumza = 1.
+*              <fs_wa_kalp>-vkp07 = ( ( eg_ekomv_zpc2-kawrt / vl_menge_out ) * 10000 ) / eg_ekomv_zpb0-kumne.
+            ELSE.
+*              <fs_wa_kalp>-vkp07 =  ( ( ( eg_ekomv_zpc2-kawrt  * eg_ekomv_zpb0-kumza ) / eg_ekomv_zpb0-kumne ) / vl_menge_out ) * 10000.
+            ENDIF.
+
+          ENDIF.
+        ENDIF.
+        CLEAR: eg_ekomv.
+
+        lr_ekals_cl = zcl_parametros=>get_param( iv_processo = 'MM_0402_01_EKALS' iv_name = 'EKALS' ).
+
+        IF <fs_wa_kalp>-ekals IN lr_ekals_cl.
+          READ TABLE tg_ekomv INTO eg_ekomv WITH KEY kposn = <fs_wa_kalp>-kposn
+                                                     kschl = 'ZCLI'.
+          IF sy-subrc EQ 0.
+*            <fs_wa_kalp>-vkp12 = eg_ekomv-kbetr.
+          ENDIF.
+          IF <fs_wa_kalp>-bwsca = '2'.
+            <fs_wa_kalp>-ekpgr = <fs_wa_kalp>-vkp03.
+          ELSE.
+            <fs_wa_kalp>-ekpgr = <fs_wa_kalp>-vkp01.
+          ENDIF.
+          IF pi_i_kalp-kaleb = '03'.
+            <fs_wa_kalp>-ekpgr = vl_icmi.
+          ENDIF.
+        ENDIF.
+
+        IF sy-tcode = lc_vkp5. "Transação
+
+          CASE sy-ucomm.     "Comandos
+            WHEN space OR 'NO' OR 'BUCH' OR 'OKAY'.
+
+              IF <fs_wa_kalp>-kaleb <> '03'.
+
+                IF NOT <fs_wa_kalp>-werks IS INITIAL AND
+                  ( <fs_wa_kalp>-ekerv = 'Z1' OR <fs_wa_kalp>-ekerv = 'Z3' ).
+
+*Selecionar Centros/filiais
+                  CLEAR eg_t001w.
+
+                  SELECT SINGLE plant, plantcustomer
+                    FROM i_plant
+                    WHERE plant = @<fs_wa_kalp>-werks
+                    INTO (@eg_t001w-werks, @eg_t001w-kunnr).
+
+                  IF sy-subrc = 0.
+** Selecionar Dados do centro, verificar se é Loja ou CD
+                    CLEAR eg_wrf1.
+
+                    SELECT SINGLE locnr betrp vlfkz
+                      INTO (eg_wrf1-locnr, eg_wrf1-betrp, eg_wrf1-vlfkz)
+                      FROM wrf1
+                     WHERE locnr EQ eg_t001w-kunnr.
+
+                    IF sy-subrc = 0.
+                      IF eg_wrf1-vlfkz = 'B'. "CD
+
+*** Limpar flags de venda e compra
+                        <fs_wa_kalp>-ekabs = space.
+                        <fs_wa_kalp>-vkabs = space.
+
+                      ELSEIF eg_wrf1-vlfkz = 'A' AND eg_wrf1-betrp <> 'ZREF' .  "Loja
+
+*** Limpar flags de venda e compra
+                        <fs_wa_kalp>-ekabs = space.
+                        <fs_wa_kalp>-vkabs = space.
+
+                      ELSE. "Refsite
+
+*** Marca flags de venda e compra
+                        <fs_wa_kalp>-ekabs = 'X'.
+                        <fs_wa_kalp>-vkabs = 'X'.
+
+                      ENDIF.
+                    ENDIF.
+
+                  ENDIF.
+
+                ELSE.
+*** Marca flags de venda e compra
+                  <fs_wa_kalp>-ekabs = 'X'.
+                  <fs_wa_kalp>-vkabs = 'X'.
+                ENDIF.
+              ENDIF.
+
+            WHEN OTHERS.
+          ENDCASE.
+
+        ENDIF.
+
+
+
+**********************************************************************
+*                         Change History                             *
+*                                                                    *
+**********************************************************************
+* Date         Reference       Author                                *
+*====================================================================*
+*    Seleciona Motivo de preço especial e VKP0                       *
+**********************************************************************
+        TRY.
+            DATA(lo_data) = zclsd_price_enhancement=>get_instance( ).
+            IF lo_data IS BOUND.
+              IF lo_data->is_relevant_reason( pi_i_glob-livar ) EQ abap_true.
+*                <fs_wa_kalp>-zmtva = lo_data->get_seq_zmtva( is_data = <fs_wa_kalp> ).
+*                <fs_wa_kalp>-zvkp0 = lo_data->get_price_vkp0( is_data = <fs_wa_kalp> ).
+              ENDIF.
+            ENDIF.
+        ENDTRY.
+
+*        CALL FUNCTION 'ZSD_CALC_ZSTC_ZSTV'
+*          CHANGING
+*            cs_kalp = <fs_wa_kalp>.
+
+
+      ENDLOOP.
+    ENDIF.
+
+
+***********************************************************************
+*                                                                     *
+*      *********************************************************      *
+*      *                +---------------------+                *      *
+*      *                | G r u p o | A S S A |                *      *
+*      *                +---------------------+                *      *
+*      *********************************************************      *
+*                                                                     *
+***********************************************************************
+*---------------------------------------------------------------------*
+*** Dados do programa                                                 *
+*---------------------------------------------------------------------*
+* Nome  : ZXVKPU04                                                    *
+* Título: Lista de trabalho de precificação                           *
+* Autor : <Desenvolvedor>                                             *
+*                                                                     *
+* Objetivos: Inserir condição - Copia da ZPB0                         *
+*                                                                     *
+* Espec.Técnica(ET): <Código/Descrição da ET>                         *
+*---------------------------------------------------------------------+
+*** Histórico das modificações                                        |
+*---+--------+----------------+---------------------------------------+
+*Seq|Data    |Autor           |COD/ Descrição da modificação ou erro  |
+*---+--------+----------------+---------------------------------------+
+*001|20032013|<Desenvolvedor> |Codificação inicial                    |
+*---+--------+----------------+---------------------------------------+
+*002|01082013|Arquimedes Campos| Ajustes performance                  |
+*---+--------+----------------+---------------------------------------+
+
+
+*(aproveitando declarações e dados do bloco acima)
+
+    IF <fs_wa_kalp>-ekals = lc_zpc007.
+
+      DATA:
+        tl_ekomv1 TYPE TABLE OF komv, " WITH HEADER LINE,
+        tl_ekomv2 TYPE TABLE OF komv, " WITH HEADER LINE,
+        lr_kschl1 TYPE RANGE OF kscha,
+        el_kschl1 LIKE LINE OF lr_kschl1,
+        lr_kschl2 TYPE RANGE OF kscha,
+        el_kschl2 LIKE LINE OF lr_kschl2,
+        lr_krech  TYPE RANGE OF krech,
+        el_krech  LIKE LINE OF lr_krech.
+
+      lr_kschl1 = zcl_parametros=>get_param( iv_processo = 'MM_011_04_KSCHL1' iv_name = 'KSCHA' ).
+      lr_kschl2 = zcl_parametros=>get_param( iv_processo = 'MM_011_05_KSCHL2' iv_name = 'KSCHA' ).
+      lr_krech  = zcl_parametros=>get_param( iv_processo = 'MM_011_06_KRECH' iv_name = 'KRECH' ).
+
+      el_kschl1 = VALUE #( lr_kschl1[ 1 ] OPTIONAL ).
+      el_kschl2 = VALUE #( lr_kschl2[ 1 ] OPTIONAL ).
+      el_krech  = VALUE #( lr_krech[ 1 ] OPTIONAL ).
+
+      tl_ekomv1[] = <fs_ekomv>[].
+
+      SORT tl_ekomv1 BY kposn kschl.
+
+*identificar a ultima linha
+      tl_ekomv2[] = <fs_ekomv>[].
+      SORT tl_ekomv2 BY knumv DESCENDING
+                        kposn DESCENDING
+                        stunr DESCENDING
+                        zaehk DESCENDING.
+
+      READ TABLE tl_ekomv2 INDEX 1 ASSIGNING FIELD-SYMBOL(<tl_ekomv2>).
+
+*ler a linha a ser copiada
+      READ TABLE tl_ekomv1 ASSIGNING FIELD-SYMBOL(<tl_ekomv1>)
+                           WITH KEY kposn = <fs_wa_kalp>-kposn
+                                    kschl = el_kschl1-low
+                                    BINARY SEARCH.
+
+      IF sy-subrc IS INITIAL AND <tl_ekomv1> IS ASSIGNED.
+
+        APPEND <tl_ekomv1> TO tl_ekomv1. "Duplica a condição ZPB0
+
+*Transforma uma das condições ZPB0 para a condição ZPB1
+*Com isso a condição ZPB1 começa a aparecer no esquema de cálculo
+        <tl_ekomv1>-kschl = el_kschl2-low. "'ZPB1'
+        <tl_ekomv1>-stunr = 2.
+        <tl_ekomv1>-zaehk = ( <tl_ekomv2>-zaehk + 1 ).
+        <tl_ekomv1>-krech = el_krech-low. "'C'
+
+
+        <fs_ekomv>[] = tl_ekomv1[]. "tabela do standard
+
+        <fs_wa_kalp>-ekpgr = <tl_ekomv1>-kbetr / <tl_ekomv1>-kpein.
+
+      ENDIF.
+    ENDIF.
+
+
+**********************************************************************
+*                         Change History                             *
+*                                                                    *
+**********************************************************************
+* Date         Reference       Author                                *
+*====================================================================*
+*  Iguala as condições de primeir0 preço para o Ecommerce           *
+**********************************************************************
+
+    IF <fs_kalp> IS ASSIGNED.
+      LOOP AT <fs_kalp> ASSIGNING <fs_wa_kalp>. ##NEEDED
+        CHECK <fs_wa_kalp>-kposn EQ pi_i_kalp-kposn.
+
+        IF <fs_wa_kalp>-vkals = 'ZPVMAR' OR
+           <fs_wa_kalp>-vkals = 'ZPV005'.
+          IF <fs_wa_kalp>-vkals = 'ZPVMAR'.
+*            <fs_wa_kalp>-zzkpe = <fs_wa_kalp>-endpr.
+*            <fs_wa_kalp>-zzvle = <fs_wa_kalp>-vkp01.
+*            <fs_wa_kalp>-zzlie = <fs_wa_kalp>-spane.
+*            <fs_wa_kalp>-zzmle = <fs_wa_kalp>-vkp03.
+*            <fs_wa_kalp>-zzmge = <fs_wa_kalp>-vkp11.
+*            <fs_wa_kalp>-zzste = <fs_wa_kalp>-zstco.
+          ELSE.
+*            <fs_wa_kalp>-zzkpe = <fs_wa_kalp>-endpr.
+*            <fs_wa_kalp>-zzvle = <fs_wa_kalp>-vkp01.
+*            <fs_wa_kalp>-zzlie = <fs_wa_kalp>-spane.
+*            <fs_wa_kalp>-zzmle = <fs_wa_kalp>-vkp02.
+*            <fs_wa_kalp>-zzmge = <fs_wa_kalp>-vkp11.
+*            <fs_wa_kalp>-zzste = <fs_wa_kalp>-zstco.
+          ENDIF.
+        ENDIF.
+      ENDLOOP.
+    ENDIF.
+
+* Preencher campos ZPRA (Preço Aconselhado a Prazo) e ZPRAD (% desconto) na VKP5
+    IF sy-tcode = lc_vkp5.
+
+      lr_werks = zcl_parametros=>get_param( iv_processo = 'SD_PR.01961_PRECO_PIX_ETIQUETA' iv_name = 'LOJA' ).
+
+      IF <fs_kalp> IS ASSIGNED.
+
+
+        SELECT kunnr, pltyp
+          FROM knvv
+          INTO TABLE @DATA(lt_knvv)
+          FOR ALL ENTRIES IN @<fs_kalp>
+           WHERE pltyp EQ @<fs_kalp>-pltyp.
+
+        IF sy-subrc IS INITIAL.
+
+          SORT lt_knvv BY kunnr.
+
+        ENDIF.
+
+        LOOP AT <fs_kalp> ASSIGNING <fs_wa_kalp>. ##NEEDED
+          CHECK <fs_wa_kalp>-kposn EQ pi_i_kalp-kposn.
+
+          "Verificar centro
+          vl_werks = <fs_wa_kalp>-werks.
+
+          IF <fs_wa_kalp>-werks IS INITIAL AND <fs_wa_kalp>-pltyp IS NOT INITIAL.
+            "Buscar centro da lista
+            vl_kunnr = VALUE #( lt_knvv[ pltyp = <fs_wa_kalp>-pltyp ]-kunnr OPTIONAL ).
+
+            "Verificar se é CD ou Refsite, se for, buscar o próximo
+            IF vl_kunnr(1) = '0' AND vl_kunnr+6(4) IN lr_werks."Verificar se o centro está cadastrado
+
+              SELECT SINGLE plant
+                FROM i_plant
+                INTO @vl_werks
+                WHERE plant         = @vl_kunnr+6(4)
+                  AND plantcategory = 'A'.
+              IF sy-subrc EQ 0.
+                EXIT.
+              ENDIF.
+
+            ENDIF.
+
+            IF sy-subrc EQ 0.
+              vl_werks = vl_kunnr+6(4).
+            ENDIF.
+
+          ENDIF.
+
+*        TRY.
+*            DATA(lo_data2) = zcl_sd_env_preco_kafka=>get_instance( ).
+*            IF lo_data2 IS BOUND.
+*              CALL METHOD lo_data2->calculate_price_virtual
+*                EXPORTING
+*                  i_werks = vl_werks
+*                  i_kbetr = <fs_wa_kalp>-zvkp0
+*                  i_kschl = 'VKP0'
+*                  i_matnr = <fs_wa_kalp>-matnr
+*                IMPORTING
+*                  o_preco = <fs_wa_kalp>-zpra.
+*            ENDIF.
+*        ENDTRY.
+*
+*        IF <fs_wa_kalp>-zpra > 0 AND <fs_wa_kalp>-endpr > 0.
+*          <fs_wa_kalp>-zprad = ( ( 100 - ( ( <fs_wa_kalp>-endpr / <fs_wa_kalp>-zpra ) * 100 ) ) * -1 ) * 10.
+*        ENDIF.
+
+        ENDLOOP.
+
+      ENDIF.
+
+    ENDIF.
+
+  ENDMETHOD.
+
+
+  METHOD yifxx_check_exit~check_active_exit.
+  ENDMETHOD.
+ENDCLASS.

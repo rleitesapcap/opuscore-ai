@@ -1,0 +1,3480 @@
+{
+  "controle": {
+    "id_demanda": "021",
+    "projeto": "MOVE2S/4 (Leroy Merlin)",
+    "titulo": "Intermediação: Comissão MktPlace - Boleto e PIX"
+  },
+  "resumo_negocio": "O objetivo é alterar o processo de contabilização da comissão do Marketplace para operações por Boleto e PIX, eliminando a transação ZAP0069. Após autorização fiscal (status 100), uma BAdI acionará compensação da fatura do cliente contra nova conta transitória e criação de nota de crédito no fornecedor. O resultado é permitir abatimento no repasse e pagamento líquido ao seller, mantendo o faturamento no cliente.",
+  "itens": [
+    {
+      "id": "D001",
+      "categoria": "IDENTIFICACAO",
+      "descricao": "ID GAP: 021",
+      "valor_original": "021",
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S00",
+        "localizacao": [
+          "T0.r4"
+        ],
+        "trecho": "ID GAP: 021 | Descrição GAP: Intermediação: Comissão MktPlace - Boleto e PIX"
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D002",
+      "categoria": "IDENTIFICACAO",
+      "descricao": "Descrição GAP: Intermediação: Comissão MktPlace - Boleto e PIX",
+      "valor_original": "Intermediação: Comissão MktPlace - Boleto e PIX",
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S00",
+        "localizacao": [
+          "T0.r4"
+        ],
+        "trecho": "ID GAP: 021 | Descrição GAP: Intermediação: Comissão MktPlace - Boleto e PIX"
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D003",
+      "categoria": "IDENTIFICACAO",
+      "descricao": "Projeto: MOVE2S/4 (Leroy Merlin)",
+      "valor_original": "MOVE2S/4 (Leroy Merlin)",
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S00",
+        "localizacao": [
+          "T0.r1"
+        ],
+        "trecho": "Projeto: MOVE2S/4 (Leroy Merlin) | Fase do Projeto: Realize"
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D004",
+      "categoria": "IDENTIFICACAO",
+      "descricao": "Fase do Projeto: Realize",
+      "valor_original": "Realize",
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S00",
+        "localizacao": [
+          "T0.r1"
+        ],
+        "trecho": "Projeto: MOVE2S/4 (Leroy Merlin) | Fase do Projeto: Realize"
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D005",
+      "categoria": "IDENTIFICACAO",
+      "descricao": "Módulo: FI",
+      "valor_original": "FI",
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S00",
+        "localizacao": [
+          "T0.r2"
+        ],
+        "trecho": "Autor: Victor Melo | Módulo: FI"
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D006",
+      "categoria": "IDENTIFICACAO",
+      "descricao": "Cenário empresarial: Contas a Receber",
+      "valor_original": "Contas a Receber",
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S00",
+        "localizacao": [
+          "T0.r3"
+        ],
+        "trecho": "Cenário empresarial: Contas a Receber | Processo: GAP-FI-021-ENH"
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D007",
+      "categoria": "IDENTIFICACAO",
+      "descricao": "Processo: GAP-FI-021-ENH",
+      "valor_original": "GAP-FI-021-ENH",
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S00",
+        "localizacao": [
+          "T0.r3"
+        ],
+        "trecho": "Cenário empresarial: Contas a Receber | Processo: GAP-FI-021-ENH"
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D008",
+      "categoria": "IDENTIFICACAO",
+      "descricao": "Autor: Victor Melo",
+      "valor_original": "Victor Melo",
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S00",
+        "localizacao": [
+          "T0.r2"
+        ],
+        "trecho": "Autor: Victor Melo | Módulo: FI"
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D009",
+      "categoria": "DEPENDENCIA",
+      "descricao": "Relação com o GAP FI-021-ENH: Cenário empresarial: Contas a Receber | Processo: GAP-FI-021-ENH",
+      "valor_original": "FI-021-ENH",
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S00",
+        "localizacao": [
+          "T0.r3"
+        ],
+        "trecho": "Cenário empresarial: Contas a Receber | Processo: GAP-FI-021-ENH"
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D010",
+      "categoria": "DEPENDENCIA",
+      "descricao": "Relação com o GAP FI-021: / / / / / / Descrição | O GAP FI-021 trata da alteração do processo de contabilização da comissão do Marketplace exclusivamente para as operações realizadas por Boleto e PIX. / As operações realizadas",
+      "valor_original": "FI-021",
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S01",
+        "localizacao": [
+          "T1.r0"
+        ],
+        "trecho": "/ / / / / / Descrição | O GAP FI-021 trata da alteração do processo de contabilização da comissão do Marketplace exclusivamente para as operações realizadas por Boleto e PIX. / As operações realizadas por cartão não fazem parte do escopo desta alteração. / Atualmente, a emissão da nota fiscal de serviço de comissão gera uma partida no cliente, posteriormente compensada pela transação ZAP0069, vinc"
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D011",
+      "categoria": "TIPO_DEMANDA",
+      "descricao": "Tipo de programa: Migração de Dados, Enhancement, Interface",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S01",
+        "localizacao": [
+          "T1.r1"
+        ],
+        "trecho": "/ / Tipo de programa | / / (X ) Migração de Dados ( X ) Enhancement ( X ) Interface ( ) App Fiori ( ) Formulário ( ) Modificação SAP standard ( ) Programa online ( ) Fiorização ( ) Outros"
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D012",
+      "categoria": "IDENTIFICACAO",
+      "descricao": "Prioridade: Alta / Obrigatório",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S01",
+        "localizacao": [
+          "T1.r2"
+        ],
+        "trecho": "Prioridade | ( X ) Alta / Obrigatório ( ) Média / Recomendável ( ) Baixa / Desejável"
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D013",
+      "categoria": "JUSTIFICATIVA",
+      "descricao": "Impacto se não desenvolvido: Falta de informação para gerir o negócio",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S01",
+        "localizacao": [
+          "T1.r13"
+        ],
+        "trecho": "/ / / Impacto caso não seja desenvolvido | / ( ) Requerimentos legais não serão atendidos ( X ) Falta de informação para gerir o negócio / ( X ) Perda de funcionalidade em relação ao sistema antigo ( X ) Mudança de procedimento necessário / ( X ) Outros: Volumetria excessiva"
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D014",
+      "categoria": "JUSTIFICATIVA",
+      "descricao": "Impacto se não desenvolvido: Perda de funcionalidade em relação ao sistema antigo",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S01",
+        "localizacao": [
+          "T1.r13"
+        ],
+        "trecho": "/ / / Impacto caso não seja desenvolvido | / ( ) Requerimentos legais não serão atendidos ( X ) Falta de informação para gerir o negócio / ( X ) Perda de funcionalidade em relação ao sistema antigo ( X ) Mudança de procedimento necessário / ( X ) Outros: Volumetria excessiva"
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D015",
+      "categoria": "JUSTIFICATIVA",
+      "descricao": "Impacto se não desenvolvido: Mudança de procedimento necessário",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S01",
+        "localizacao": [
+          "T1.r13"
+        ],
+        "trecho": "/ / / Impacto caso não seja desenvolvido | / ( ) Requerimentos legais não serão atendidos ( X ) Falta de informação para gerir o negócio / ( X ) Perda de funcionalidade em relação ao sistema antigo ( X ) Mudança de procedimento necessário / ( X ) Outros: Volumetria excessiva"
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D016",
+      "categoria": "JUSTIFICATIVA",
+      "descricao": "Impacto se não desenvolvido: Outros: Volumetria excessiva",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S01",
+        "localizacao": [
+          "T1.r13"
+        ],
+        "trecho": "/ / / Impacto caso não seja desenvolvido | / ( ) Requerimentos legais não serão atendidos ( X ) Falta de informação para gerir o negócio / ( X ) Perda de funcionalidade em relação ao sistema antigo ( X ) Mudança de procedimento necessário / ( X ) Outros: Volumetria excessiva"
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D017",
+      "categoria": "JUSTIFICATIVA",
+      "descricao": "Volumetria excessiva",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S01",
+        "localizacao": [
+          "T1.r13"
+        ],
+        "trecho": "/ / / Impacto caso não seja desenvolvido | / ( ) Requerimentos legais não serão atendidos ( X ) Falta de informação para gerir o negócio / ( X ) Perda de funcionalidade em relação ao sistema antigo ( X ) Mudança de procedimento necessário / ( X ) Outros: Volumetria excessiva"
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D018",
+      "categoria": "JUSTIFICATIVA",
+      "descricao": "Existe alternativa no S/4HANA? Não",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S01",
+        "localizacao": [
+          "T1.r14"
+        ],
+        "trecho": "Existe alternativa no S4HANA? | ( ) Sim ( X ) Não"
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D019",
+      "categoria": "OBJETIVO",
+      "descricao": "Objetivo: alterar o processo de contabilização da comissão do Marketplace para as operações realizadas por Boleto e PIX, mantendo o faturamento no cliente e substituindo o encontro de contas realizado pela ZAP0069.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S03",
+        "localizacao": [
+          "P019"
+        ],
+        "trecho": "Objetivo: alterar o processo de contabilização da comissão do Marketplace para as operações realizadas por Boleto e PIX, mantendo o faturamento no cliente e substituindo o encontro de contas realizado pela ZAP0069."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D020",
+      "categoria": "OBJETIVO",
+      "descricao": "Após a autorização da nota fiscal na Sefaz, quando o status da nota fiscal for igual a 100, a lógica vinculada à BAdI CL_NFE_PRINT deverá executar, em sequência, os function modules POSTING_INTERFACE_START, POSTING_INTERFACE_CLEARING e POSTING_INTERFACE_END para compensar a fatura do cliente contra a nova conta transitória. Após o sucesso da compensação, a BAPI_ACC_DOCUMENT_POST deverá criar a nota de crédito no fornecedor seller contra a mesma conta transitória, permitindo o abatimento no repas",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S03",
+        "localizacao": [
+          "P021"
+        ],
+        "trecho": "Após a autorização da nota fiscal na Sefaz, quando o status da nota fiscal for igual a 100, a lógica vinculada à BAdI CL_NFE_PRINT deverá executar, em sequência, os function modules POSTING_INTERFACE_START, POSTING_INTERFACE_CLEARING e POSTING_INTERFACE_END para compensar a fatura do cliente contra a nova conta transitória. Após o sucesso da compensação, a BAPI_ACC_DOCUMENT_POST deverá criar a not"
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D021",
+      "categoria": "OBJETIVO",
+      "descricao": "A alteração permitirá eliminar a transação ZAP0069 e o programa ZRFI_MKTPLACE_COMPENSACAO_RXC.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S03",
+        "localizacao": [
+          "P022"
+        ],
+        "trecho": "A alteração permitirá eliminar a transação ZAP0069 e o programa ZRFI_MKTPLACE_COMPENSACAO_RXC."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D022",
+      "categoria": "PROCESSO",
+      "descricao": "-Marketplace/Mirakl - evento de disparo do período de Repasse e Comissão.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S04",
+        "localizacao": [
+          "P028"
+        ],
+        "trecho": "-Marketplace/Mirakl - evento de disparo do período de Repasse e Comissão."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D023",
+      "categoria": "PROCESSO",
+      "descricao": "-Gateway KONG - exposição das APIs chamadas pela Plataforma Marketplace.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S04",
+        "localizacao": [
+          "P030"
+        ],
+        "trecho": "-Gateway KONG - exposição das APIs chamadas pela Plataforma Marketplace."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D024",
+      "categoria": "PROCESSO",
+      "descricao": "-SAP CPI - roteamento das chamadas recebidas pelo Gateway KONG para o serviço OData criado em ABAP/RAP.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S04",
+        "localizacao": [
+          "P032"
+        ],
+        "trecho": "-SAP CPI - roteamento das chamadas recebidas pelo Gateway KONG para o serviço OData criado em ABAP/RAP."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D025",
+      "categoria": "PROCESSO",
+      "descricao": "-API Business Partner - consulta e validação, por CNPJ, da existência do cliente e do fornecedor, sem consulta por CPF, com retorno da informação de cliente ou fornecedor válido.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S04",
+        "localizacao": [
+          "P034"
+        ],
+        "trecho": "-API Business Partner - consulta e validação, por CNPJ, da existência do cliente e do fornecedor, sem consulta por CPF, com retorno da informação de cliente ou fornecedor válido."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D026",
+      "categoria": "PROCESSO",
+      "descricao": "-API standard Sales Order - criação da Ordem de Venda no SAP S/4HANA.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S04",
+        "localizacao": [
+          "P036"
+        ],
+        "trecho": "-API standard Sales Order - criação da Ordem de Venda no SAP S/4HANA."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D027",
+      "categoria": "PROCESSO",
+      "descricao": "-API Documento Contábil - API integrante do fluxo de integração informado para o processo.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S04",
+        "localizacao": [
+          "P037"
+        ],
+        "trecho": "-API Documento Contábil - API integrante do fluxo de integração informado para o processo."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D028",
+      "categoria": "PROCESSO",
+      "descricao": "-VF01 - faturamento e geração da fatura no cliente.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S04",
+        "localizacao": [
+          "P039"
+        ],
+        "trecho": "-VF01 - faturamento e geração da fatura no cliente."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D029",
+      "categoria": "PROCESSO",
+      "descricao": "-BAdI CL_NFE_PRINT - lógica acionada após a autorização da nota fiscal na Sefaz, quando o status da nota fiscal for igual a 100.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S04",
+        "localizacao": [
+          "P040"
+        ],
+        "trecho": "-BAdI CL_NFE_PRINT - lógica acionada após a autorização da nota fiscal na Sefaz, quando o status da nota fiscal for igual a 100."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D030",
+      "categoria": "PROCESSO",
+      "descricao": "-Function modules POSTING_INTERFACE_START, POSTING_INTERFACE_CLEARING e POSTING_INTERFACE_END - inicialização, compensação da fatura do cliente contra a conta transitória e finalização da interface de compensação.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S04",
+        "localizacao": [
+          "P042"
+        ],
+        "trecho": "-Function modules POSTING_INTERFACE_START, POSTING_INTERFACE_CLEARING e POSTING_INTERFACE_END - inicialização, compensação da fatura do cliente contra a conta transitória e finalização da interface de compensação."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D031",
+      "categoria": "PROCESSO",
+      "descricao": "-BAPI_ACC_DOCUMENT_POST - criação da nota de crédito no fornecedor seller contra a mesma conta transitória, após o sucesso da compensação.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S04",
+        "localizacao": [
+          "P044"
+        ],
+        "trecho": "-BAPI_ACC_DOCUMENT_POST - criação da nota de crédito no fornecedor seller contra a mesma conta transitória, após o sucesso da compensação."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D032",
+      "categoria": "PROCESSO",
+      "descricao": "-ZTFID_MKTPL_LG - manutenção dos dados dos documentos de repasse e devolução, tipos MP e MC, e monitoramento do processo. -ZAP0069 / ZRFI_MKTPLACE_COMPENSACAO_RXC - transação e programa de compensação que serão eliminados. -Endpoint KONG: /v1/orders/payment/fee.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S04",
+        "localizacao": [
+          "P046"
+        ],
+        "trecho": "-ZTFID_MKTPL_LG - manutenção dos dados dos documentos de repasse e devolução, tipos MP e MC, e monitoramento do processo. -ZAP0069 / ZRFI_MKTPLACE_COMPENSACAO_RXC - transação e programa de compensação que serão eliminados. -Endpoint KONG: /v1/orders/payment/fee."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D033",
+      "categoria": "ESCOPO_EXCLUIDO",
+      "descricao": "As operações realizadas por cartão não fazem parte do escopo desta alteração.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S05",
+        "localizacao": [
+          "P049"
+        ],
+        "trecho": "As operações realizadas por cartão não fazem parte do escopo desta alteração."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D034",
+      "categoria": "REGRA",
+      "descricao": "Após a compensação da fatura do cliente e a contabilização da nota de crédito no fornecedor seller, a conta transitória deverá apresentar saldo zerado.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S05",
+        "localizacao": [
+          "P066"
+        ],
+        "trecho": "Após a compensação da fatura do cliente e a contabilização da nota de crédito no fornecedor seller, a conta transitória deverá apresentar saldo zerado."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D035",
+      "categoria": "REGRA",
+      "descricao": "A tabela ZTFID_MKTPL_LG deverá ser mantida com os dados dos documentos contábeis de repasse e devolução, correspondentes aos tipos MP e MC.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S05",
+        "localizacao": [
+          "P068"
+        ],
+        "trecho": "A tabela ZTFID_MKTPL_LG deverá ser mantida com os dados dos documentos contábeis de repasse e devolução, correspondentes aos tipos MP e MC."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D036",
+      "categoria": "PREMISSA",
+      "descricao": "As invoices são geradas em dois ciclos, nos dias 05 e 20, respeitando o intervalo de 15 dias. O ciclo possui valor sumarizado por ciclo e fornecedor, não por pedido.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S06",
+        "localizacao": [
+          "P077"
+        ],
+        "trecho": "As invoices são geradas em dois ciclos, nos dias 05 e 20, respeitando o intervalo de 15 dias. O ciclo possui valor sumarizado por ciclo e fornecedor, não por pedido."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D037",
+      "categoria": "ESCOPO_EXCLUIDO",
+      "descricao": "O processo de cartão não será alterado por este GAP.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S06",
+        "localizacao": [
+          "P079"
+        ],
+        "trecho": "O processo de cartão não será alterado por este GAP."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D038",
+      "categoria": "PREMISSA",
+      "descricao": "O novo fluxo de contabilização será aplicado somente às operações de Boleto e PIX. O processo de cartão não será alterado por este GAP.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S06",
+        "localizacao": [
+          "P079"
+        ],
+        "trecho": "O novo fluxo de contabilização será aplicado somente às operações de Boleto e PIX. O processo de cartão não será alterado por este GAP."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D039",
+      "categoria": "PREMISSA",
+      "descricao": "A compensação da fatura do cliente e a criação da nota de crédito no fornecedor dependem da autorização da nota fiscal na Sefaz e do status igual a 100. Para status diferente de 100, essas etapas não deverão ser executadas.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S06",
+        "localizacao": [
+          "P081"
+        ],
+        "trecho": "A compensação da fatura do cliente e a criação da nota de crédito no fornecedor dependem da autorização da nota fiscal na Sefaz e do status igual a 100. Para status diferente de 100, essas etapas não deverão ser executadas."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D040",
+      "categoria": "PREMISSA",
+      "descricao": "A tabela ZTFID_MKTPL_LG será mantida para os documentos de repasse e devolução, tipos MP e MC.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S06",
+        "localizacao": [
+          "P083"
+        ],
+        "trecho": "A tabela ZTFID_MKTPL_LG será mantida para os documentos de repasse e devolução, tipos MP e MC."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D041",
+      "categoria": "PREMISSA",
+      "descricao": "A ZAP0069 será descontinuada.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S06",
+        "localizacao": [
+          "P085"
+        ],
+        "trecho": "A ZAP0069 será descontinuada."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D042",
+      "categoria": "PREMISSA",
+      "descricao": "A solução utilizará a lógica vinculada à BAdI CL_NFE_PRINT, acionada para nota fiscal com status igual a 100; os function modules POSTING_INTERFACE_START, POSTING_INTERFACE_CLEARING e POSTING_INTERFACE_END para a compensação da fatura do cliente; e a BAPI_ACC_DOCUMENT_POST para criação da nota de crédito no fornecedor seller.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S06",
+        "localizacao": [
+          "P087"
+        ],
+        "trecho": "A solução utilizará a lógica vinculada à BAdI CL_NFE_PRINT, acionada para nota fiscal com status igual a 100; os function modules POSTING_INTERFACE_START, POSTING_INTERFACE_CLEARING e POSTING_INTERFACE_END para a compensação da fatura do cliente; e a BAPI_ACC_DOCUMENT_POST para criação da nota de crédito no fornecedor seller."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D043",
+      "categoria": "PREMISSA",
+      "descricao": "A compensação e a criação da nota de crédito somente deverão ocorrer após a autorização da nota fiscal na Sefaz e quando o status da nota fiscal for igual a 100.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S06",
+        "localizacao": [
+          "P088"
+        ],
+        "trecho": "A compensação e a criação da nota de crédito somente deverão ocorrer após a autorização da nota fiscal na Sefaz e quando o status da nota fiscal for igual a 100."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D044",
+      "categoria": "TO_BE",
+      "descricao": "Passo 1: A Plataforma Marketplace dispara o período de Repasse e Comissão.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S07",
+        "localizacao": [
+          "P091"
+        ],
+        "trecho": "A Plataforma Marketplace dispara o período de Repasse e Comissão."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D045",
+      "categoria": "TO_BE",
+      "descricao": "Passo 2: A Plataforma Marketplace chama as APIs por meio do fluxo Marketplace -> KONG -> SAP CPI -> serviço OData criado em ABAP/RAP no SAP S/4HANA.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S07",
+        "localizacao": [
+          "P092"
+        ],
+        "trecho": "A Plataforma Marketplace chama as APIs por meio do fluxo Marketplace -> KONG -> SAP CPI -> serviço OData criado em ABAP/RAP no SAP S/4HANA."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D046",
+      "categoria": "TO_BE",
+      "descricao": "Passo 3: A API Business Partner consulta e valida, por CNPJ, a existência do cliente e do fornecedor. Não haverá consulta por CPF. Após a localização e o retorno da informação de cliente ou fornecedor válido, a API standard Sales Order cria a Ordem de Venda no SAP S/4HANA.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S07",
+        "localizacao": [
+          "P093"
+        ],
+        "trecho": "A API Business Partner consulta e valida, por CNPJ, a existência do cliente e do fornecedor. Não haverá consulta por CPF. Após a localização e o retorno da informação de cliente ou fornecedor válido, a API standard Sales Order cria a Ordem de Venda no SAP S/4HANA."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D047",
+      "categoria": "TO_BE",
+      "descricao": "Passo 4: A VF01 realiza o faturamento e gera a fatura no cliente.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S07",
+        "localizacao": [
+          "P094"
+        ],
+        "trecho": "A VF01 realiza o faturamento e gera a fatura no cliente."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D048",
+      "categoria": "TO_BE",
+      "descricao": "Passo 5: A nota fiscal é enviada para autorização na Sefaz.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S07",
+        "localizacao": [
+          "P095"
+        ],
+        "trecho": "A nota fiscal é enviada para autorização na Sefaz."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D049",
+      "categoria": "TO_BE",
+      "descricao": "Passo 6: Quando o status da nota fiscal for igual a 100, é acionada a lógica vinculada à BAdI CL_NFE_PRINT.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S07",
+        "localizacao": [
+          "P096"
+        ],
+        "trecho": "Quando o status da nota fiscal for igual a 100, é acionada a lógica vinculada à BAdI CL_NFE_PRINT."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D050",
+      "categoria": "TO_BE",
+      "descricao": "Passo 7: A POSTING_INTERFACE_START inicia a interface de compensação.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S07",
+        "localizacao": [
+          "P097"
+        ],
+        "trecho": "A POSTING_INTERFACE_START inicia a interface de compensação."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D051",
+      "categoria": "TO_BE",
+      "descricao": "Passo 8: A POSTING_INTERFACE_CLEARING compensa a fatura do cliente contra a nova conta transitória.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S07",
+        "localizacao": [
+          "P098"
+        ],
+        "trecho": "A POSTING_INTERFACE_CLEARING compensa a fatura do cliente contra a nova conta transitória."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D052",
+      "categoria": "TO_BE",
+      "descricao": "Passo 9: A POSTING_INTERFACE_END finaliza a interface de compensação.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S07",
+        "localizacao": [
+          "P099"
+        ],
+        "trecho": "A POSTING_INTERFACE_END finaliza a interface de compensação."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D053",
+      "categoria": "TO_BE",
+      "descricao": "Passo 10: O retorno da compensação é validado.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S07",
+        "localizacao": [
+          "P100"
+        ],
+        "trecho": "O retorno da compensação é validado."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D054",
+      "categoria": "TO_BE",
+      "descricao": "Passo 11: Após o retorno de sucesso da compensação, a BAPI_ACC_DOCUMENT_POST cria a nota de crédito no fornecedor seller contra a mesma conta transitória.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S07",
+        "localizacao": [
+          "P101"
+        ],
+        "trecho": "Após o retorno de sucesso da compensação, a BAPI_ACC_DOCUMENT_POST cria a nota de crédito no fornecedor seller contra a mesma conta transitória."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D055",
+      "categoria": "TO_BE",
+      "descricao": "Passo 12: Os documentos de repasse e devolução dos tipos MP e MC são mantidos na ZTFID_MKTPL_LG.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S07",
+        "localizacao": [
+          "P102"
+        ],
+        "trecho": "Os documentos de repasse e devolução dos tipos MP e MC são mantidos na ZTFID_MKTPL_LG."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D056",
+      "categoria": "TO_BE",
+      "descricao": "Passo 13: O saldo da conta transitória é validado após a compensação da fatura do cliente e a criação da nota de crédito no fornecedor.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S07",
+        "localizacao": [
+          "P103"
+        ],
+        "trecho": "O saldo da conta transitória é validado após a compensação da fatura do cliente e a criação da nota de crédito no fornecedor."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D057",
+      "categoria": "TO_BE",
+      "descricao": "Passo 14: A conta transitória deverá apresentar saldo zerado.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S07",
+        "localizacao": [
+          "P104"
+        ],
+        "trecho": "A conta transitória deverá apresentar saldo zerado."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D058",
+      "categoria": "TO_BE",
+      "descricao": "Passo 15: A nota de crédito deverá ser abatida do valor do repasse ao seller.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S07",
+        "localizacao": [
+          "P105"
+        ],
+        "trecho": "A nota de crédito deverá ser abatida do valor do repasse ao seller."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D059",
+      "categoria": "TO_BE",
+      "descricao": "Passo 16: O repasse líquido deverá ser pago ao seller.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S07",
+        "localizacao": [
+          "P106"
+        ],
+        "trecho": "O repasse líquido deverá ser pago ao seller."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D060",
+      "categoria": "TO_BE",
+      "descricao": "Passo 17: Para status diferente de 100, a compensação e a criação da nota de crédito não deverão ser executadas. Em caso de erro na compensação, o erro deverá ser registrado e a BAPI_ACC_DOCUMENT_POST não deverá ser executada.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S07",
+        "localizacao": [
+          "P107"
+        ],
+        "trecho": "Para status diferente de 100, a compensação e a criação da nota de crédito não deverão ser executadas. Em caso de erro na compensação, o erro deverá ser registrado e a BAPI_ACC_DOCUMENT_POST não deverá ser executada."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D061",
+      "categoria": "TO_BE",
+      "descricao": "Passo 18: Com a implantação do novo fluxo, a ZAP0069 e o programa ZRFI_MKTPLACE_COMPENSACAO_RXC deixarão de ser utilizados.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S07",
+        "localizacao": [
+          "P108"
+        ],
+        "trecho": "Com a implantação do novo fluxo, a ZAP0069 e o programa ZRFI_MKTPLACE_COMPENSACAO_RXC deixarão de ser utilizados."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D062",
+      "categoria": "SISTEMA",
+      "descricao": "Sistemas envolvidos: Marketplace/Mirakl, Gateway KONG, SAP CPI, serviço OData criado em ABAP/RAP, SAP ECC e SAP S/4HANA. Módulos envolvidos: FI-AR, FI-AP e SD.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S08",
+        "localizacao": [
+          "P112"
+        ],
+        "trecho": "Sistemas envolvidos: Marketplace/Mirakl, Gateway KONG, SAP CPI, serviço OData criado em ABAP/RAP, SAP ECC e SAP S/4HANA. Módulos envolvidos: FI-AR, FI-AP e SD."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D063",
+      "categoria": "SISTEMA",
+      "descricao": "Integração atual: ZFSD_ITF_BKF_ORDEM_VENDA_TRANS.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S08",
+        "localizacao": [
+          "P114"
+        ],
+        "trecho": "Integração atual: ZFSD_ITF_BKF_ORDEM_VENDA_TRANS."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D064",
+      "categoria": "SISTEMA",
+      "descricao": "Funções/classes atuais: ZFSD_CONSULTA_CLIENTE, ZFSD_CRIAR_IDOC_CLIENTE, ZFSD_CRIAR_IDOC_OV e zcl_itf_bkf_ordem_venda_trans1.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S08",
+        "localizacao": [
+          "P116"
+        ],
+        "trecho": "Funções/classes atuais: ZFSD_CONSULTA_CLIENTE, ZFSD_CRIAR_IDOC_CLIENTE, ZFSD_CRIAR_IDOC_OV e zcl_itf_bkf_ordem_venda_trans1."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D065",
+      "categoria": "SISTEMA",
+      "descricao": "Transação/programa eliminado: ZAP0069 / ZRFI_MKTPLACE_COMPENSACAO_RXC. Tabela mantida: ZTFID_MKTPL_LG.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S08",
+        "localizacao": [
+          "P118"
+        ],
+        "trecho": "Transação/programa eliminado: ZAP0069 / ZRFI_MKTPLACE_COMPENSACAO_RXC. Tabela mantida: ZTFID_MKTPL_LG."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D066",
+      "categoria": "SISTEMA",
+      "descricao": "BAdI/lógica de SD: CL_NFE_PRINT. Function modules de compensação: POSTING_INTERFACE_START, POSTING_INTERFACE_CLEARING e POSTING_INTERFACE_END. BAPI de FI: BAPI_ACC_DOCUMENT_POST.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S08",
+        "localizacao": [
+          "P120"
+        ],
+        "trecho": "BAdI/lógica de SD: CL_NFE_PRINT. Function modules de compensação: POSTING_INTERFACE_START, POSTING_INTERFACE_CLEARING e POSTING_INTERFACE_END. BAPI de FI: BAPI_ACC_DOCUMENT_POST."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D067",
+      "categoria": "SISTEMA",
+      "descricao": "Objetos do novo fluxo: API Business Partner, API Documento Contábil, API standard Sales Order, Gateway KONG, SAP CPI, serviço OData criado em ABAP/RAP, BAdI/lógica CL_NFE_PRINT na VF01, function modules POSTING_INTERFACE_START, POSTING_INTERFACE_CLEARING e POSTING_INTERFACE_END, BAPI_ACC_DOCUMENT_POST, BRF+ e tabela de log ZTFID_MKTPL_LG.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S08",
+        "localizacao": [
+          "P122"
+        ],
+        "trecho": "Objetos do novo fluxo: API Business Partner, API Documento Contábil, API standard Sales Order, Gateway KONG, SAP CPI, serviço OData criado em ABAP/RAP, BAdI/lógica CL_NFE_PRINT na VF01, function modules POSTING_INTERFACE_START, POSTING_INTERFACE_CLEARING e POSTING_INTERFACE_END, BAPI_ACC_DOCUMENT_POST, BRF+ e tabela de log ZTFID_MKTPL_LG."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D068",
+      "categoria": "SISTEMA",
+      "descricao": "Tipos de documentos do processo atual: MP - Repasse do seller; MC - Devolução/Cancelamentos; RM - Documento da nota de comissão.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S08",
+        "localizacao": [
+          "P124"
+        ],
+        "trecho": "Tipos de documentos do processo atual: MP - Repasse do seller; MC - Devolução/Cancelamentos; RM - Documento da nota de comissão."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D069",
+      "categoria": "TO_BE",
+      "descricao": "Conta transitória nova para compensação da fatura do cliente e contabilização da nota de crédito no fornecedor. Serviço OData criado em ABAP/RAP para consumo pelo SAP CPI e execução das validações e regras atuais.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S09",
+        "localizacao": [
+          "P129"
+        ],
+        "trecho": "Conta transitória nova para compensação da fatura do cliente e contabilização da nota de crédito no fornecedor. Serviço OData criado em ABAP/RAP para consumo pelo SAP CPI e execução das validações e regras atuais."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D070",
+      "categoria": "TO_BE",
+      "descricao": "BAdI/lógica CL_NFE_PRINT na VF01, acionada após a autorização da nota fiscal com status igual a 100.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S09",
+        "localizacao": [
+          "P131"
+        ],
+        "trecho": "BAdI/lógica CL_NFE_PRINT na VF01, acionada após a autorização da nota fiscal com status igual a 100."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D071",
+      "categoria": "TO_BE",
+      "descricao": "Function modules: POSTING_INTERFACE_START, POSTING_INTERFACE_CLEARING e POSTING_INTERFACE_END.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S09",
+        "localizacao": [
+          "P133"
+        ],
+        "trecho": "Function modules: POSTING_INTERFACE_START, POSTING_INTERFACE_CLEARING e POSTING_INTERFACE_END."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D072",
+      "categoria": "TO_BE",
+      "descricao": "BAPI de FI: BAPI_ACC_DOCUMENT_POST.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S09",
+        "localizacao": [
+          "P135"
+        ],
+        "trecho": "BAPI de FI: BAPI_ACC_DOCUMENT_POST."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D073",
+      "categoria": "TO_BE",
+      "descricao": "Nota de crédito no fornecedor seller contra a conta transitória nova.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S09",
+        "localizacao": [
+          "P137"
+        ],
+        "trecho": "Nota de crédito no fornecedor seller contra a conta transitória nova."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D074",
+      "categoria": "TO_BE",
+      "descricao": "BRF+ para salvar os dados das contas contábeis.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S09",
+        "localizacao": [
+          "P139"
+        ],
+        "trecho": "BRF+ para salvar os dados das contas contábeis."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D075",
+      "categoria": "OBJETIVO",
+      "descricao": "Simplificação",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S12",
+        "localizacao": [
+          "T4.r1"
+        ],
+        "trecho": "Objetivo da Remediação/Simplificação | Simplificação"
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D076",
+      "categoria": "ESCOPO_INCLUIDO",
+      "descricao": "Tipo de ampliação (Custom Field / BAdI / Exit / Enhancement Spot): BAdI/lógica CL_NFE_PRINT; function modules POSTING_INTERFACE_START, POSTING_INTERFACE_CLEARING e POSTING_INTERFACE_END; BAPI_ACC_DOCUMENT_POST.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S12",
+        "localizacao": [
+          "T4.r2"
+        ],
+        "trecho": "Tipo de ampliação (Custom Field / BAdI / Exit / Enhancement Spot) | BAdI/lógica CL_NFE_PRINT; function modules POSTING_INTERFACE_START, POSTING_INTERFACE_CLEARING e POSTING_INTERFACE_END; BAPI_ACC_DOCUMENT_POST."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D077",
+      "categoria": "ESCOPO_INCLUIDO",
+      "descricao": "Lista de Transações/programas ou Jobs para Remediação/Simplificação: ZAP0069 / ZRFI_MKTPLACE_COMPENSACAO_RXC - / ELIMINAR / / ZFSD_ITF_BKF_ORDEM_VENDA_TRANS - fluxo atual de integração.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S12",
+        "localizacao": [
+          "T4.r3"
+        ],
+        "trecho": "Lista de Transações/programas ou Jobs para Remediação/Simplificação | ZAP0069 / ZRFI_MKTPLACE_COMPENSACAO_RXC - / ELIMINAR / / ZFSD_ITF_BKF_ORDEM_VENDA_TRANS - fluxo atual de integração."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D078",
+      "categoria": "ESCOPO_INCLUIDO",
+      "descricao": "Existe Fiorização de Transações ? se sim, informar lista, e qual catálogo do Fiori será utilizado , ou caso não / exista o perfil de acesso: NA",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S12",
+        "localizacao": [
+          "T4.r4"
+        ],
+        "trecho": "Existe Fiorização de Transações ? se sim, informar lista, e qual catálogo do Fiori será utilizado , ou caso não / exista o perfil de acesso | NA"
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D079",
+      "categoria": "ESCOPO_INCLUIDO",
+      "descricao": "Objeto ou ponto de extensão conhecido: VF01 - lógica vinculada à CL_NFE_PRINT, acionada após autorização da nota fiscal com status igual a 100.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S12",
+        "localizacao": [
+          "T4.r5"
+        ],
+        "trecho": "Objeto ou ponto de extensão conhecido | VF01 - lógica vinculada à CL_NFE_PRINT, acionada após autorização da nota fiscal com status igual a 100."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D080",
+      "categoria": "JUSTIFICATIVA",
+      "descricao": "A alternativa standard apresentada realiza contabilização apenas na visão cliente, sem geração de contabilização em conta de fornecedor. / O direcionamento seguirá para implementação via solução Z conforme programa já existente no ECC.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S12",
+        "localizacao": [
+          "T4.r6"
+        ],
+        "trecho": "Pesquisa de alternativa standard | A alternativa standard apresentada realiza contabilização apenas na visão cliente, sem geração de contabilização em conta de fornecedor. / O direcionamento seguirá para implementação via solução Z conforme programa já existente no ECC."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D081",
+      "categoria": "ESCOPO_INCLUIDO",
+      "descricao": "Validação na SCFD_REGISTRY, quando aplicável: NA",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S12",
+        "localizacao": [
+          "T4.r7"
+        ],
+        "trecho": "Validação na SCFD_REGISTRY, quando aplicável | NA"
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D082",
+      "categoria": "ESCOPO_INCLUIDO",
+      "descricao": "Campos envolvidos: Status da nota fiscal; CNPJ; dados do cliente e do fornecedor; retorno de cliente ou fornecedor válido; dados da Ordem de Venda; dados da fatura do cliente; conta transitória; dados do fornecedor seller; documentos de repasse e devolução MP e MC.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S12",
+        "localizacao": [
+          "T4.r8"
+        ],
+        "trecho": "Campos envolvidos | Status da nota fiscal; CNPJ; dados do cliente e do fornecedor; retorno de cliente ou fornecedor válido; dados da Ordem de Venda; dados da fatura do cliente; conta transitória; dados do fornecedor seller; documentos de repasse e devolução MP e MC."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D083",
+      "categoria": "ESCOPO_INCLUIDO",
+      "descricao": "Regras e validações: Aplicar o novo fluxo exclusivamente às operações de Boleto e PIX, sem alteração do processo de cartão; consultar e validar cliente e fornecedor por CNPJ, sem consulta por CPF; prosseguir após o retorno de cliente ou fornecedor válido; utilizar a API standard Sales Order para criar a Ordem de Venda; manter a fatura da comissão no cliente; processar somente para nota fiscal com status 100; compensar a fatura contra a conta transitória; criar a nota de crédito no fornecedor som",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S12",
+        "localizacao": [
+          "T4.r9"
+        ],
+        "trecho": "Regras e validações | Aplicar o novo fluxo exclusivamente às operações de Boleto e PIX, sem alteração do processo de cartão; consultar e validar cliente e fornecedor por CNPJ, sem consulta por CPF; prosseguir após o retorno de cliente ou fornecedor válido; utilizar a API standard Sales Order para criar a Ordem de Venda; manter a fatura da comissão no cliente; processar somente para nota fiscal com"
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D084",
+      "categoria": "ESCOPO_INCLUIDO",
+      "descricao": "Impactos em interfaces, relatórios ou apps: Marketplace/Mirakl, Gateway KONG, SAP CPI, serviço OData ABAP/RAP, APIs Business Partner, Documento Contábil e Ordem de Venda, VF01, FI-AR, FI-AP, SD e SLG1.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S12",
+        "localizacao": [
+          "T4.r11"
+        ],
+        "trecho": "Impactos em interfaces, relatórios ou apps | Marketplace/Mirakl, Gateway KONG, SAP CPI, serviço OData ABAP/RAP, APIs Business Partner, Documento Contábil e Ordem de Venda, VF01, FI-AR, FI-AP, SD e SLG1."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D085",
+      "categoria": "ESCOPO_INCLUIDO",
+      "descricao": "Cenários de exceção: Status diferente de 100; erro no fluxo KONG/CPI/OData; erro na criação da Ordem de Venda; erro na emissão ou autorização da nota fiscal; erro na compensação; erro na criação da nota de crédito no fornecedor.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S12",
+        "localizacao": [
+          "T4.r12"
+        ],
+        "trecho": "Cenários de exceção | Status diferente de 100; erro no fluxo KONG/CPI/OData; erro na criação da Ordem de Venda; erro na emissão ou autorização da nota fiscal; erro na compensação; erro na criação da nota de crédito no fornecedor."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D086",
+      "categoria": "COMPONENTE",
+      "descricao": "BAdI CL_NFE_PRINT — Enhancement",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": "REMEDIACAO",
+      "objeto_origem": "BAdI CL_NFE_PRINT",
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "MEDIA",
+      "fonte": {
+        "secao": "S13",
+        "localizacao": [
+          "T5.r1"
+        ],
+        "trecho": "/ / / / / / / BAdI CL_NFE_PRINT | / / / / / / / Enhancement | Após o faturamento e a autorização da nota fiscal na Sefaz, quando o status for igual a 100, deverá ser executada a lógica vinculada à CL_NFE_PRINT. A compensação da fatura do cliente contra a conta transitória deverá utilizar, em sequência, os function modules POSTING_INTERFACE_START, POSTING_INTERFACE_CLEARING e POSTING_INTERFACE_END."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D087",
+      "categoria": "ESCOPO_INCLUIDO",
+      "descricao": "Uso declarado de ponto de ampliação implícito: / VF01 | / BADI/enhance ment | Acionar a lógica vinculada à CL_NFE_PRINT para nota fiscal com status 100; executar POSTING_INTERFACE_START, POSTING_INTERFACE_CLEARING e POSTING_INTERFACE_END para compensação da fatura do cliente; e executar BAPI_ACC_DOCUMENT_POST para criação da nota de crédito no fornecedor após o sucesso da compensação.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S15",
+        "localizacao": [
+          "T7.r1"
+        ],
+        "trecho": "/ VF01 | / BADI/enhance ment | Acionar a lógica vinculada à CL_NFE_PRINT para nota fiscal com status 100; executar POSTING_INTERFACE_START, POSTING_INTERFACE_CLEARING e POSTING_INTERFACE_END para compensação da fatura do cliente; e executar BAPI_ACC_DOCUMENT_POST para criação da nota de crédito no fornecedor após o sucesso da compensação."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D088",
+      "categoria": "REGRA",
+      "descricao": "[VF01 - / BADI CL_NFE_PRINT] Após o faturamento e a autorização da nota fiscal na Sefaz, quando o status da nota fiscal for igual a 100, a lógica vinculada à CL_NFE_PRINT deverá executar, em sequência, os function modules POSTING_INTERFACE_START, POSTING_INTERFACE_CLEARING e POSTING_INTERFACE_END. A POSTING_INTERFACE_CLEARING deverá compensar a fatura do cliente contra a nova conta transitória. Após a confirmação do sucesso da compensação, deverá ser chamada a BAPI_ACC_DOCUMENT_POST para criar a",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S16",
+        "localizacao": [
+          "T8.r1"
+        ],
+        "trecho": "/ / VF01 - / BADI CL_NFE_PRINT | Após o faturamento e a autorização da nota fiscal na Sefaz, quando o status da nota fiscal for igual a 100, a lógica vinculada à CL_NFE_PRINT deverá executar, em sequência, os function modules POSTING_INTERFACE_START, POSTING_INTERFACE_CLEARING e POSTING_INTERFACE_END. A POSTING_INTERFACE_CLEARING deverá compensar a fatura do cliente contra a nova conta transitória"
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D089",
+      "categoria": "TESTE",
+      "descricao": "Objetivo do teste é validar o novo fluxo de contabilização da comissão do Marketplace exclusivamente para Boleto e PIX, sem alteração do processo de cartão.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S18",
+        "localizacao": [
+          "P190"
+        ],
+        "trecho": "Objetivo do teste é validar o novo fluxo de contabilização da comissão do Marketplace exclusivamente para Boleto e PIX, sem alteração do processo de cartão."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D090",
+      "categoria": "TESTE",
+      "descricao": "Pré-requisito: período de Repasse, Comissão E Devolução/cancelamento fechado na Plataforma Marketplace, fornecedor seller e cliente existentes e nota fiscal aprovada na Sefaz.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S18",
+        "localizacao": [
+          "P191"
+        ],
+        "trecho": "Pré-requisito: período de Repasse, Comissão E Devolução/cancelamento fechado na Plataforma Marketplace, fornecedor seller e cliente existentes e nota fiscal aprovada na Sefaz."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D091",
+      "categoria": "TESTE",
+      "descricao": "Passos do teste:",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S18",
+        "localizacao": [
+          "P192"
+        ],
+        "trecho": "Passos do teste:"
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D092",
+      "categoria": "TESTE",
+      "descricao": "Disparar o período de Repasse e Comissão na Plataforma Marketplace.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S18",
+        "localizacao": [
+          "P193"
+        ],
+        "trecho": "Disparar o período de Repasse e Comissão na Plataforma Marketplace."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D093",
+      "categoria": "TESTE",
+      "descricao": "Acompanhar o fluxo Marketplace -> KONG -> SAP CPI -> serviço OData criado em ABAP/RAP.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S18",
+        "localizacao": [
+          "P194"
+        ],
+        "trecho": "Acompanhar o fluxo Marketplace -> KONG -> SAP CPI -> serviço OData criado em ABAP/RAP."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D094",
+      "categoria": "TESTE",
+      "descricao": "Validar a consulta e a validação do cliente e do fornecedor por CNPJ na API Business Partner, sem consulta por CPF, incluindo o retorno da informação de cliente ou fornecedor válido; validar também as chamadas da API Documento Contábil e da API standard Sales Order.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S18",
+        "localizacao": [
+          "P195"
+        ],
+        "trecho": "Validar a consulta e a validação do cliente e do fornecedor por CNPJ na API Business Partner, sem consulta por CPF, incluindo o retorno da informação de cliente ou fornecedor válido; validar também as chamadas da API Documento Contábil e da API standard Sales Order."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D095",
+      "categoria": "TESTE",
+      "descricao": "Validar contabilização da fatura no cliente.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S18",
+        "localizacao": [
+          "P196"
+        ],
+        "trecho": "Validar contabilização da fatura no cliente."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D096",
+      "categoria": "TESTE",
+      "descricao": "Validar que a lógica vinculada à CL_NFE_PRINT seja acionada somente quando o status da nota fiscal for igual a 100.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S18",
+        "localizacao": [
+          "P197"
+        ],
+        "trecho": "Validar que a lógica vinculada à CL_NFE_PRINT seja acionada somente quando o status da nota fiscal for igual a 100."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D097",
+      "categoria": "TESTE",
+      "descricao": "Validar a execução sequencial de POSTING_INTERFACE_START, POSTING_INTERFACE_CLEARING e POSTING_INTERFACE_END e a compensação da fatura do cliente contra a conta transitória.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S18",
+        "localizacao": [
+          "P198"
+        ],
+        "trecho": "Validar a execução sequencial de POSTING_INTERFACE_START, POSTING_INTERFACE_CLEARING e POSTING_INTERFACE_END e a compensação da fatura do cliente contra a conta transitória."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D098",
+      "categoria": "TESTE",
+      "descricao": "Validar que a BAPI_ACC_DOCUMENT_POST seja executada somente após o sucesso da compensação e crie a nota de crédito no fornecedor seller contra a mesma conta transitória.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S18",
+        "localizacao": [
+          "P199"
+        ],
+        "trecho": "Validar que a BAPI_ACC_DOCUMENT_POST seja executada somente após o sucesso da compensação e crie a nota de crédito no fornecedor seller contra a mesma conta transitória."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D099",
+      "categoria": "TESTE",
+      "descricao": "Validar o abatimento da nota de crédito no pagamento do repasse ao seller.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S18",
+        "localizacao": [
+          "P200"
+        ],
+        "trecho": "Validar o abatimento da nota de crédito no pagamento do repasse ao seller."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D100",
+      "categoria": "TESTE",
+      "descricao": "Validar a manutenção da tabela ZTFID_MKTPL_LG para os documentos de repasse e devolução, tipos MP e MC.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S18",
+        "localizacao": [
+          "P201"
+        ],
+        "trecho": "Validar a manutenção da tabela ZTFID_MKTPL_LG para os documentos de repasse e devolução, tipos MP e MC."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D101",
+      "categoria": "TESTE",
+      "descricao": "Validar saldo zerado na conta transitória após os lançamentos a crédito e débito",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S18",
+        "localizacao": [
+          "P202"
+        ],
+        "trecho": "Validar saldo zerado na conta transitória após os lançamentos a crédito e débito"
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D102",
+      "categoria": "ACEITE",
+      "descricao": "Os dados do período de Repasse e Comissão devem percorrer o fluxo Marketplace -> KONG -> SAP CPI -> serviço OData criado em ABAP/RAP.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S19",
+        "localizacao": [
+          "P207"
+        ],
+        "trecho": "Os dados do período de Repasse e Comissão devem percorrer o fluxo Marketplace -> KONG -> SAP CPI -> serviço OData criado em ABAP/RAP."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D103",
+      "categoria": "ACEITE",
+      "descricao": "A API Business Partner deve consultar e validar cliente e fornecedor por CNPJ, sem consulta por CPF, e retornar a informação de cliente ou fornecedor válido. A API Documento Contábil e a API standard Sales Order devem ser chamadas conforme o fluxo de integração. Os payloads e mapeamentos deverão seguir o DE/PARA a ser fornecido.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S19",
+        "localizacao": [
+          "P208"
+        ],
+        "trecho": "A API Business Partner deve consultar e validar cliente e fornecedor por CNPJ, sem consulta por CPF, e retornar a informação de cliente ou fornecedor válido. A API Documento Contábil e a API standard Sales Order devem ser chamadas conforme o fluxo de integração. Os payloads e mapeamentos deverão seguir o DE/PARA a ser fornecido."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D104",
+      "categoria": "ACEITE",
+      "descricao": "A comissão será contabilizada no cliente e compensada com lançamento na transitória nova.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S19",
+        "localizacao": [
+          "P209"
+        ],
+        "trecho": "A comissão será contabilizada no cliente e compensada com lançamento na transitória nova."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D105",
+      "categoria": "ACEITE",
+      "descricao": "Após a autorização da nota fiscal na Sefaz, com status igual a 100, a fatura do cliente deve ser compensada contra a conta transitória e a nota de crédito deve ser criada no fornecedor seller contra a mesma conta.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S19",
+        "localizacao": [
+          "P210"
+        ],
+        "trecho": "Após a autorização da nota fiscal na Sefaz, com status igual a 100, a fatura do cliente deve ser compensada contra a conta transitória e a nota de crédito deve ser criada no fornecedor seller contra a mesma conta."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D106",
+      "categoria": "ACEITE",
+      "descricao": "O valor da nota de crédito deve ser abatido no pagamento do repasse ao seller.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S19",
+        "localizacao": [
+          "P211"
+        ],
+        "trecho": "O valor da nota de crédito deve ser abatido no pagamento do repasse ao seller."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D107",
+      "categoria": "ACEITE",
+      "descricao": "A tabela ZTFID_MKTPL_LG deve manter os documentos de repasse e devolução, tipos MP e MC.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S19",
+        "localizacao": [
+          "P212"
+        ],
+        "trecho": "A tabela ZTFID_MKTPL_LG deve manter os documentos de repasse e devolução, tipos MP e MC."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D108",
+      "categoria": "ANEXO",
+      "descricao": "Material de teste: Utilizar os fluxos apresentados na seção Material Adicional como referência para os testes.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S20",
+        "localizacao": [
+          "P216"
+        ],
+        "trecho": "Utilizar os fluxos apresentados na seção Material Adicional como referência para os testes."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D109",
+      "categoria": "REQ_NAO_FUNCIONAL",
+      "descricao": "Periodicidade de Execução: As invoices são geradas em dois ciclos, nos dias 05 e 20. A periodicidade da integração está indicada como 3 vezes ao dia.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S22",
+        "localizacao": [
+          "P227"
+        ],
+        "trecho": "As invoices são geradas em dois ciclos, nos dias 05 e 20. A periodicidade da integração está indicada como 3 vezes ao dia."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D110",
+      "categoria": "REQ_NAO_FUNCIONAL",
+      "descricao": "Tipo de Execução: Integração via SAP CPI e APIs.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S23",
+        "localizacao": [
+          "P230"
+        ],
+        "trecho": "Integração via SAP CPI e APIs."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D111",
+      "categoria": "REQ_NAO_FUNCIONAL",
+      "descricao": "Volumetria e frequência de execução.: Volumes mensais médios: R$ 1,9 milhão em comissão (2.000 NFs).",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S24",
+        "localizacao": [
+          "P234"
+        ],
+        "trecho": "Volumes mensais médios: R$ 1,9 milhão em comissão (2.000 NFs)."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D112",
+      "categoria": "REQ_NAO_FUNCIONAL",
+      "descricao": "Janela para Execução: NA",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S25",
+        "localizacao": [
+          "P238"
+        ],
+        "trecho": "NA"
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D113",
+      "categoria": "REQ_NAO_FUNCIONAL",
+      "descricao": "Tratamento de erros, logs, monitoramento e reprocessamento.: Os erros dos processos de integração, incluindo KONG, SAP CPI e serviço OData ABAP/RAP, criação da Ordem de Venda, autorização da nota fiscal, compensação e criação da nota de crédito deverão ser gravados em log e monitorados na tabela ZTFID_MKTPL_LG.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S26",
+        "localizacao": [
+          "P243"
+        ],
+        "trecho": "Os erros dos processos de integração, incluindo KONG, SAP CPI e serviço OData ABAP/RAP, criação da Ordem de Venda, autorização da nota fiscal, compensação e criação da nota de crédito deverão ser gravados em log e monitorados na tabela ZTFID_MKTPL_LG."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D114",
+      "categoria": "REQ_NAO_FUNCIONAL",
+      "descricao": "Tratamento de erros, logs, monitoramento e reprocessamento.: Em caso de erro na compensação, a BAPI_ACC_DOCUMENT_POST não deverá ser executada.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S26",
+        "localizacao": [
+          "P244"
+        ],
+        "trecho": "Em caso de erro na compensação, a BAPI_ACC_DOCUMENT_POST não deverá ser executada."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D115",
+      "categoria": "REQ_NAO_FUNCIONAL",
+      "descricao": "Processo Crítico: A ausência da solução mantém a necessidade da compensação entre cliente seller e fornecedor seller e gera falta de informação para gerir o negócio, perda de funcionalidade, mudança de procedimento e impacto relacionado à volumetria.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S27",
+        "localizacao": [
+          "P249"
+        ],
+        "trecho": "A ausência da solução mantém a necessidade da compensação entre cliente seller e fornecedor seller e gera falta de informação para gerir o negócio, perda de funcionalidade, mudança de procedimento e impacto relacionado à volumetria."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D116",
+      "categoria": "ATOR",
+      "descricao": "Ator citado: usuário",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S10",
+        "localizacao": [
+          "T3.r4"
+        ],
+        "trecho": "App Fiori | TI e usuários | NA"
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D117",
+      "categoria": "REF_TECNICA",
+      "descricao": "Outro citado em 17 ponto(s) da EF. Escopo inferido: citado na lista de objetos a remediar/manter.",
+      "valor_original": "BAPI_ACC_DOCUMENT_POST",
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": "OUTRO",
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": "INCLUIDO",
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S01",
+        "localizacao": [
+          "T1.r0"
+        ],
+        "trecho": "/ / / / / / Descrição | O GAP FI-021 trata da alteração do processo de contabilização da comissão do Marketplace exclusivamente para as operações realizadas por Boleto e PIX. / As operações realizadas por cartão não fazem parte do escopo desta alteração. / Atualmente, a emissão da nota fiscal de serviço de comissão gera uma partida no cliente, posteriormente compensada pela transação ZAP0069, vinc"
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D118",
+      "categoria": "REF_TECNICA",
+      "descricao": "Badi citado em 15 ponto(s) da EF.",
+      "valor_original": "CL_NFE_PRINT",
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": "BADI",
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": "INDEFINIDO",
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S01",
+        "localizacao": [
+          "T1.r0"
+        ],
+        "trecho": "/ / / / / / Descrição | O GAP FI-021 trata da alteração do processo de contabilização da comissão do Marketplace exclusivamente para as operações realizadas por Boleto e PIX. / As operações realizadas por cartão não fazem parte do escopo desta alteração. / Atualmente, a emissão da nota fiscal de serviço de comissão gera uma partida no cliente, posteriormente compensada pela transação ZAP0069, vinc"
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D119",
+      "categoria": "REF_TECNICA",
+      "descricao": "Outro citado em 1 ponto(s) da EF.",
+      "valor_original": "NSACAO_RXC",
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": "OUTRO",
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": "INDEFINIDO",
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S14",
+        "localizacao": [
+          "T6.r1"
+        ],
+        "trecho": "/ / / / / ZAP0069 | / / / / ZRFI_MKTPLACE_COMPE NSACAO_RXC | / / / Eliminar a transação/programa de compensação responsável pelo encontro de contas entre fornecedor seller e cliente seller. | / / / / Transação/Progra ma"
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D120",
+      "categoria": "REF_TECNICA",
+      "descricao": "Outro citado em 15 ponto(s) da EF.",
+      "valor_original": "POSTING_INTERFACE_CLEARING",
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": "OUTRO",
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": "INDEFINIDO",
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S01",
+        "localizacao": [
+          "T1.r0"
+        ],
+        "trecho": "/ / / / / / Descrição | O GAP FI-021 trata da alteração do processo de contabilização da comissão do Marketplace exclusivamente para as operações realizadas por Boleto e PIX. / As operações realizadas por cartão não fazem parte do escopo desta alteração. / Atualmente, a emissão da nota fiscal de serviço de comissão gera uma partida no cliente, posteriormente compensada pela transação ZAP0069, vinc"
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D121",
+      "categoria": "REF_TECNICA",
+      "descricao": "Outro citado em 14 ponto(s) da EF.",
+      "valor_original": "POSTING_INTERFACE_END",
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": "OUTRO",
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": "INDEFINIDO",
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S01",
+        "localizacao": [
+          "T1.r0"
+        ],
+        "trecho": "/ / / / / / Descrição | O GAP FI-021 trata da alteração do processo de contabilização da comissão do Marketplace exclusivamente para as operações realizadas por Boleto e PIX. / As operações realizadas por cartão não fazem parte do escopo desta alteração. / Atualmente, a emissão da nota fiscal de serviço de comissão gera uma partida no cliente, posteriormente compensada pela transação ZAP0069, vinc"
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D122",
+      "categoria": "REF_TECNICA",
+      "descricao": "Outro citado em 14 ponto(s) da EF.",
+      "valor_original": "POSTING_INTERFACE_START",
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": "OUTRO",
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": "INDEFINIDO",
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S01",
+        "localizacao": [
+          "T1.r0"
+        ],
+        "trecho": "/ / / / / / Descrição | O GAP FI-021 trata da alteração do processo de contabilização da comissão do Marketplace exclusivamente para as operações realizadas por Boleto e PIX. / As operações realizadas por cartão não fazem parte do escopo desta alteração. / Atualmente, a emissão da nota fiscal de serviço de comissão gera uma partida no cliente, posteriormente compensada pela transação ZAP0069, vinc"
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D123",
+      "categoria": "REF_TECNICA",
+      "descricao": "Outro citado em 1 ponto(s) da EF.",
+      "valor_original": "SCFD_REGISTRY",
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": "OUTRO",
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": "INDEFINIDO",
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S12",
+        "localizacao": [
+          "T4.r7"
+        ],
+        "trecho": "Validação na SCFD_REGISTRY, quando aplicável | NA"
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D124",
+      "categoria": "REF_TECNICA",
+      "descricao": "Transacao citado em 11 ponto(s) da EF. Escopo inferido: citado na lista de objetos a remediar/manter.",
+      "valor_original": "ZAP0069",
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": "TRANSACAO",
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": "INCLUIDO",
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S01",
+        "localizacao": [
+          "T1.r0"
+        ],
+        "trecho": "/ / / / / / Descrição | O GAP FI-021 trata da alteração do processo de contabilização da comissão do Marketplace exclusivamente para as operações realizadas por Boleto e PIX. / As operações realizadas por cartão não fazem parte do escopo desta alteração. / Atualmente, a emissão da nota fiscal de serviço de comissão gera uma partida no cliente, posteriormente compensada pela transação ZAP0069, vinc"
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D125",
+      "categoria": "REF_TECNICA",
+      "descricao": "Outro citado em 1 ponto(s) da EF.",
+      "valor_original": "ZFSD_CONSULTA_CLIENTE",
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": "OUTRO",
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": "INDEFINIDO",
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S08",
+        "localizacao": [
+          "P116"
+        ],
+        "trecho": "Funções/classes atuais: ZFSD_CONSULTA_CLIENTE, ZFSD_CRIAR_IDOC_CLIENTE, ZFSD_CRIAR_IDOC_OV e zcl_itf_bkf_ordem_venda_trans1."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D126",
+      "categoria": "REF_TECNICA",
+      "descricao": "Outro citado em 1 ponto(s) da EF.",
+      "valor_original": "ZFSD_CRIAR_IDOC_CLIENTE",
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": "OUTRO",
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": "INDEFINIDO",
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S08",
+        "localizacao": [
+          "P116"
+        ],
+        "trecho": "Funções/classes atuais: ZFSD_CONSULTA_CLIENTE, ZFSD_CRIAR_IDOC_CLIENTE, ZFSD_CRIAR_IDOC_OV e zcl_itf_bkf_ordem_venda_trans1."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D127",
+      "categoria": "REF_TECNICA",
+      "descricao": "Outro citado em 1 ponto(s) da EF.",
+      "valor_original": "ZFSD_CRIAR_IDOC_OV",
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": "OUTRO",
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": "INDEFINIDO",
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S08",
+        "localizacao": [
+          "P116"
+        ],
+        "trecho": "Funções/classes atuais: ZFSD_CONSULTA_CLIENTE, ZFSD_CRIAR_IDOC_CLIENTE, ZFSD_CRIAR_IDOC_OV e zcl_itf_bkf_ordem_venda_trans1."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D128",
+      "categoria": "REF_TECNICA",
+      "descricao": "Outro citado em 2 ponto(s) da EF.",
+      "valor_original": "ZFSD_ITF_BKF_ORDEM_VENDA_TRANS",
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": "OUTRO",
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": "INDEFINIDO",
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S08",
+        "localizacao": [
+          "P114"
+        ],
+        "trecho": "Integração atual: ZFSD_ITF_BKF_ORDEM_VENDA_TRANS."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D129",
+      "categoria": "REF_TECNICA",
+      "descricao": "Outro citado em 1 ponto(s) da EF.",
+      "valor_original": "ZRFI_MKTPLACE_COMPE",
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": "OUTRO",
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": "INDEFINIDO",
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S14",
+        "localizacao": [
+          "T6.r1"
+        ],
+        "trecho": "/ / / / / ZAP0069 | / / / / ZRFI_MKTPLACE_COMPE NSACAO_RXC | / / / Eliminar a transação/programa de compensação responsável pelo encontro de contas entre fornecedor seller e cliente seller. | / / / / Transação/Progra ma"
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D130",
+      "categoria": "REF_TECNICA",
+      "descricao": "Programa citado em 7 ponto(s) da EF. Escopo inferido: citado na lista de objetos a remediar/manter.",
+      "valor_original": "ZRFI_MKTPLACE_COMPENSACAO_RXC",
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": "PROGRAMA",
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": "INCLUIDO",
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S01",
+        "localizacao": [
+          "T1.r0"
+        ],
+        "trecho": "/ / / / / / Descrição | O GAP FI-021 trata da alteração do processo de contabilização da comissão do Marketplace exclusivamente para as operações realizadas por Boleto e PIX. / As operações realizadas por cartão não fazem parte do escopo desta alteração. / Atualmente, a emissão da nota fiscal de serviço de comissão gera uma partida no cliente, posteriormente compensada pela transação ZAP0069, vinc"
+      },
+      "relacionados": []
+    },
+    {
+      "id": "D131",
+      "categoria": "REF_TECNICA",
+      "descricao": "Tabela citado em 11 ponto(s) da EF. Escopo inferido: citado na lista de objetos a remediar/manter.",
+      "valor_original": "ZTFID_MKTPL_LG",
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": "TABELA",
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": "INCLUIDO",
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S04",
+        "localizacao": [
+          "P046"
+        ],
+        "trecho": "-ZTFID_MKTPL_LG - manutenção dos dados dos documentos de repasse e devolução, tipos MP e MC, e monitoramento do processo. -ZAP0069 / ZRFI_MKTPLACE_COMPENSACAO_RXC - transação e programa de compensação que serão eliminados. -Endpoint KONG: /v1/orders/payment/fee."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "A001",
+      "categoria": "AMBIGUIDADE",
+      "descricao": "Momento exato de disparo da BAdI e sequência de execução dos function modules não está claro quanto ao tratamento de transações SAP (commit/rollback). Não fica explícito se cada FM é uma transação isolada ou se há uma transação englobante.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "PONTO_A_CONFIRMAR",
+      "confianca": "MEDIA",
+      "fonte": {
+        "secao": "S05",
+        "localizacao": [
+          "P059",
+          "P060",
+          "P061",
+          "P062"
+        ],
+        "trecho": "Após o faturamento e a autorização da nota fiscal na Sefaz, quando o status da nota fiscal for igual a 100, a lógica vinculada à BAdI CL_NFE_PRINT deverá executar, em sequência, os seguintes function modules: POSTING_INTERFACE_START; POSTING_INTERFACE_CLEARING; POSTING_INTERFACE_END."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "A002",
+      "categoria": "AMBIGUIDADE",
+      "descricao": "Condição de validação do status 100 aparece duplicada em contextos ligeiramente diferentes: uma refere-se à Sefaz e autorização, outra apenas ao status da nota fiscal. Não está claro se são validações diferentes ou a mesma regra.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "ENTENDIMENTO",
+      "confianca": "MEDIA",
+      "fonte": {
+        "secao": "S05",
+        "localizacao": [
+          "P065"
+        ],
+        "trecho": "A compensação da fatura do cliente e a criação da nota de crédito no fornecedor dependerão da autorização da nota fiscal na Sefaz e do status igual a 100. Para status diferente de 100, essas etapas não deverão ser executadas."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "A003",
+      "categoria": "AUSENCIA",
+      "descricao": "Não há detalhamento sobre o comportamento quando a POSTING_INTERFACE_CLEARING falha parcialmente (ex.: compensa parte da fatura). Fica apenas indicado que em caso de erro, a BAPI não executa, mas não há definição de rollback ou compensação de erros.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "PONTO_A_CONFIRMAR",
+      "confianca": "MEDIA",
+      "fonte": {
+        "secao": "S05",
+        "localizacao": [
+          "P071"
+        ],
+        "trecho": "Em caso de erro na compensação da fatura do cliente, a BAPI_ACC_DOCUMENT_POST não deverá ser executada."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "A004",
+      "categoria": "AMBIGUIDADE",
+      "descricao": "A regra menciona que a conta transitória deve apresentar saldo zerado após compensação e nota de crédito, mas não especifica se isso é uma validação de negócio obrigatória ou apenas uma verificação informativa. Não está claro se deve haver bloqueio ou apenas log.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "ENTENDIMENTO",
+      "confianca": "MEDIA",
+      "fonte": {
+        "secao": "S05",
+        "localizacao": [
+          "P066"
+        ],
+        "trecho": "Após a compensação da fatura do cliente e a contabilização da nota de crédito no fornecedor seller, a conta transitória deverá apresentar saldo zerado."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "A005",
+      "categoria": "AUSENCIA",
+      "descricao": "Não há especificação sobre cenários de reprocessamento: se uma nota fiscal retorna status 100 após ter sido rejeitada, ou se passa de status 100 para outro, como a BAdI deve se comportar. Risco de duplicação de registros.",
+      "valor_original": null,
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": null,
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": null,
+      "classificacao": "PONTO_A_CONFIRMAR",
+      "confianca": "BAIXA",
+      "fonte": {
+        "secao": "S07",
+        "localizacao": [
+          "P096"
+        ],
+        "trecho": "Quando o status da nota fiscal for igual a 100, é acionada a lógica vinculada à BAdI CL_NFE_PRINT."
+      },
+      "relacionados": []
+    },
+    {
+      "id": "AUTO001",
+      "categoria": "REF_TECNICA",
+      "descricao": "Identificador técnico presente na EF e não extraído pela IA.",
+      "valor_original": "ZTD_LMB_PARAMETROS",
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": "OUTRO",
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": "INDEFINIDO",
+      "classificacao": "PONTO_A_CONFIRMAR",
+      "confianca": "BAIXA",
+      "fonte": {
+        "secao": "S10",
+        "localizacao": [
+          "T3.r2"
+        ],
+        "trecho": "BRF+ | Somente TI | 1 - Se tiver alguma definição de Hard Code simples ou lista (TVARV), deverá usar uma única BRF+ (ZTD_LMB_PARAMETROS) / / / 2 - Se tiver referência as tabelas de parâmetros ZTXXC_PARA_1 e ZTXXC_PARA_2 nos programas desse GAP, será usado a única BRF+ ZTD_LMB_PARAMETROS. /"
+      },
+      "relacionados": []
+    },
+    {
+      "id": "AUTO002",
+      "categoria": "REF_TECNICA",
+      "descricao": "Identificador técnico presente na EF e não extraído pela IA.",
+      "valor_original": "ZTXXC_PARA_1",
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": "OUTRO",
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": "INDEFINIDO",
+      "classificacao": "PONTO_A_CONFIRMAR",
+      "confianca": "BAIXA",
+      "fonte": {
+        "secao": "S10",
+        "localizacao": [
+          "T3.r2"
+        ],
+        "trecho": "BRF+ | Somente TI | 1 - Se tiver alguma definição de Hard Code simples ou lista (TVARV), deverá usar uma única BRF+ (ZTD_LMB_PARAMETROS) / / / 2 - Se tiver referência as tabelas de parâmetros ZTXXC_PARA_1 e ZTXXC_PARA_2 nos programas desse GAP, será usado a única BRF+ ZTD_LMB_PARAMETROS. /"
+      },
+      "relacionados": []
+    },
+    {
+      "id": "AUTO003",
+      "categoria": "REF_TECNICA",
+      "descricao": "Identificador técnico presente na EF e não extraído pela IA.",
+      "valor_original": "ZTXXC_PARA_2",
+      "valor_normalizado": null,
+      "regra_normalizacao": null,
+      "tipo_objeto": "OUTRO",
+      "natureza": null,
+      "objeto_origem": null,
+      "ancora": null,
+      "sistema": null,
+      "escopo": "INDEFINIDO",
+      "classificacao": "PONTO_A_CONFIRMAR",
+      "confianca": "BAIXA",
+      "fonte": {
+        "secao": "S10",
+        "localizacao": [
+          "T3.r2"
+        ],
+        "trecho": "BRF+ | Somente TI | 1 - Se tiver alguma definição de Hard Code simples ou lista (TVARV), deverá usar uma única BRF+ (ZTD_LMB_PARAMETROS) / / / 2 - Se tiver referência as tabelas de parâmetros ZTXXC_PARA_1 e ZTXXC_PARA_2 nos programas desse GAP, será usado a única BRF+ ZTD_LMB_PARAMETROS. /"
+      },
+      "relacionados": []
+    }
+  ],
+  "criterios": [
+    {
+      "codigo": "B01",
+      "bloqueia": false,
+      "evidencia": "4 item(ns) de objetivo e 7 de justificativa extraídos.",
+      "localizacao": [],
+      "origem": "regra"
+    },
+    {
+      "codigo": "B02",
+      "bloqueia": false,
+      "evidencia": "4 item(ns) de objetivo.",
+      "localizacao": [],
+      "origem": "regra"
+    },
+    {
+      "codigo": "B03",
+      "bloqueia": false,
+      "evidencia": "35 item(ns) de processo/fluxo e 1 ator(es).",
+      "localizacao": [],
+      "origem": "regra"
+    },
+    {
+      "codigo": "B04",
+      "bloqueia": false,
+      "evidencia": "15 referência(s) técnica(s) ou âncora(s) no escopo ou indefinidas.",
+      "localizacao": [],
+      "origem": "regra"
+    },
+    {
+      "codigo": "B05",
+      "bloqueia": false,
+      "evidencia": "Sistemas citados: CPI, ECC, S4HANA, SAP ECC, SAP S/4HANA, legado.",
+      "localizacao": [],
+      "origem": "regra"
+    },
+    {
+      "codigo": "B08",
+      "bloqueia": false,
+      "evidencia": "Nenhum anexo citado como fonte de regra, layout ou mapeamento.",
+      "localizacao": [],
+      "origem": "regra"
+    },
+    {
+      "codigo": "B09",
+      "bloqueia": false,
+      "evidencia": "Todos os componentes de remediação têm objeto de origem.",
+      "localizacao": [],
+      "origem": "regra"
+    },
+    {
+      "codigo": "B06",
+      "bloqueia": false,
+      "evidencia": "O escopo exclui explicitamente as operações por cartão (P049, P079), mas inclui Boleto e PIX. Não há contradição interna no escopo defnido. A eliminação de ZAP0069 e ZRFI_MKTPLACE_COMPENSACAO_RXC está alinhada com o novo fluxo.",
+      "localizacao": [],
+      "origem": "IA"
+    },
+    {
+      "codigo": "B07",
+      "bloqueia": false,
+      "evidencia": "A regra principal (execução sequencial dos FMs após status 100 na BAdI) é explícita e inequívoca. Todas as referências convergem para o mesmo comportamento: P021, P059-P062, P087, P088. A ambiguidade está na orquestração transacional (x1) e em cenários de erro (x3), não na regra em si.",
+      "localizacao": [],
+      "origem": "IA"
+    }
+  ],
+  "avaliacao": {
+    "pesquisa_viavel_sem_varredura": true,
+    "justificativa": "15 referência(s) técnica(s) no escopo ou indefinidas orientam a pesquisa."
+  },
+  "plano_etapa2": [
+    {
+      "id": "V01",
+      "objetivo": "Ler a estrutura DDIC (somente leitura)",
+      "alvos": [
+        "D131"
+      ],
+      "tipo": "estrutura DDIC",
+      "prioridade": "ALTA"
+    },
+    {
+      "id": "V02",
+      "objetivo": "Listar implementações ativas da BAdI",
+      "alvos": [
+        "D118"
+      ],
+      "tipo": "existência de objeto",
+      "prioridade": "MEDIA"
+    },
+    {
+      "id": "V03",
+      "objetivo": "Confirmar a transação e o programa/objeto associado",
+      "alvos": [
+        "D124"
+      ],
+      "tipo": "existência de objeto",
+      "prioridade": "ALTA"
+    },
+    {
+      "id": "V04",
+      "objetivo": "Identificar o tipo do objeto no repositório",
+      "alvos": [
+        "D117",
+        "D119",
+        "D120",
+        "D121",
+        "D122",
+        "D123",
+        "D125",
+        "D126",
+        "D127",
+        "D128",
+        "D129"
+      ],
+      "tipo": "identificação",
+      "prioridade": "ALTA"
+    },
+    {
+      "id": "V05",
+      "objetivo": "Ler o código-fonte e localizar os controles citados",
+      "alvos": [
+        "D130"
+      ],
+      "tipo": "leitura de código",
+      "prioridade": "ALTA"
+    }
+  ],
+  "limitacoes": [
+    "Não foi possível validar existência ou assinatura dos BAPIs e FMs listados; apenas confirmou-se sua referência na EF.",
+    "Detalhes de implementação BRF+ e estrutura da nova conta transitória não estão no escopo narrativo.",
+    "Configuração do serviço OData em ABAP/RAP é mencionada mas não detalhada nesta EF."
+  ]
+}

@@ -1,0 +1,14 @@
+# Dependências dos motores incorporados (ET + Remediação).
+# Instale além do requirements.txt do backend para usar os fluxos do Desenvolvedor.
+langchain-core
+langchain-openai
+langchain-anthropic
+tenacity
+rank-bm25
+pymupdf
+sentence-transformers
+python-docx
+python-dotenv
+pdfplumber
+pypdf
+Pillow

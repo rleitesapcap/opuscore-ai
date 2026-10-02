@@ -1,0 +1,121 @@
+class ZCL_IM_IMMM_SPC_POSTING_CO definition
+  public
+  final
+  create public .
+
+public section.
+
+  interfaces IF_EX_SPC_POSTING_CONTROL .
+protected section.
+private section.
+ENDCLASS.
+
+
+
+CLASS ZCL_IM_IMMM_SPC_POSTING_CO IMPLEMENTATION.
+
+
+METHOD if_ex_spc_posting_control~calc_item_post_check.
+
+"*********************************************************************
+" Capgemini - Brazil
+"*********************************************************************
+" Data Execução: 	17/09/2026
+" Autor: Capgemini SAP
+" Projeto: MOVE2S4
+"*********************************************************************
+
+***********************************************************************
+*                                                                     *
+*      *********************************************************      *
+*      *                +---------------------+                *      *
+*      *                | G r u p o | A S S A |                *      *
+*      *                +---------------------+                *      *
+*      *********************************************************      *
+*                                                                     *
+***********************************************************************
+*---------------------------------------------------------------------*
+*** Dados do programa                                                 *
+*---------------------------------------------------------------------*
+* Nome  : IF_EX_SPC_POSTING_CONTROL~CALC_ITEM_POST_CHECK              *
+* Título: Controle de Preço Fundo de Seção - VKP5                     *
+* Autor : Renata Campos                                               *
+* Data  : 04/03/2013                                                  *
+* Objetivos: Gravar preço das execuções da VKP5                       *
+*---------------------------------------------------------------------+
+*** Histórico das modificações                                        |
+*---+--------+----------------+---------------------------------------+
+*Seq|Data    |Autor           |COD/ Descrição da modificação ou erro  |
+*---+--------+----------------+---------------------------------------+
+*001|04032013|Renata Campos   |Desenvolvimento inicial                |
+*---+--------+----------------+---------------------------------------+
+*002|29102013|Henrique Mattos |Seleção de preço líquido anterior ao   |
+*   |        |                |cálculo atual                          |
+*---+--------+----------------+---------------------------------------+
+*003|07052014|Marcio Oliveira  | Verifica data incio validade VKP5    |
+*---+--------+----------------+---------------------------------------+
+*004|01092017|Anderson Tessitori | Não gravar condição ZLCI sem valor |
+*---+--------+----------------+---------------------------------------+
+*005|02102023|Luiz Otavio     | PR.01780 - Retirar ZKPE da Primeira   |
+* precificação.
+*---+--------+----------------+---------------------------------------+
+
+
+  CONSTANTS: lc_x TYPE flag VALUE 'X'.
+  CONSTANTS: c_kschl_zstp TYPE konv-kschl VALUE 'ZSTP'.
+  CONSTANTS: c_kschl_zmdn TYPE konv-kschl VALUE 'ZMDN'.
+  CONSTANTS: c_kschl_zrdf TYPE konv-kschl VALUE 'ZRDF'.
+
+  CONSTANTS: lc_program_price_calc TYPE c LENGTH 26 VALUE 'ZRMM_SALES_PRICE_CALCULATE',
+             lc_vkpc               TYPE c LENGTH 4  VALUE 'VKP5'.
+
+  DATA: lr_vkerv    TYPE RANGE OF ekerv_v,
+        vl_data_org TYPE sy-datum,
+        vl_zuserlb1 TYPE zuserlib,
+        vl_workday  LIKE sy-datum.
+
+  CHECK sy-tcode = lc_vkpc AND sy-cprog <> lc_program_price_calc.
+
+*<-- GAP SD-034-ENH
+
+  IF pi_i_kalp-vkerv IN lr_vkerv AND pi_i_kalp-werks IS NOT INITIAL.
+
+*  ... Se marcado será gravado um novo doc. de calculo de preço de venda
+    IF pi_i_kalp-vkabs = lc_x.
+
+      CLEAR: vl_zuserlb1, vl_data_org, vl_workday.
+
+      CALL FUNCTION 'ZFMM_CHECK_CONDITION_DATE'
+        EXPORTING
+          i_vkkab        = pi_i_kalp-vkkab
+          i_uname        = sy-uname
+        IMPORTING
+          e_workday      = vl_workday
+        EXCEPTIONS
+          calendar_error = 1
+          no_check       = 2
+          OTHERS         = 3.
+
+      IF sy-subrc = 0.
+
+*Verifica se o usuário alterou a data válida para registro de condição
+        IF vl_workday <> pi_i_kalp-vkkab.
+
+*Grava no LOG a data que deveria ter sido utilizada
+          vl_zuserlb1 = sy-uname.
+          vl_data_org = vl_workday.
+        ELSE.
+          CLEAR: vl_data_org,
+                 vl_zuserlb1.
+        ENDIF.
+
+      ENDIF.
+
+    ENDIF.
+
+  ENDIF.
+
+*--> GAP SD-034-ENH
+
+ENDMETHOD.
+ENDCLASS.

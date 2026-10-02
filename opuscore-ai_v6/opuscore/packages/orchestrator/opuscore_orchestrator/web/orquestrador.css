@@ -1,0 +1,9 @@
+/* CSS do Orquestrador: toda regra começa com .c-orquestrador */
+.c-orquestrador .orq-stats{display:flex;flex-wrap:wrap;gap:10px}
+.c-orquestrador .orq-stats div{min-width:120px;padding:10px 12px;border-radius:12px;border:1px solid var(--line2);background:var(--glass)}
+.c-orquestrador .orq-stats b{display:block;font-size:20px}
+.c-orquestrador .orq-stats span{font-family:var(--mono);font-size:10px;color:var(--muted);text-transform:uppercase}
+.c-orquestrador .orq-tl{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 10px}
+.c-orquestrador .orq-ev{font-size:12px;padding:4px 8px;border-radius:8px;background:rgba(255,255,255,.05);color:var(--muted)}
+.c-orquestrador .orq-ho,.c-orquestrador .orq-falha{border-top:1px dashed var(--line);padding:10px 0;font-size:13px}
+.c-orquestrador .orq-acts{display:flex;gap:8px;margin-top:8px}

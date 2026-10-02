@@ -1,0 +1,21 @@
+[project]
+name = "opuscore-platform"
+version = "1.0.0"
+description = "OPUSCORE-AI — plataforma (host): gateway, registro de plugins, ctx, banco, artefatos"
+requires-python = ">=3.11"
+dependencies = [
+  "opuscore-core>=1.0", "opuscore-orchestrator>=1.0", "opuscore-web>=1.0",
+  "opuscore-connectors>=1.0",      # só em tempo de execução: a Plataforma sobe o servidor MCP dos Conectores
+  "fastapi>=0.115", "uvicorn[standard]>=0.32", "sqlmodel>=0.0.22", "python-multipart>=0.0.9",
+]
+
+[project.scripts]
+opuscore-servidor = "opuscore_platform.servidor:main"
+opuscore-dev = "opuscore_platform.dev:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["opuscore_platform*"]

@@ -1,0 +1,19 @@
+[project]
+name = "opuscore-orchestrator"
+version = "1.0.0"
+description = "OPUSCORE-AI — orquestrador: eventos (outbox), handoffs, fluxos e gates entre consultores"
+requires-python = ">=3.11"
+dependencies = ["opuscore-core>=1.0", "sqlmodel>=0.0.22", "fastapi>=0.115"]
+
+[project.entry-points."opuscore.consultores"]
+orquestrador = "opuscore_orchestrator.plugin:PLUGIN"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["opuscore_orchestrator*"]
+
+[tool.setuptools.package-data]
+opuscore_orchestrator = ["web/*"]

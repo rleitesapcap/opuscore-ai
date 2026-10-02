@@ -1,0 +1,43 @@
+
+"*********************************************************************
+" Capgemini - Brazil
+"*********************************************************************
+" Data Execução: 	16/09/2026
+" Autor:      Capgemini SAP
+" Projeto:              MOVE2S4
+"*********************************************************************
+
+*&---------------------------------------------------------------------*
+*&  Include           ZRMM_CADASTRO_PRECO_1000_F01
+*&---------------------------------------------------------------------*
+*&---------------------------------------------------------------------*
+*&      Form  F_LOG_T001_TAB
+*&---------------------------------------------------------------------*
+FORM f_log_t001_tab .
+
+** LIMPAR TABELA
+  CLEAR: tg_itab, eg_itab.
+
+*** DADOS DA TABELA DE LOG
+  SELECT zzdata, zzhora
+         FROM ztmmc_stat_pr_lg
+         INTO CORRESPONDING FIELDS OF TABLE @tg_itab.
+
+  IF sy-subrc EQ 0.
+
+** ORDENAR PARA VISUALIZAÇÃO
+    SORT tg_itab BY zzdata DESCENDING
+                    zzhora DESCENDING.
+
+** CHAMAR TELA PARA PROCESSAMENTO
+    CALL SCREEN 9000.
+
+  ELSE.
+    "DADOS DE LOG HISTÓRICO NÃO ENCONTRADOS, ANALISAR!!!
+    MESSAGE s899(mm) WITH TEXT-019 DISPLAY LIKE 'S'.
+    save_ok = c_enter.
+
+  ENDIF.
+
+
+ENDFORM.                    " F_LOG_T001_TAB

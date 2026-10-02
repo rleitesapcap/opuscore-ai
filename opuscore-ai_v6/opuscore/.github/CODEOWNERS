@@ -1,0 +1,21 @@
+# Dono de cada pacote: todo PR que mexe numa pasta pede a aprovação do dono dela.
+# Troque os nomes abaixo pelos usuários do GitHub da equipe.
+*                                                      @pessoa-1-lider-tecnico
+/pyproject.toml                                        @pessoa-1-lider-tecnico
+/.importlinter                                         @pessoa-1-lider-tecnico
+/packages/core/                                        @pessoa-1-lider-tecnico
+/packages/connectors/                                  @pessoa-2-conectores
+/packages/platform/                                    @pessoa-3-plataforma
+/packages/orchestrator/                                @pessoa-4-orquestrador
+/packages/web/                                         @pessoa-5-web
+/packages/ef/                                          @pessoa-6-ef
+/consultores/dev-abap/                                 @pessoa-7-dev-et @pessoa-8-dev-remediacao
+/consultores/dev-abap/opuscore_dev/motores/et/         @pessoa-7-dev-et
+/consultores/dev-abap/opuscore_dev/motores/remediacao/ @pessoa-8-dev-remediacao
+/consultores/funcional-mm/                             @pessoa-9-funcional-mm
+/consultores/funcional-sd/                             @pessoa-10-funcional-sd
+/consultores/arquiteto/                                @pessoa-10-funcional-sd
+/consultores/integracao/                               @pessoa-10-funcional-sd
+/consultores/lider-tecnico/                            @pessoa-10-funcional-sd
+/consultores/qualidade/                                @pessoa-10-funcional-sd
+/config/                                               @pessoa-1-lider-tecnico

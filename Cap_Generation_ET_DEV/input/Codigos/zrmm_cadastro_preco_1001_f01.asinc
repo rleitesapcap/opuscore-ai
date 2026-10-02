@@ -1,0 +1,105 @@
+
+"*********************************************************************
+" Capgemini - Brazil
+"*********************************************************************
+" Data Execução: 	16/09/2026
+" Autor:      Capgemini SAP
+" Projeto:              MOVE2S4
+"*********************************************************************
+
+*&---------------------------------------------------------------------*
+*&  Include           ZRMM_CADASTRO_PRECO_1001_F01
+*&---------------------------------------------------------------------*
+
+*&---------------------------------------------------------------------*
+*&      FORM  F_SELECAO_DADOS
+*&---------------------------------------------------------------------*
+FORM f_selecao_dados_1001 .
+
+  REFRESH: tg_bloq, tg_itab.
+  CLEAR:   eg_bloq, eg_itab.
+
+*** DADOS DA TABELA PRINCIPAL
+  SELECT *
+         FROM ztmmc_stat_preco
+         INTO TABLE @tg_bloq.
+
+  IF sy-subrc EQ 0 AND lines( tg_bloq ) > 0.
+    eg_bloq = tg_bloq[ 1 ].
+    ztmmc_stat_preco = CORRESPONDING #( eg_bloq ).
+  ENDIF.
+
+  SELECT * FROM ztsdd_users_lib
+    INTO TABLE @gt_usua_lib.
+
+  IF sy-subrc IS INITIAL.
+
+    CLEAR: s_uslb1[].
+
+    LOOP AT gt_usua_lib ASSIGNING FIELD-SYMBOL(<fslv_uslb1>).
+
+      APPEND VALUE #( sign   = 'I'
+                      option = 'EQ'
+                      low    = <fslv_uslb1>-userlib ) TO s_uslb1.
+
+    ENDLOOP.
+
+  ENDIF.
+
+** MARCA QUE FOI EFETUADO SELEÇÃO
+  vg_sel_1001 = c_x.
+
+  IF ok_tabold IS INITIAL.
+    ok_tabold = g_tab_geral-pressed_tab.
+
+  ENDIF.
+
+ENDFORM.                    " F_SELECAO_DADOS_1001
+
+FORM f_atual_dados_usuario_lib_1001.
+
+  DATA: lt_usua_lib_i TYPE TABLE OF ztsdd_users_lib,
+        lt_usua_lib_d TYPE TABLE OF ztsdd_users_lib.
+
+  IF s_uslb1[] IS NOT INITIAL.
+
+    LOOP AT gt_usua_lib ASSIGNING FIELD-SYMBOL(<fslv_uslb1>).
+
+      IF NOT line_exists( s_uslb1[ low = <fslv_uslb1>-userlib ] ).
+
+        APPEND <fslv_uslb1> TO lt_usua_lib_d.
+
+      ENDIF.
+
+    ENDLOOP.
+
+
+    LOOP AT s_uslb1 ASSIGNING FIELD-SYMBOL(<fslv_uslb2>).
+
+      IF NOT line_exists( gt_usua_lib[ userlib = <fslv_uslb2>-low ] ).
+
+        APPEND VALUE #( userlib         = <fslv_uslb2>-low
+                        data_criacao    = sy-datum
+                        hora_criacao    = sy-uzeit
+                        usuario_criacao = sy-uname ) TO lt_usua_lib_i.
+
+      ENDIF.
+
+    ENDLOOP.
+
+
+    IF lt_usua_lib_d[] IS NOT INITIAL.
+
+      DELETE ztsdd_users_lib FROM TABLE lt_usua_lib_d.
+
+    ENDIF.
+
+    IF lt_usua_lib_i[] IS NOT INITIAL.
+
+      MODIFY ztsdd_users_lib FROM TABLE lt_usua_lib_i.
+
+    ENDIF.
+
+  ENDIF.
+
+ENDFORM.

@@ -1,0 +1,97 @@
+# Regras de dependência entre pacotes, verificadas no CI com `lint-imports`.
+[importlinter]
+root_packages =
+    opuscore_core
+    opuscore_connectors
+    opuscore_ef
+    opuscore_orchestrator
+    opuscore_platform
+    opuscore_dev
+    opuscore_mm
+    opuscore_arquiteto
+    opuscore_sd
+    opuscore_integracao
+    opuscore_lider
+    opuscore_qualidade
+
+[importlinter:contract:consultores-independentes]
+name = Um consultor nunca importa outro consultor
+type = independence
+modules =
+    opuscore_dev
+    opuscore_mm
+    opuscore_arquiteto
+    opuscore_sd
+    opuscore_integracao
+    opuscore_lider
+    opuscore_qualidade
+
+[importlinter:contract:consultores-sem-infra]
+name = Consultores falam com a infraestrutura só pelo ctx (sem importar Plataforma, Conectores ou Orquestrador)
+type = forbidden
+source_modules =
+    opuscore_dev
+    opuscore_mm
+    opuscore_arquiteto
+    opuscore_sd
+    opuscore_integracao
+    opuscore_lider
+    opuscore_qualidade
+forbidden_modules =
+    opuscore_platform
+    opuscore_connectors
+    opuscore_orchestrator
+
+[importlinter:contract:core-na-base]
+name = O Core não importa nenhum outro pacote do projeto
+type = forbidden
+source_modules =
+    opuscore_core
+forbidden_modules =
+    opuscore_connectors
+    opuscore_ef
+    opuscore_orchestrator
+    opuscore_platform
+    opuscore_dev
+    opuscore_mm
+    opuscore_arquiteto
+    opuscore_sd
+    opuscore_integracao
+    opuscore_lider
+    opuscore_qualidade
+
+[importlinter:contract:conectores]
+name = Conectores só dependem do Core
+type = forbidden
+source_modules =
+    opuscore_connectors
+forbidden_modules =
+    opuscore_ef
+    opuscore_orchestrator
+    opuscore_platform
+    opuscore_dev
+    opuscore_mm
+
+[importlinter:contract:ef-biblioteca]
+name = O pacote EF é biblioteca: não acessa Plataforma, Conectores, Orquestrador nem consultores
+type = forbidden
+source_modules =
+    opuscore_ef
+forbidden_modules =
+    opuscore_connectors
+    opuscore_orchestrator
+    opuscore_platform
+    opuscore_dev
+    opuscore_mm
+
+[importlinter:contract:orquestrador]
+name = O Orquestrador não conhece regra de consultor nem a Plataforma
+type = forbidden
+source_modules =
+    opuscore_orchestrator
+forbidden_modules =
+    opuscore_platform
+    opuscore_connectors
+    opuscore_ef
+    opuscore_dev
+    opuscore_mm

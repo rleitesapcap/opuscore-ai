@@ -1,0 +1,103 @@
+
+"*********************************************************************
+" Capgemini - Brazil
+"*********************************************************************
+" Data Execução: 	16/09/2026
+" Autor:      Capgemini SAP
+" Projeto:              MOVE2S4
+"*********************************************************************
+
+*&---------------------------------------------------------------------*
+*&  Include           ZRMM_CADASTRO_PRECO_1003_PBO
+*&---------------------------------------------------------------------*
+*OUTPUT MODULE FOR TC 'TC_1003'. DO NOT CHANGE THIS LINE!
+*&COPY DDIC-TABLE TO ITAB
+MODULE tc_1003_init OUTPUT.
+
+  IF g_tc_1003_copied IS INITIAL.
+
+** LIMPAR TABELA INTERNAS
+    REFRESH: g_tc_1003_old, g_tc_1003_itab.
+
+** TABELA NEW
+    SELECT * FROM ztmmd_preco_capr
+       INTO CORRESPONDING FIELDS
+       OF TABLE g_tc_1003_old.
+
+    IF sy-subrc EQ 0.
+
+      LOOP AT g_tc_1003_old INTO g_tc_1003_old_wa.
+
+        CLEAR: g_tc_1003_wa.
+
+        g_tc_1003_wa = CORRESPONDING #( g_tc_1003_old_wa ).
+
+        APPEND g_tc_1003_wa TO g_tc_1003_itab.
+
+      ENDLOOP.
+
+    ENDIF.
+
+** MARCA QUE FOI SELECIONADO
+    g_tc_1003_copied = 'X'.
+
+    REFRESH CONTROL 'TC_1003' FROM SCREEN '1003'.
+
+  ENDIF.
+
+** VERIFICAR AUTORIZAÇÃO PARA PROCESSAMENTO
+  IF vg_aut_1003 IS INITIAL. "VERIFICA SE TEM AUTORIZAÇÃO
+    PERFORM f_autorizacao_1003.
+
+  ENDIF.
+
+** NESSE PROCESSO MANTER APENAS VALORES VALIDOS
+  IF vg_capr IS INITIAL.
+
+** SELECIONAR DADOS DO CADASTRO PRINCIPAL PARA
+** PARA EXISTIR DADOS QUANDO EXISTE NA PRINCIPAL
+    PERFORM f_selecao_ztmmd_preco_capr.
+
+  ENDIF.
+
+** PROCESSAR DADOS COMPLEMENTARES
+  PERFORM f_selecao_usuario_capr.
+
+** ORDENAR TABELA
+  SORT g_tc_1003_itab BY zzdocpr_aprcod
+                         zzdocpr_aprseq
+                         zzdocpr_aprsub
+                         zzdocpr_aprdti
+                         zzdocpr_aprdtf
+                         zzdocpr_mdatum
+                         zzdocpr_muzeit
+                         zzdocpr_muname
+                         zzdocpr_acao
+                         mark.
+
+ENDMODULE.
+
+*&SPWIZARD: OUTPUT MODULE FOR TC 'TC_1003'. DO NOT CHANGE THIS LINE!
+*&SPWIZARD: MOVE ITAB TO DYNPRO
+MODULE tc_1003_move OUTPUT.
+
+  zsmm_ztmmd_preco_capr = CORRESPONDING #( g_tc_1003_wa ).
+
+ENDMODULE.
+
+*OUTPUT MODULE FOR TC 'TC_1003'. DO NOT CHANGE THIS LINE!
+MODULE tc_1003_get_lines OUTPUT.
+  g_tc_1003_lines = sy-loopc.
+
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Module  FILL_TABLE_CONTROL_1003  OUTPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE fill_table_control_1003 OUTPUT.
+
+  READ TABLE g_tc_1003_itab INTO zsmm_ztmmd_preco_capr
+  INDEX tc_1003-current_line.
+
+ENDMODULE.                 " FILL_TABLE_CONTROL_1003  OUTPUT

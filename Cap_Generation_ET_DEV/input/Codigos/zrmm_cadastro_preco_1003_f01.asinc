@@ -1,0 +1,927 @@
+
+
+"*********************************************************************
+" Capgemini - Brazil
+"*********************************************************************
+" Data Execução: 	16/09/2026
+" Autor:      Capgemini SAP
+" Projeto:              MOVE2S4
+"*********************************************************************
+
+
+*&---------------------------------------------------------------------*
+*&  Include           ZRMM_CADASTRO_PRECO_1003_F01
+*&---------------------------------------------------------------------*
+*&---------------------------------------------------------------------*
+*&      Form  F_AUTORIZACAO_1003
+*&---------------------------------------------------------------------*
+FORM f_autorizacao_1003 .
+
+  DATA: vl_tabix TYPE sy-tabix.
+
+  CLEAR: vl_botao.
+
+** VALIDAR OBJETO DE AUTORIZAÇÃO PARA AÇÕES
+  "VERIFICA AUTORIZAÇÃO PARA O TIPO DE PROCESSAMENTO
+** SE FOR DIFERENTE BLOQUEAR CAMPOS
+  IF lg_mm_008_006_uname-low NE sy-uname.
+
+* AUTORIZAÇÃO PARA TELA DE CADASTRO DE SUBSTITUTO
+* ATUALIZAR CADASTRO DE SUBSTITUTO DE APROVAÇÃO MONITOR ADM PR
+    AUTHORITY-CHECK OBJECT c_zsd_prc_cs
+          ID c_actvt FIELD c_01
+          ID c_actvt FIELD c_todos.
+
+** SE NÃO ENCONTRAR NÃO HABILITA BOTÕES
+    IF sy-subrc NE 0.
+      vl_botao    = c_x.
+      vg_aut_1003 = c_x.
+
+    ENDIF.
+
+  ELSE.
+    CLEAR vl_botao.
+
+  ENDIF.
+
+  LOOP AT tc_1003-cols INTO eg_screen_tc.
+
+    IF eg_screen_tc-screen-group1 = 'MOD'.
+
+      CLEAR vl_tabix.
+
+      vl_tabix = sy-tabix.
+
+      CASE vl_botao.
+
+        WHEN ' '.
+          eg_screen_tc-screen-input = '1'.
+
+
+        WHEN c_x.
+          eg_screen_tc-screen-input = '0'.
+
+      ENDCASE.
+
+** Modificar data
+      MODIFY tc_1003-cols FROM eg_screen_tc INDEX vl_tabix.
+
+    ENDIF.
+
+  ENDLOOP.
+
+
+** HABITAR OU NÃO OS CAMPOS DE TELA
+  LOOP AT SCREEN INTO screen_wa.
+
+** HABITAR OU NÃO BOTÕES PARA PROCESSAR
+    IF screen_wa-group1 = 'AUT'.
+
+      CASE vl_botao.
+        WHEN ' '.
+          screen_wa-input = '1'.
+
+        WHEN c_x.
+          screen_wa-input = '0'.
+
+      ENDCASE.
+
+      MODIFY SCREEN FROM screen_wa.
+
+    ENDIF.
+
+  ENDLOOP.
+
+  CLEAR sy-ucomm.
+  CLEAR save_ok.
+
+ENDFORM.                    " F_AUTORIZACAO_1003
+*&---------------------------------------------------------------------*
+*&      Form  F_SELECAO_ZTMMD_PRECO_CAPR
+*&---------------------------------------------------------------------*
+FORM f_selecao_ztmmd_preco_capr .
+
+  DATA: vl_tabix TYPE sy-tabix.
+
+  REFRESH: tg_lfa1.
+
+** SELECIONAR NOME DO GERENTE
+  SELECT * FROM lfa1
+         INTO TABLE tg_lfa1
+           WHERE ktokk EQ lg_mm_monitor_ktokk-low.
+
+  IF sy-subrc EQ 0.
+* Ordenar tabela
+    SORT tg_lfa1 BY lifnr.
+
+  ENDIF.
+
+** SOMENTE EFETUAR OS AJUSTES AUTOMATICOS SE TIVER
+** AUTORIZAÇÃO DE ACESSO PARA GRAVAR NAS TABELAS
+  IF vg_aut_1003 IS INITIAL. "VERIFICA SE TEM AUTORIZAÇÃO
+
+** PROCESSAR DADOS DA TABELA DE SUBSTITUTO
+    LOOP AT g_tc_1003_itab INTO g_tc_1003_wa.
+
+      CLEAR: vl_tabix.
+      vl_tabix = sy-tabix.
+
+      CLEAR: eg_lfa1.
+
+      READ TABLE tg_lfa1 INTO eg_lfa1
+          WITH KEY lifnr = g_tc_1003_wa-zzdocpr_aprcod BINARY SEARCH.
+
+      IF sy-subrc EQ 0.
+        CONTINUE.
+
+      ELSE.
+
+** ATUALIZAR TABELA DE LOG - ZTMMD_PRLOG_CAPR
+        CLEAR: eg_caprl.
+
+        eg_caprl = CORRESPONDING #( g_tc_1003_wa ).
+        eg_caprl-zmd_logdt      = sy-datum.
+        eg_caprl-zmd_loghr      = sy-uzeit.
+        eg_caprl-zzdocpr_acao   = c_d.
+        MODIFY ztmmd_prlog_capr FROM eg_caprl.
+
+** ATUALIZAÇÃO
+        CALL FUNCTION 'BAPI_TRANSACTION_COMMIT'
+          EXPORTING
+            wait = 'X'.
+
+** DELETAR VALOR DA TABELA - ZTMMD_PRECO_CAPR
+        DELETE ztmmd_preco_capr FROM g_tc_1003_wa.
+
+** ATUALIZAÇÃO
+        CALL FUNCTION 'BAPI_TRANSACTION_COMMIT'
+          EXPORTING
+            wait = 'X'.
+
+** DELETAR DA TABLE CONTROL
+        DELETE g_tc_1003_itab INDEX vl_tabix.
+
+      ENDIF.
+
+    ENDLOOP. "LOOP AT G_TC_1003_ITAB INTO G_TC_1003_WA.
+
+** INCLUIR VALORES QUE AINDA NÃO EXISTEM
+** PROCESSAR DADOS DA TABELA DE APROVADOR
+    LOOP AT tg_lfa1 INTO eg_lfa1.
+
+      CLEAR: vl_tabix.
+      vl_tabix = sy-tabix.
+
+      CLEAR: g_tc_1003_wa.
+
+      READ TABLE g_tc_1003_itab INTO g_tc_1003_wa
+          WITH KEY zzdocpr_aprcod = eg_lfa1-lifnr.
+
+      IF sy-subrc EQ 0.
+        CONTINUE.
+
+      ELSE.
+        CLEAR: g_tc_1003_wa, eg_caprp.
+
+** DADOS PARA ATUALIZAR TABELA - ZTMMD_PRECO_SAPR
+        eg_caprp-zzdocpr_aprcod = eg_lfa1-lifnr.
+        CLEAR: eg_caprp-zzdocpr_aprsub.
+        eg_caprp-zzdocpr_aprdti = c_00000000.
+        eg_caprp-zzdocpr_aprdtf = c_00000000.
+        eg_caprp-zzdocpr_mdatum = sy-datum.
+        eg_caprp-zzdocpr_muzeit = sy-uzeit.
+        eg_caprp-zzdocpr_muname = sy-uname.
+
+        MODIFY ztmmd_preco_capr FROM eg_caprp.
+
+** ATUALIZAÇÃO
+        CALL FUNCTION 'BAPI_TRANSACTION_COMMIT'
+          EXPORTING
+            wait = 'X'.
+
+** DADOS PARA ATUALIZAR TABELA - ZTMMD_PRLOG_SAPR
+        CLEAR: eg_caprl.
+        eg_caprl-zzdocpr_aprcod = eg_lfa1-lifnr.
+        CLEAR: eg_caprl-zzdocpr_aprsub.
+        eg_caprl-zmd_logdt      = sy-datum.
+        eg_caprl-zmd_loghr      = sy-uzeit.
+        eg_caprl-zzdocpr_aprdti = c_00000000.
+        eg_caprl-zzdocpr_aprdtf = c_00000000.
+        eg_caprl-zzdocpr_mdatum = sy-datum.
+        eg_caprl-zzdocpr_muzeit = sy-uzeit.
+        eg_caprl-zzdocpr_muname = sy-uname.
+        eg_caprl-zzdocpr_acao   = c_i.
+
+        MODIFY ztmmd_prlog_capr FROM eg_caprl.
+
+** ATUALIZAÇÃO
+        CALL FUNCTION 'BAPI_TRANSACTION_COMMIT'
+          EXPORTING
+            wait = 'X'.
+
+** DADOS PARA ATUALIZAR TABLE CONTROL - G_TC_1003_ITAB
+        g_tc_1003_wa-zzdocpr_aprcod = eg_lfa1-lifnr.
+        CLEAR: g_tc_1003_wa-zzdocpr_aprsub.
+        g_tc_1003_wa-zzdocpr_aprdti = c_00000000.
+        g_tc_1003_wa-zzdocpr_aprdtf = c_00000000.
+        g_tc_1003_wa-zzdocpr_mdatum = sy-datum.
+        g_tc_1003_wa-zzdocpr_muzeit = sy-uzeit.
+        g_tc_1003_wa-zzdocpr_muname = sy-uname.
+        g_tc_1003_wa-zzdocpr_acao   = c_i.
+        APPEND g_tc_1003_wa TO g_tc_1003_itab.
+
+      ENDIF.
+
+    ENDLOOP. "LOOP AT TG_CAPRP INTO EG_CAPRP.
+
+  ENDIF. "IF VG_AUT_1003 IS INITIAL. "VERIFICA SE TEM AUTORIZAÇÃO
+
+* MARCA QUE JÁ FOI SELECIONADO
+  vg_capr = c_x.
+
+ENDFORM.                    " F_SELECAO_ZTMMD_PRECO_CAPR
+*&---------------------------------------------------------------------*
+*&      Form  F_SELECAO_USUARIO_CAPR
+*&---------------------------------------------------------------------*
+FORM f_selecao_usuario_capr .
+
+  DATA: vl_tabix TYPE sy-tabix.
+
+  REFRESH: tg_usera.
+  CLEAR:   eg_usera, eg_lfa1.
+
+** SELECIONAR DADOS DE USUÁRIO
+
+  SELECT * FROM user_addr
+        INTO TABLE tg_usera
+        FOR ALL ENTRIES IN g_tc_1003_itab
+          WHERE bname EQ g_tc_1003_itab-zzdocpr_aprsub.
+
+  IF sy-subrc EQ 0.
+* Ordenar tabela
+    SORT tg_usera BY bname.
+
+  ENDIF.
+
+  LOOP AT g_tc_1003_itab INTO g_tc_1003_wa.
+    CLEAR: vl_tabix.
+    vl_tabix = sy-tabix.
+
+** ATUALIZAR NOME DO LDAP SUBSTITUTO
+    CLEAR: eg_usera.
+
+    READ TABLE tg_usera INTO eg_usera
+        WITH KEY bname = g_tc_1003_wa-zzdocpr_aprsub BINARY SEARCH.
+
+    IF sy-subrc EQ 0.
+      g_tc_1003_wa-name_textc = eg_usera-name_textc.
+
+    ENDIF.
+
+** ATUALIZAR NOME DO GERENTE GRUPO
+    CLEAR: eg_lfa1.
+
+    READ TABLE tg_lfa1 INTO eg_lfa1
+        WITH KEY lifnr = g_tc_1003_wa-zzdocpr_aprcod BINARY SEARCH.
+
+    IF sy-subrc EQ 0.
+      g_tc_1003_wa-name1 = eg_lfa1-name1.
+
+    ENDIF.
+
+** ATUALIZAR ESTRUTURA
+    MODIFY g_tc_1003_itab FROM g_tc_1003_wa INDEX vl_tabix.
+
+  ENDLOOP.
+
+ENDFORM.                    " F_SELECAO_USUARIO_CAPR
+*&---------------------------------------------------------------------*
+*&      Form  F_USER_COMMAND_1003
+*&---------------------------------------------------------------------*
+
+FORM f_user_command_1003 .
+
+  CASE save_ok.
+
+** EFETUAR MODIFICAÇÃO DOS DADOS EFETUADOS
+    WHEN 'MODF'.
+      PERFORM f_modifica_t003_tab.
+
+** PROCESSAR
+    WHEN 'INSR'.
+      PERFORM f_inserir_t003_tab.
+
+** CONCLUIR UM REGISTRO DA TABELA
+    WHEN 'DELE'.
+      PERFORM f_deleta_t003_tab.
+
+** PROCESSAR RELATORIO DE LOG HISTORICO DO REGISTRO
+    WHEN 'LOG'.
+      PERFORM f_log_t003_tab.
+
+** OUTROS PROCESSOS
+    WHEN OTHERS.
+
+
+  ENDCASE.
+
+ENDFORM.                    " F_USER_COMMAND_1003
+*&---------------------------------------------------------------------*
+*&      Form  F_MODIFICA_T003_TAB
+*&---------------------------------------------------------------------*
+FORM f_modifica_t003_tab .
+
+** LIMPAR DADOS DAS TABELAS PARA ATUALIZAÇÃO
+  REFRESH: tg_caprl,       "TABELA DE LOG
+           tg_caprp_ins,   "TABELA PARA INSERIR
+           tg_caprp_mod,   "TABELA PARA MODIFICAR
+           tg_caprp_del.   "TABELA PARA DELETAR
+
+** Procurar dados modificados e atualizar tabela principal
+** e tabela de logs
+  LOOP AT g_tc_1003_itab INTO g_tc_1003_wa.
+
+** VERIFICAR OS DADOS QUE FORAM MARCADOS COMO MODIFICADO
+** COM BASE NA SELEÇÃO INICIAL (HOUVE TROCA DE LDAP)
+
+    CASE g_tc_1003_wa-zzdocpr_acao.
+
+** VERIFICAR O TIPO DE PROCESSO
+      WHEN c_i. "INCLUSÃO
+        PERFORM f_tabela_1003_ins.
+
+      WHEN c_m. "MODIFICAR
+        PERFORM f_tabela_1003_mod.
+
+      WHEN c_d. "DELETAR
+        PERFORM f_tabela_1003_del.
+
+      WHEN OTHERS.
+
+
+    ENDCASE.
+
+  ENDLOOP. "LOOP AT G_TC_1003_ITAB INTO G_TC_1003_WA.
+
+** ATUALIZAR TABELAS GERADAS
+  PERFORM f_atualizar_tabelas_1003.
+
+
+ENDFORM.                    " F_MODIFICA_T003_TAB
+*&---------------------------------------------------------------------*
+*&      Form  F_DELETA_T003_TAB
+*&---------------------------------------------------------------------*
+FORM f_deleta_t003_tab .
+
+  DATA: vl_tabix    TYPE sy-tabix,
+        vl_text(60) TYPE c.
+
+** POSICIONA ITEM PARA LOG
+  CLEAR: g_tc_1003_wa.
+  READ TABLE g_tc_1003_itab INTO g_tc_1003_wa
+                         WITH KEY mark = c_x.
+
+** SE ENCONTRAR PROCESSAR INFORMAÇÃO
+  IF sy-subrc EQ 0.
+
+    CLEAR: vl_tabix.
+    vl_tabix = sy-tabix.
+
+** MONTAR TEXTO PARA POPUP
+    CLEAR: vl_text.
+    CONCATENATE TEXT-t12
+                g_tc_1003_wa-zzdocpr_aprcod
+                ' - '
+                g_tc_1003_wa-name1
+           INTO vl_text.
+
+*** PERGUNTAR PARA ELIMINAR
+    CALL FUNCTION 'POPUP_TO_CONFIRM'
+      EXPORTING
+        titlebar              = TEXT-t13 "Confirmar Deletação do Dado Abaixo ?
+        text_question         = vl_text
+        text_button_1         = c_sim
+        text_button_2         = c_nao
+        default_button        = c_1
+        display_cancel_button = c_x
+        start_column          = 10
+        start_row             = 2
+      IMPORTING
+        answer                = vg_answer
+      EXCEPTIONS
+        text_not_found        = 1
+        OTHERS                = 2.
+
+    "SE A RESPOSTA FOR 'SIM'
+    IF sy-subrc  EQ 0 AND vg_answer EQ c_1.
+
+** PROCESSAR DADOS PARA TABELA PRINCIPAL
+      CLEAR: eg_caprp.
+
+      eg_caprp = CORRESPONDING #( g_tc_1003_wa ).
+
+** ATUALIZAR COM A ULTIMA INFORMAÇÃO
+      eg_caprp-mandt  = sy-mandt.
+      APPEND eg_caprp TO tg_caprp_del.
+
+** PROCESSAR DADOS PARA TABELA LOG
+** COM INFORMAÇÃO DA SELEÇÃO INICIAL SEM ALTERAÇÃO
+      CLEAR: eg_caprl.
+
+      eg_caprl = CORRESPONDING #( g_tc_1003_wa ).
+      eg_caprl-mandt         = sy-mandt.
+      eg_caprl-zmd_logdt     = sy-datum.
+      eg_caprl-zmd_loghr     = sy-uzeit.
+      eg_caprl-zzdocpr_acao  = c_d.
+      APPEND eg_caprl TO tg_caprl.
+
+** DELETAR NA TABELA INTERNA
+      DELETE g_tc_1003_itab INDEX vl_tabix.
+
+** ATUALIZAR DADOS NA TABELA TRANSPARENTE PRINCIPAÇ
+      IF tg_caprp_del[] IS NOT INITIAL.
+
+        DELETE ztmmd_preco_capr FROM TABLE tg_caprp_del.
+
+** ATUALIZAR DADOS
+        CALL FUNCTION 'BAPI_TRANSACTION_COMMIT'
+          EXPORTING
+            wait = 'X'.
+
+** LIMPAR DADOS DAS TABELAS PARA ATUALIZAÇÃO
+        REFRESH: tg_caprp_del.
+
+      ENDIF.
+
+** ATUALIZAR DADOS NA TABELA TRANSPARENTE PRINCIPAÇ
+      IF tg_caprl[] IS NOT INITIAL.
+
+        MODIFY ztmmd_prlog_capr FROM TABLE tg_caprl.
+
+** ATUALIZAR DADOS
+        CALL FUNCTION 'BAPI_TRANSACTION_COMMIT'
+          EXPORTING
+            wait = 'X'.
+
+** LIMPAR DADOS DAS TABELAS PARA ATUALIZAÇÃO
+        REFRESH: tg_caprl.
+
+      ENDIF.
+
+    ELSE.
+      "AÇÃO CANCELADA PELO USUÁRIO !!!
+      MESSAGE s899(mm) WITH TEXT-t11 DISPLAY LIKE 'S'.
+      save_ok = c_enter.
+
+    ENDIF. "IF SY-SUBRC  EQ 0 AND VG_ANSWER EQ C_1.
+
+** SE NÃO TIVER FLAG APRESENTAR MENSAGEM
+  ELSE.
+    "SELECIONAR O UM VALOR PARA DELETAR !!!
+    MESSAGE s899(mm) WITH TEXT-021 DISPLAY LIKE 'S'.
+    save_ok = c_enter.
+
+  ENDIF.
+
+  save_okpr = c_repr.
+
+ENDFORM.                    " F_DELETA_T003_TAB
+*&---------------------------------------------------------------------*
+*&      Form  F_INSERIR_T003_TAB
+*&---------------------------------------------------------------------*
+FORM f_inserir_t003_tab .
+
+  DATA: vl_text(60)       TYPE c,
+        vl_tc_1003_old    TYPE TABLE OF ztmmd_preco_capr,
+        wa_tc_1003_old    TYPE ztmmd_preco_capr,
+        vl_zzdocpr_aprseq TYPE ztmmd_preco_capr-zzdocpr_aprseq.
+
+** LIMPAR TABELAS INTERNAS
+  REFRESH: tg_caprp_ins, tg_caprl, vl_tc_1003_old.
+
+** POSICIONA ITEM PARA LOG
+  CLEAR: g_tc_1003_wa.
+  READ TABLE g_tc_1003_itab INTO g_tc_1003_wa
+                         WITH KEY mark = c_x.
+
+** SE ENCONTRAR PROCESSAR INFORMAÇÃO
+  IF sy-subrc EQ 0.
+
+** MONTAR TEXTO PARA POPUP
+    CLEAR: vl_text.
+    CONCATENATE TEXT-t12
+                g_tc_1003_wa-zzdocpr_aprcod
+                ' - '
+                g_tc_1003_wa-name1
+           INTO vl_text.
+
+*** PERGUNTAR PARA ELIMINAR
+    CALL FUNCTION 'POPUP_TO_CONFIRM'
+      EXPORTING
+        titlebar              = TEXT-t10 "Confirmar Cópia do Dado Abaixo ?
+        text_question         = vl_text
+        text_button_1         = c_sim
+        text_button_2         = c_nao
+        default_button        = c_1
+        display_cancel_button = c_x
+        start_column          = 10
+        start_row             = 2
+      IMPORTING
+        answer                = vg_answer
+      EXCEPTIONS
+        text_not_found        = 1
+        OTHERS                = 2.
+
+    "SE A RESPOSTA FOR 'SIM'
+    IF sy-subrc  EQ 0 AND vg_answer EQ c_1.
+
+** LIMPAR DADOS
+      CLEAR: g_tc_1003_wa-name1,
+             g_tc_1003_wa-zzdocpr_aprsub,
+             g_tc_1003_wa-name_textc,
+             g_tc_1003_wa-mark.
+
+** ORDENAR TABELA INTERNA PARA PROCESSAR DADOS
+      SORT g_tc_1003_itab BY zzdocpr_aprcod
+                             zzdocpr_aprseq
+                             zzdocpr_aprsub.
+
+** COPIAR ESTRUTURA
+      vl_tc_1003_old = g_tc_1003_old.
+
+** ORDENAR TABELA PARA PEGAR ULTIMO VALOR SEQUENCIAR
+      SORT vl_tc_1003_old BY zzdocpr_aprcod
+                             zzdocpr_aprseq.
+
+      DELETE vl_tc_1003_old WHERE
+             zzdocpr_aprcod NE g_tc_1003_wa-zzdocpr_aprcod.
+
+** PROCESSAR SEQUENCIA
+      CLEAR: g_tc_1003_old_wa, vl_zzdocpr_aprseq.
+      LOOP AT vl_tc_1003_old INTO wa_tc_1003_old.
+        vl_zzdocpr_aprseq = wa_tc_1003_old-zzdocpr_aprseq.
+
+      ENDLOOP.
+
+** ATUALIZAR ULTIMO VALOR DA SEQUENCIA MAIS 1
+      IF vl_zzdocpr_aprseq IS INITIAL.
+        g_tc_1003_wa-zzdocpr_aprseq = vl_zzdocpr_aprseq + 1.
+
+      ELSE.
+        g_tc_1003_wa-zzdocpr_aprseq = vl_zzdocpr_aprseq + 1.
+
+      ENDIF.
+
+** COLOCAR DATA BRANCO
+      g_tc_1003_wa-zzdocpr_aprdti = c_00000000.
+      g_tc_1003_wa-zzdocpr_aprdtf = c_00000000.
+      g_tc_1003_wa-zzdocpr_mdatum = sy-datum.
+      g_tc_1003_wa-zzdocpr_muzeit = sy-uzeit.
+      g_tc_1003_wa-zzdocpr_muname = sy-uname.
+      g_tc_1003_wa-zzdocpr_acao   = c_i.
+
+** ATUALIZAR DADOS NA TABELA INTERNA
+      APPEND g_tc_1003_wa TO g_tc_1003_itab.
+      SORT g_tc_1003_itab BY zzdocpr_aprcod
+                             zzdocpr_aprseq
+                             zzdocpr_aprsub.
+
+** ATUALIZAR DADOS DA OLD
+      CLEAR: g_tc_1003_old_wa.
+
+      g_tc_1003_old_wa = CORRESPONDING #( g_tc_1003_wa ).
+      g_tc_1003_old_wa-mandt = sy-mandt.
+      APPEND g_tc_1003_old_wa TO g_tc_1003_old.
+      SORT g_tc_1003_old BY zzdocpr_aprcod
+                            zzdocpr_aprseq
+                            zzdocpr_aprsub.
+
+** PROCESSAR DADOS PARA TABELA PRINCIPAL
+      CLEAR: eg_caprp.
+
+      eg_caprp = CORRESPONDING #( g_tc_1003_wa ).
+** ATUALIZAR COM A ULTIMA INFORMAÇÃO
+      eg_caprp-mandt  = sy-mandt.
+      APPEND eg_caprp TO tg_caprp_ins.
+
+** PROCESSAR DADOS PARA TABELA LOG
+** COM INFORMAÇÃO DA SELEÇÃO INICIAL SEM ALTERAÇÃO
+      CLEAR: eg_caprl.
+
+      eg_caprl = CORRESPONDING #( g_tc_1003_wa ).
+      eg_caprl-mandt     = sy-mandt.
+      eg_caprl-zmd_logdt = sy-datum.
+      eg_caprl-zmd_loghr = sy-uzeit.
+      APPEND eg_caprl TO tg_caprl.
+
+** ATUALIZAR DADOS NA TABELA TRANSPARENTE PRINCIPAÇ
+      IF tg_caprp_ins[] IS NOT INITIAL.
+
+        MODIFY ztmmd_preco_capr FROM TABLE tg_caprp_ins.
+
+** ATUALIZAR DADOS
+        CALL FUNCTION 'BAPI_TRANSACTION_COMMIT'
+          EXPORTING
+            wait = 'X'.
+
+** LIMPAR DADOS DAS TABELAS PARA ATUALIZAÇÃO
+        REFRESH: tg_caprp_ins.
+
+      ENDIF.
+
+** ATUALIZAR DADOS NA TABELA TRANSPARENTE PRINCIPAÇ
+      IF tg_caprl[] IS NOT INITIAL.
+
+        MODIFY ztmmd_prlog_capr FROM TABLE tg_caprl.
+
+** ATUALIZAR DADOS
+        CALL FUNCTION 'BAPI_TRANSACTION_COMMIT'
+          EXPORTING
+            wait = 'X'.
+
+** LIMPAR DADOS DAS TABELAS PARA ATUALIZAÇÃO
+        REFRESH: tg_caprl.
+
+      ENDIF.
+
+    ELSE.
+      "AÇÃO CANCELADA PELO USUÁRIO !!!
+      MESSAGE s899(mm) WITH TEXT-t11 DISPLAY LIKE 'S'.
+      save_ok = c_enter.
+
+    ENDIF. "IF SY-SUBRC  EQ 0 AND VG_ANSWER EQ C_1.
+
+** SE NÃO TIVER FLAG APRESENTAR MENSAGEM
+  ELSE.
+    "SELECIONAR O UM VALOR PARA INSERIR !!!
+    MESSAGE s899(mm) WITH TEXT-020 DISPLAY LIKE 'S'.
+    save_ok = c_enter.
+
+  ENDIF.
+
+  save_okpr = c_repr.
+
+ENDFORM.                    " F_INSERIR_T003_TAB
+*&---------------------------------------------------------------------*
+*&      Form  F_LOG_T003_TAB
+*&---------------------------------------------------------------------*
+FORM f_log_t003_tab .
+
+** POSICIONA ITEM PARA LOG
+  READ TABLE g_tc_1003_itab INTO g_tc_1003_wa
+                         WITH KEY mark = c_x.
+
+** SE ENCONTRAR PROCESSAR INFORMAÇÃO
+  IF sy-subrc EQ 0.
+
+** LIMPAR TABELA DE LOG
+    REFRESH: tg_caprl, tg_saprl.
+
+** SELECIONAR DADOS PARA PROCESSAR
+    SELECT * FROM ztmmd_prlog_capr
+         INTO TABLE tg_caprl
+         WHERE zzdocpr_aprcod EQ g_tc_1003_wa-zzdocpr_aprcod.
+
+    IF sy-subrc EQ 0.
+
+** CHAMAR TELA PARA PROCESSAMENTO
+      CALL SCREEN 9000.
+
+    ELSE.
+      "DADOS DE LOG HISTÓRICO NÃO ENCONTRADOS, ANALISAR!!!
+      MESSAGE s899(mm) WITH TEXT-019 DISPLAY LIKE 'S'.
+      save_ok = c_enter.
+
+    ENDIF.
+** SE NÃO TIVER FLAG APRESENTAR MENSAGEM
+  ELSE.
+    "SELECIONAR UM VALOR PARA PROCESSAR HISTÓRICO
+    MESSAGE s899(mm) WITH TEXT-018 DISPLAY LIKE 'S'.
+    save_ok = c_enter.
+
+  ENDIF.
+
+  save_okpr = c_repr.
+
+ENDFORM.                    " F_LOG_T003_TAB
+*&---------------------------------------------------------------------*
+*&      Form  F_CONFIRMAR_SAIR
+*&---------------------------------------------------------------------*
+FORM f_confirmar_sair .
+
+*** PERGUNTAR PARA ELIMINAR
+  CALL FUNCTION 'POPUP_TO_CONFIRM'
+    EXPORTING
+      titlebar              = TEXT-t14 "Deseja Sair do Monitor ?
+      text_question         = TEXT-t15 "Todos os Dados foram Gravados ?
+      text_button_1         = c_sim
+      text_button_2         = c_nao
+      default_button        = c_1
+      display_cancel_button = c_x
+      start_column          = 10
+      start_row             = 2
+    IMPORTING
+      answer                = vg_answer
+    EXCEPTIONS
+      text_not_found        = 1
+      OTHERS                = 2.
+
+  "SE A RESPOSTA FOR 'SIM'
+  IF sy-subrc  EQ 0 AND
+     vg_answer EQ c_1.
+
+    LEAVE PROGRAM.
+
+  ELSE.
+    "AÇÃO CANCELADA PELO USUÁRIO !!!
+    MESSAGE s899(mm) WITH TEXT-t11 DISPLAY LIKE 'S'.
+    save_ok = c_enter.
+    CLEAR: sy-ucomm.
+    save_okpr = c_repr.
+
+  ENDIF. "IF SY-SUBRC  EQ 0 AND VG_ANSWER EQ C_1.
+
+
+ENDFORM.                    " F_CONFIRMAR_SAIR
+*&---------------------------------------------------------------------*
+*&      Form  F_TABELA_1003_INS
+*&---------------------------------------------------------------------*
+FORM f_tabela_1003_ins .
+
+** POSICIONAR DADOS OLD
+  CLEAR: g_tc_1003_old_wa.
+  READ TABLE g_tc_1003_old INTO g_tc_1003_old_wa
+          WITH KEY zzdocpr_aprcod = g_tc_1003_wa-zzdocpr_aprcod
+                   zzdocpr_aprseq = g_tc_1003_wa-zzdocpr_aprseq.
+
+  IF sy-subrc EQ 0. "COM CODIGO E APROVADOR
+
+** PROCESSAR DADOS PARA TABELA PRINCIPAL
+    CLEAR: eg_caprp.
+    MOVE-CORRESPONDING g_tc_1003_wa TO eg_caprp.
+** ATUALIZAR COM A ULTIMA INFORMAÇÃO
+    eg_caprp-mandt          = sy-mandt.
+    eg_caprp-zzdocpr_mdatum = sy-datum.
+    eg_caprp-zzdocpr_muzeit = sy-uzeit.
+    eg_caprp-zzdocpr_muname = sy-uname.
+    APPEND eg_caprp TO tg_caprp_ins.
+
+** PROCESSAR DADOS PARA TABELA LOG
+** COM INFORMAÇÃO DA SELEÇÃO INICIAL SEM ALTERAÇÃO
+    CLEAR: eg_caprl.
+    MOVE-CORRESPONDING g_tc_1003_wa TO eg_caprl.
+    eg_caprl-mandt     = sy-mandt.
+    eg_caprl-zmd_logdt = sy-datum.
+    eg_caprl-zmd_loghr = sy-uzeit.
+    eg_caprl-zzdocpr_acao = c_i.
+    APPEND eg_caprl TO tg_caprl.
+
+  ENDIF. "IF SY-SUBRC EQ 0. "COM CODIGO E APROVADOR
+
+ENDFORM.                    " F_TABELA_1003_INS
+*&---------------------------------------------------------------------*
+*&      Form  F_TABELA_1003_MOD
+*&---------------------------------------------------------------------*
+FORM f_tabela_1003_mod .
+
+** POSICIONAR DADOS OLD
+  CLEAR: g_tc_1003_old_wa.
+  READ TABLE g_tc_1003_old INTO g_tc_1003_old_wa
+          WITH KEY zzdocpr_aprcod = g_tc_1003_wa-zzdocpr_aprcod
+                   zzdocpr_aprseq = g_tc_1003_wa-zzdocpr_aprseq.
+
+  IF sy-subrc EQ 0. "COM CODIGO E APROVADOR
+
+** PROCESSAR DADOS PARA TABELA PRINCIPAL
+    CLEAR: eg_caprp.
+    MOVE-CORRESPONDING g_tc_1003_wa TO eg_caprp.
+** ATUALIZAR COM A ULTIMA INFORMAÇÃO
+    eg_caprp-mandt          = sy-mandt.
+    eg_caprp-zzdocpr_mdatum = sy-datum.
+    eg_caprp-zzdocpr_muzeit = sy-uzeit.
+    eg_caprp-zzdocpr_muname = sy-uname.
+    APPEND eg_caprp TO tg_caprp_mod.
+
+** PROCESSAR DADOS PARA TABELA LOG
+** COM INFORMAÇÃO DA SELEÇÃO INICIAL SEM ALTERAÇÃO
+    CLEAR: eg_caprl.
+    MOVE-CORRESPONDING g_tc_1003_wa TO eg_caprl.
+    eg_caprl-mandt        = sy-mandt.
+    eg_caprl-zmd_logdt    = sy-datum.
+    eg_caprl-zmd_loghr    = sy-uzeit.
+    eg_caprl-zzdocpr_acao = c_m.
+    APPEND eg_caprl TO tg_caprl.
+
+  ENDIF. "IF SY-SUBRC EQ 0. "COM CODIGO E APROVADOR
+
+
+ENDFORM.                    " F_TABELA_1003_MOD
+*&---------------------------------------------------------------------*
+*&      Form  F_TABELA_1003_DEL
+*&---------------------------------------------------------------------*
+FORM f_tabela_1003_del .
+
+** POSICIONAR DADOS OLD
+  CLEAR: g_tc_1003_old_wa.
+  READ TABLE g_tc_1003_old INTO g_tc_1003_old_wa
+          WITH KEY zzdocpr_aprcod = g_tc_1003_wa-zzdocpr_aprcod
+                   zzdocpr_aprseq = g_tc_1003_wa-zzdocpr_aprseq.
+
+  IF sy-subrc EQ 0. "COM CODIGO E APROVADOR
+
+** PROCESSAR DADOS PARA TABELA PRINCIPAL
+    CLEAR: eg_caprp.
+    MOVE-CORRESPONDING g_tc_1003_wa TO eg_caprp.
+** ATUALIZAR COM A ULTIMA INFORMAÇÃO
+    eg_caprp-mandt          = sy-mandt.
+    eg_caprp-zzdocpr_mdatum = sy-datum.
+    eg_caprp-zzdocpr_muzeit = sy-uzeit.
+    eg_caprp-zzdocpr_muname = sy-uname.
+    APPEND eg_caprp TO tg_caprp_del.
+
+** PROCESSAR DADOS PARA TABELA LOG
+** COM INFORMAÇÃO DA SELEÇÃO INICIAL SEM ALTERAÇÃO
+    CLEAR: eg_caprl.
+    MOVE-CORRESPONDING g_tc_1003_wa TO eg_caprl.
+    eg_caprl-mandt        = sy-mandt.
+    eg_caprl-zmd_logdt    = sy-datum.
+    eg_caprl-zmd_loghr    = sy-uzeit.
+    eg_caprl-zzdocpr_acao = c_d.
+    APPEND eg_caprl TO tg_caprl.
+
+  ENDIF. "IF SY-SUBRC EQ 0. "COM CODIGO E APROVADOR
+
+
+ENDFORM.                    " F_TABELA_1003_DEL
+*&---------------------------------------------------------------------*
+*&      Form  F_ATUALIZAR_TABELAS_1003
+*&---------------------------------------------------------------------*
+FORM f_atualizar_tabelas_1003 .
+
+** ATUALIZAR DADOS NA TABELA TRANSPARENTE PRINCIPAÇ
+  IF tg_caprp_ins[] IS NOT INITIAL.
+
+    MODIFY ztmmd_preco_capr FROM TABLE tg_caprp_ins.
+
+** ATUALIZAR DADOS
+    CALL FUNCTION 'BAPI_TRANSACTION_COMMIT'
+      EXPORTING
+        wait = 'X'.
+
+** LIMPAR DADOS DAS TABELAS PARA ATUALIZAÇÃO
+    CLEAR tg_caprp_ins.
+
+  ENDIF.
+
+** ATUALIZAR DADOS NA TABELA TRANSPARENTE PRINCIPAÇ
+  IF tg_caprp_mod[] IS NOT INITIAL.
+
+    MODIFY ztmmd_preco_capr FROM TABLE tg_caprp_mod.
+
+** ATUALIZAR DADOS
+    CALL FUNCTION 'BAPI_TRANSACTION_COMMIT'
+      EXPORTING
+        wait = 'X'.
+
+** LIMPAR DADOS DAS TABELAS PARA ATUALIZAÇÃO
+
+    CLEAR tg_caprp_mod.
+
+  ENDIF.
+
+** ATUALIZAR DADOS NA TABELA TRANSPARENTE PRINCIPAÇ
+  IF tg_caprp_del[] IS NOT INITIAL.
+
+    DELETE ztmmd_preco_capr FROM TABLE tg_caprp_del.
+
+** ATUALIZAR DADOS
+    CALL FUNCTION 'BAPI_TRANSACTION_COMMIT'
+      EXPORTING
+        wait = 'X'.
+
+** LIMPAR DADOS DAS TABELAS PARA ATUALIZAÇÃO
+    CLEAR tg_caprp_del.
+
+  ENDIF.
+
+** ATUALIZAR DADOS NA TABELA TRANSPARENTE PRINCIPAÇ
+  IF tg_caprl[] IS NOT INITIAL.
+
+    MODIFY ztmmd_prlog_capr FROM TABLE tg_caprl.
+
+** ATUALIZAR DADOS
+    CALL FUNCTION 'BAPI_TRANSACTION_COMMIT'
+      EXPORTING
+        wait = 'X'.
+
+** LIMPAR DADOS DAS TABELAS PARA ATUALIZAÇÃO
+    CLEAR tg_caprl.
+
+  ENDIF.
+
+** LIMPAR CONTROLE PARA NOVA SELEÇÃO
+  CLEAR: g_tc_1003_copied.
+
+  save_okpr = c_repr.
+
+ENDFORM.                    " F_ATUALIZAR_TABELAS_1003

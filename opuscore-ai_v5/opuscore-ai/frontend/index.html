@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OPUSCORE-AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./styles.css?v=20261001">
+</head>
+<body>
+<div class="bgfx" aria-hidden="true"><span class="g1"></span><span class="g2"></span><span class="grid"></span><span class="vig"></span></div>
+<div id="app">
+  <aside class="rail">
+    <div class="brand">
+      <div class="mark"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#04231e" stroke-width="2.2"><circle cx="12" cy="5" r="2.3"/><circle cx="5" cy="18" r="2.3"/><circle cx="19" cy="18" r="2.3"/><path d="M12 7.3 6.4 15.8M12 7.3l5.6 8.5M7 18h10"/></svg></div>
+      <div><h1>OPUSCORE<b> AI</b></h1><small>CONSULTORES SAP</small></div>
+    </div>
+
+    <div class="active-proj">
+      <p class="sec">Projeto ativo</p>
+      <div class="nm" id="railProjName">—</div>
+      <div class="sub" id="railProjSub"></div>
+    </div>
+
+    <div>
+      <p class="sec">Explorar</p>
+      <nav class="nav" id="nav">
+        <a href="#/cerebro" data-v="cerebro"><span class="ic">⬡</span> Cérebro do projeto</a>
+        <a href="#/consultores" data-v="consultores"><span class="ic">◎</span> Consultores <span class="ct" id="navCount"></span></a>
+        <a href="#/chat" data-v="chat"><span class="ic">▤</span> Conversas</a>
+        <a href="#/dev" data-v="dev"><span class="ic">◈</span> Desenvolvedor</a>
+      </nav>
+    </div>
+
+    <div class="grow"></div>
+
+    <div class="card-mini env-card" id="envCard">
+      <div class="top"><span class="dot"></span><span class="nm" id="envName">Ambiente</span></div>
+      <div class="sub" id="envSub">verificando…</div>
+    </div>
+    <div class="user-card">
+      <div class="av" id="userAv">U</div>
+      <div><div class="nm" id="userName">Usuário</div><div class="sub" id="userRole"></div></div>
+    </div>
+  </aside>
+
+  <main class="stage">
+    <div class="topbar">
+      <div class="crumb"><span>Workspace</span><span class="sep">›</span><b id="crumbProj">—</b></div>
+      <div class="right">
+        <span class="ro"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l7 4v5c0 4-3 7-7 8-4-1-7-4-7-8V7z"/><path d="M9 12l2 2 4-4"/></svg> Consultas somente leitura</span>
+        <span class="badge-proto">PROTÓTIPO</span>
+      </div>
+    </div>
+    <div class="view" id="view"><div class="boot">carregando…</div></div>
+  </main>
+</div>
+<script src="./app.js?v=20261001"></script>
+</body>
+</html>

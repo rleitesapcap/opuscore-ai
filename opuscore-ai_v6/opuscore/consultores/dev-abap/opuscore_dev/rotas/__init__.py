@@ -1,0 +1,1 @@
+"""Consultor Dev ABAP."""
