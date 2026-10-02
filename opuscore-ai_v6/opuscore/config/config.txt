@@ -61,3 +61,55 @@ sap:
 safety:
   audit_log_path: "audit/opuscore-audit.jsonl"  # trilha append-only (JSON Lines)
   require_transport: true                         # sem request informada -> bloqueia
+
+
+
+
+
+
+
+
+
+
+
+
+Muda pouco no código, mas há cuidados práticos. Antes, uma recomendação: como você já tem o WSL2 com o Docker e o trial a4h rodando nele, o caminho mais simples é continuar instalando e executando dentro do WSL, exatamente como no guia. O Windows nativo funciona, mas vale para quem não usa WSL (por exemplo, alguém da equipe).
+
+Para o Windows nativo, as diferenças são estas:
+
+Instalação: o instalar.sh é bash. Vou criar o equivalente em PowerShell.
+Acentos e símbolos: o console do Windows usa outra codificação (cp1252) por padrão. Os motores imprimem caracteres como "✓" e "✗", e a plataforma lê essa saída. Sem UTF-8, isso pode quebrar a leitura do log. Vou corrigir no código e recomendar PYTHONUTF8=1.
+Finais de linha: se o repositório for clonado no Windows com o Git convertendo para CRLF, o instalar.sh quebra quando rodado no WSL. Vou fixar LF para scripts.
+
+Faço as três mudanças:
+
+No Windows nativo, o código do OPUSCORE é o mesmo. O que muda é a instalação, a ativação do ambiente e o cuidado com a codificação de texto. O instalador em PowerShell, o guia atualizado e o pacote estão abaixo.
+
+Passo a passo no Windows (PowerShell)
+
+powershell
+cd opuscore
+powershell -ExecutionPolicy Bypass -File scripts\instalar.ps1 -Motores
+.venv\Scripts\Activate.ps1
+# edite config\config.yaml e config\.env
+opuscore-servidor
+
+Para subir um consultor só: opuscore-dev --plugins funcional-mm --porta 8801. Para filtrar por variável, a sintaxe muda: $env:OPUSCORE_PLUGINS="funcional-mm"; opuscore-servidor.
+
+O que ajustei no projeto
+
+scripts/instalar.ps1: o equivalente em PowerShell do instalar.sh, com a opção -Motores.
+UTF-8 na execução dos motores: a leitura da saída dos motores agora força UTF-8. No Windows, o padrão é cp1252, e os símbolos que os motores imprimem ("✓", "✗") podiam quebrar a leitura do log. Testei com uma saída cheia de acentos e símbolos.
+PYTHONUTF8=1 no config/.env.example, valendo também para o servidor MCP e os motores (inofensivo no Linux).
+.gitattributes: os scripts .sh ficam sempre com final de linha LF. Assim, um clone feito no Windows continua rodando o instalar.sh no WSL.
+Seção 3.4 Windows nativo no guia, com a tabela de diferenças e os cuidados.
+
+Pontos de atenção
+
+Se a ativação for bloqueada ("execução de scripts foi desabilitada"), rode uma vez Set-ExecutionPolicy -Scope CurrentUser RemoteSigned.
+Com o trial no WSL e o OPUSCORE no Windows, o localhost:50000 funciona porque o seu .wslconfig usa networkingMode=mirrored. Sem essa opção, seria preciso usar o IP do WSL.
+Use barras normais nos caminhos do .env (C:/opuscore/data).
+
+Uma ressalva honesta: escrevi e revisei o instalar.ps1, mas não consegui executá-lo, porque o ambiente onde trabalho é Linux. Os testes que rodei (13 passando) cobrem a lógica comum, não o Windows. Se der algum erro na primeira instalação, me mande a mensagem.
+
+Para o seu uso diário, a recomendação continua sendo o WSL, onde já estão o Docker e o SAP trial: lá, o guia vale sem nenhuma adaptação.
