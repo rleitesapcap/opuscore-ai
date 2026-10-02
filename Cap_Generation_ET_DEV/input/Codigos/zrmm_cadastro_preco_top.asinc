@@ -1,0 +1,269 @@
+
+"*********************************************************************
+" Capgemini - Brazil
+"*********************************************************************
+" Data Execução: 16/09/2026
+" Autor: Capgemini SAP
+" Projeto: MOVE2S4
+"*********************************************************************
+
+*&---------------------------------------------------------------------*
+*&  Include           ZRMM_CADASTRO_PRECO_TOP
+*&---------------------------------------------------------------------*
+
+*---------------------------------------------------------------------*
+* DECLARAÇÃO: TABELA
+*---------------------------------------------------------------------*
+
+TABLES: ztmmc_stat_preco, ztmmc_stat_pr_lg, "DADOS DE BLOQUEIO
+        ztmmd_preco_rapr, ztmmd_prlog_rapr, "DADOS DE CUSTO
+        ztmmd_preco_capr, ztmmd_prlog_capr, "APROVADORES PRINCIPAL
+        ztmmd_preco_sapr, ztmmd_prlog_sapr, "APROVADORES SUBSTITUTO
+        user_addr,                          "USUÁRIO COMPLETO
+        lfa1,                               "FORNECEDRO
+        zsmm_ztmmd_preco_rapr,
+        zsmm_ztmmd_preco_capr,
+        zsmm_ztmmd_preco_sapr,
+        icon,
+        rfc_fields.
+
+TYPE-POOLS: icon.
+
+*---------------------------------------------------------------------*
+* DECLARAÇÃO: OBJETO(S)
+*---------------------------------------------------------------------*
+DATA: og_cont_alv TYPE REF TO cl_gui_custom_container,
+      og_alv      TYPE REF TO cl_gui_alv_grid.
+
+*---------------------------------------------------------------------*
+* Declaração: TABLECONTROL - 1001
+*---------------------------------------------------------------------*
+CONTROLS tc_log TYPE TABLEVIEW USING SCREEN 1001.
+DATA: cols  LIKE LINE OF tc_log-cols,
+      lines TYPE i.
+
+DATA: vg_sel_1001(1) TYPE c. "SELEÇÃO INICIAL
+
+*---------------------------------------------------------------------*
+* Declaração: TABLECONTROL - 1002
+*---------------------------------------------------------------------*
+TYPES: BEGIN OF t_tc_1002.
+         INCLUDE STRUCTURE zsmm_ztmmd_preco_rapr.
+TYPES: END OF t_tc_1002.
+
+
+DATA: g_tc_1002_itab   TYPE TABLE OF t_tc_1002,
+      g_tc_1002_old    TYPE TABLE OF ztmmd_preco_rapr,
+      g_tc_1002_wa     TYPE t_tc_1002,
+      g_tc_1002_wa_old TYPE t_tc_1002,
+      g_tc_1002_old_wa TYPE ztmmd_preco_rapr.
+DATA:     g_tc_1002_copied.
+
+CONTROLS: tc_1002 TYPE TABLEVIEW USING SCREEN 1002.
+
+DATA:     g_tc_1002_lines  LIKE sy-loopc.
+
+*---------------------------------------------------------------------*
+* Declaração: TABLECONTROL - 1003
+*---------------------------------------------------------------------*
+TYPES: BEGIN OF t_tc_1003.
+         INCLUDE STRUCTURE zsmm_ztmmd_preco_capr.
+TYPES: END OF t_tc_1003.
+
+
+DATA: g_tc_1003_itab   TYPE TABLE OF t_tc_1003,
+      g_tc_1003_old    TYPE TABLE OF ztmmd_preco_capr,
+      g_tc_1003_wa     TYPE t_tc_1003,
+      g_tc_1003_old_wa TYPE ztmmd_preco_capr.
+
+DATA: g_tc_1003_copied.
+
+CONTROLS: tc_1003 TYPE TABLEVIEW USING SCREEN 1003.
+
+DATA: g_tc_1003_lines  LIKE sy-loopc.
+
+*---------------------------------------------------------------------*
+* Declaração: TABLECONTROL - 1004
+*---------------------------------------------------------------------*
+TYPES: BEGIN OF t_tc_1004.
+         INCLUDE STRUCTURE zsmm_ztmmd_preco_sapr.
+TYPES: END OF t_tc_1004.
+
+DATA: g_tc_1004_itab   TYPE TABLE OF t_tc_1004,
+      g_tc_1004_old    TYPE TABLE OF ztmmd_preco_sapr,
+      g_tc_1004_wa     TYPE t_tc_1004,
+      g_tc_1004_old_wa TYPE ztmmd_preco_sapr.
+
+DATA: g_tc_1004_copied.
+
+CONTROLS: tc_1004 TYPE TABLEVIEW USING SCREEN 1004.
+
+DATA: g_tc_1004_lines  LIKE sy-loopc.
+
+*---------------------------------------------------------------------*
+* Declaração: TABSTRIP Controle
+*---------------------------------------------------------------------*
+CONSTANTS: BEGIN OF c_tab_geral,
+             tab1 LIKE sy-ucomm VALUE 'TAB_GERAL_FC1',
+             tab2 LIKE sy-ucomm VALUE 'TAB_GERAL_FC2',
+             tab3 LIKE sy-ucomm VALUE 'TAB_GERAL_FC3',
+             tab4 LIKE sy-ucomm VALUE 'TAB_GERAL_FC4',
+             tab5 LIKE sy-ucomm VALUE 'TAB_GERAL_FC5',
+           END OF c_tab_geral.
+
+CONTROLS:  tab_geral TYPE TABSTRIP.
+
+DATA: BEGIN OF g_tab_geral,
+        subscreen   LIKE sy-dynnr,
+        prog        LIKE sy-repid VALUE 'ZRMM_CADASTRO_PRECO_ADMINISTR',
+        pressed_tab LIKE sy-ucomm VALUE c_tab_geral-tab1,
+      END OF g_tab_geral.
+
+
+*---------------------------------------------------------------------*
+* DECLARAÇÃO: TABELA INTERNA
+*---------------------------------------------------------------------*
+DATA: tg_itab      TYPE TABLE OF ztmmc_stat_pr_lg,
+      tg_bloq      TYPE TABLE OF ztmmc_stat_preco,
+      tg_raprp     TYPE TABLE OF ztmmd_preco_rapr,
+      tg_raprl     TYPE TABLE OF ztmmd_prlog_rapr,
+      tg_caprp     TYPE TABLE OF ztmmd_preco_capr,
+      tg_caprl     TYPE TABLE OF ztmmd_prlog_capr,
+      tg_saprp     TYPE TABLE OF ztmmd_preco_sapr,
+      tg_saprl     TYPE TABLE OF ztmmd_prlog_sapr,
+      tg_usera     TYPE TABLE OF user_addr,
+      tg_lfa1      TYPE TABLE OF lfa1,
+      tg_dd07v     TYPE TABLE OF dd07v,
+      tg_raprp_ins TYPE TABLE OF ztmmd_preco_rapr,
+      tg_raprp_mod TYPE TABLE OF ztmmd_preco_rapr,
+      tg_raprp_del TYPE TABLE OF ztmmd_preco_rapr,
+      tg_caprp_ins TYPE TABLE OF ztmmd_preco_capr,
+      tg_caprp_mod TYPE TABLE OF ztmmd_preco_capr,
+      tg_caprp_del TYPE TABLE OF ztmmd_preco_capr,
+      tg_saprp_ins TYPE TABLE OF ztmmd_preco_sapr,
+      tg_saprp_mod TYPE TABLE OF ztmmd_preco_sapr,
+      tg_saprp_del TYPE TABLE OF ztmmd_preco_sapr,
+
+      gt_usua_lib  TYPE TABLE OF ztsdd_users_lib.
+
+DATA: tg_data          TYPE TABLE OF rfc_fields,
+      tg_fieldcat      TYPE TABLE OF lvc_s_fcat,
+      tg_list_comments TYPE slis_t_listheader,
+      tg_fields        TYPE TABLE OF rfc_fields.
+
+*---------------------------------------------------------------------*
+* DECLARAÇÃO: ESTRUTURAS
+*---------------------------------------------------------------------*
+DATA: eg_bloq      TYPE ztmmc_stat_preco,
+      eg_itab      TYPE ztmmc_stat_pr_lg,
+      screen_wa    TYPE screen,
+      eg_raprp     TYPE ztmmd_preco_rapr,
+      eg_raprl     TYPE ztmmd_prlog_rapr,
+      eg_caprp     TYPE ztmmd_preco_capr,
+      eg_caprl     TYPE ztmmd_prlog_capr,
+      eg_saprp     TYPE ztmmd_preco_sapr,
+      eg_saprl     TYPE ztmmd_prlog_sapr,
+      eg_usera     TYPE user_addr,
+      eg_lfa1      TYPE lfa1,
+      eg_dd07v     TYPE dd07v,
+      eg_screen_tc TYPE zsmm_ztmmd_preco_screen,
+      eg_layout    TYPE lvc_s_layo,
+      eg_fields    TYPE rfc_fields.
+
+*---------------------------------------------------------------------*
+* DECLARAÇÃO: RANGE
+*---------------------------------------------------------------------*
+DATA: rg_mm_008_006_uname     TYPE RANGE OF uname.
+DATA: lg_mm_008_006_uname     LIKE LINE OF rg_mm_008_006_uname.
+
+DATA: rg_mm_monitor_ktokk     TYPE RANGE OF ktokk.
+
+DATA: lg_mm_monitor_ktokk     LIKE LINE OF  rg_mm_monitor_ktokk.
+
+*---------------------------------------------------------------------*
+* DECLARAÇÃO: FIELD-SYMBOLS
+*---------------------------------------------------------------------*
+
+*---------------------------------------------------------------------*
+* DECLARAÇÃO: OBJETO(S)
+*---------------------------------------------------------------------*
+
+*---------------------------------------------------------------------*
+* DECLARAÇÃO: VARIAVEIS
+*---------------------------------------------------------------------*
+DATA: vg_aut_1004     TYPE c, "AUTORIZAÇÃO TELA 1004
+      vg_aut_1003     TYPE c, "AUTORIZAÇÃO TELA 1003
+      vg_aut_1002     TYPE c, "AUTORIZAÇÃO TELA 1002
+      vg_aut_1001     TYPE c, "AUTORIZAÇÃO TELA 1001
+      vg_aut_1005     TYPE c, "AUTORIZAÇÃO TELA 1005
+      vg_answer       TYPE c,
+      vg_sort(132)    TYPE c,
+      vg_prtl(1)      TYPE c, "PROCESSAR TELA
+      vg_capr(1)      TYPE c, "SELEÇAO EFETUADA INICIAL
+      vg_sapr(1)      TYPE c, "SELEÇAO EFETUADA INICIAL
+      vg_cont         TYPE i,
+      vg_tam          TYPE i,
+      vg_sort_1001(1) TYPE c,
+      vg_modif(1)     TYPE c,
+      vg_variant      TYPE disvariant,
+      vg_field        TYPE dfies-lfieldname,
+      vg_name         TYPE dd04v-scrtext_l,
+
+      vg_var_a        TYPE ztmm_valor_var-valor_seq,
+      vg_var_c        TYPE ztmm_valor_var-valor_seq,
+      vg_var_d        TYPE ztmm_valor_var-valor_seq,
+      vg_var_f        TYPE ztmm_valor_var-valor_var,
+      vg_var_g        TYPE ztmm_valor_var-valor_var,
+      vg_txt_var_a    TYPE ztmm_valor_var-name,
+      vg_txt_var_c    TYPE ztmm_valor_var-name,
+      vg_txt_var_d    TYPE ztmm_valor_var-name,
+      vg_txt_var_f    TYPE ztmm_valor_var-name,
+      vg_txt_var_g    TYPE ztmm_valor_var-name.
+
+DATA: ok_code   TYPE sy-ucomm,
+      ok_tabold TYPE sy-ucomm,
+      ok_tabnew TYPE sy-ucomm,
+      save_okpr TYPE sy-ucomm,
+      save_ok   TYPE sy-ucomm.
+
+*---------------------------------------------------------------------*
+* Declaração: Constantes
+*---------------------------------------------------------------------*
+CONSTANTS:
+  c_sim(3)                TYPE c VALUE 'SIM',
+  c_nao(3)                TYPE c VALUE 'NÃO',
+  c_x(1)                  TYPE c VALUE 'X',
+  c_d(1)                  TYPE c VALUE 'D', "DELETAR
+  c_i(1)                  TYPE c VALUE 'I', "INSERIR
+  c_m(1)                  TYPE c VALUE 'M', "MODIFICAR
+  c_0(1)                  TYPE c VALUE '0',
+  c_1(1)                  TYPE c VALUE '1',
+  c_2(1)                  TYPE c VALUE '2',
+  c_a(1)                  TYPE c VALUE 'A',
+  c_c(1)                  TYPE c VALUE 'C',
+  c_back(4)               TYPE c VALUE 'BACK',
+  c_exit(4)               TYPE c VALUE 'EXIT',
+  c_salve(5)              TYPE c VALUE 'SALVE',
+  c_cancel(6)             TYPE c VALUE 'CANCEL',
+  c_enter(5)              TYPE c VALUE 'ENTER',
+  c_repr(4)               TYPE c VALUE 'REPR',
+  c_toggle(6)             TYPE c VALUE 'TOGGLE',
+  c_zsd_prc_db(10)        TYPE c VALUE 'ZSD_PRC_DB', "DADOS DE BLOQUEIO PREÇO
+  c_zsd_prc_dm(10)        TYPE c VALUE 'ZSD_PRC_DM',
+  c_zsd_prc_ra(10)        TYPE c VALUE 'ZSD_PRC_RA', "REGRAS DE APROVAÇÃO CUSTO
+  c_zsd_prc_cs(10)        TYPE c VALUE 'ZSD_PRC_CS', "CADASTRO DE SUBSTITUTO
+  c_zsd_prc_ca(10)        TYPE c VALUE 'ZSD_PRC_CA', "CONTIGÊNCIA DE APROVADOR
+  c_actvt(5)              TYPE c VALUE 'ACTVT',
+  c_00000000(8)           TYPE c VALUE '00000000', "DATA VAZIA
+  c_99991231(8)           TYPE c VALUE '99991231', "DATA FIM
+  c_01(2)                 TYPE c VALUE '01',
+  c_todos(1)              TYPE c VALUE '*',
+  c_name(7)               TYPE c VALUE 'OPTION1',
+  c_f_alv_top_of_list(20) TYPE c VALUE 'F_ALV_TOP_OF_LIST',
+  c_cont(6)               TYPE c VALUE 'CC_ALV',
+  c_mandt(5)              TYPE c VALUE 'MANDT',
+  c_tg_alv(6)             TYPE c VALUE 'TL_ALV',
+  c_tab1                  TYPE x030l-tabname VALUE 'ZTMMD_PRLOG_CAPR',
+  c_tab2                  TYPE x030l-tabname VALUE 'ZTMMD_PRLOG_SAPR',
+  c_tab3                  TYPE x030l-tabname VALUE 'ZTMMD_PRLOG_RAPR',
+  c_tab4                  TYPE x030l-tabname VALUE 'ZTMMC_STAT_PR_LG'.

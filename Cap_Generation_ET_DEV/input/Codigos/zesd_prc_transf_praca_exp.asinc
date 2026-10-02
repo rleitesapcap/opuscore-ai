@@ -1,0 +1,360 @@
+
+
+"*********************************************************************
+" Capgemini - Brazil
+"*********************************************************************
+" Data Execução: 	17/09/2026
+" Autor:      Capgemini SAP
+" Projeto:              MOVE2S4
+"*********************************************************************
+
+
+***********************************************************************
+*                                                                     *
+*      *********************************************************      *
+*      *                +---------------------+                *      *
+*      *                | G r u p o | A S S A |                *      *
+*      *                +---------------------+                *      *
+*      *********************************************************      *
+*                                                                     *
+***********************************************************************
+*---------------------------------------------------------------------*
+*** Dados do programa                                                 *
+*---------------------------------------------------------------------*
+* Nome  : ZESD_PRC_TRANSF_PRACA_EXP                                   *
+* Título: Verifica Seq.Determinação e modifica o Tp. Cálculo de preço *
+* Autor :                                                             *
+* Data  : 18/02/2013                                                  *
+*                                                                     *
+* Objetivos: Verificar a sequencia de determinação de preço e alterar *
+*            o tipo de cálculo de preço
+*                                                                     *
+*---------------------------------------------------------------------+
+*** Histórico das modificações                                        |
+*---+--------+----------------+---------------------------------------+
+*Seq|Data    |Autor           |COD/ Descrição da modificação ou erro  |
+*---+--------+----------------+---------------------------------------+
+*001|18022013|                |Desenvolvimento inicial                |
+*002|26042013|Renata/HPS      |Alteraçao                              |
+*---+--------+----------------+---------------------------------------+
+
+*---------------------------------------------------------------------*
+* Declaração: Variáveis e Constantes
+*---------------------------------------------------------------------*
+CONSTANTS: c_zpfs  TYPE twkg-kalgr  VALUE 'ZPFS',
+           c_zpf1  TYPE twkg-kalgr  VALUE 'ZPF1',
+           c_zpf2  TYPE twkg-kalgr  VALUE 'ZPF2',
+           c_zf01  TYPE twkg-kalgr  VALUE 'ZF01',
+           c_zpf9  TYPE twkg-kalgr  VALUE 'ZPF9',
+           c_field TYPE c LENGTH 25 VALUE '(SAPLWVK1)G_T_KALP-VKERV',
+           c_zpes  TYPE twkg-kalgr  VALUE 'ZPES',
+           c_zpe1  TYPE twkg-kalgr  VALUE 'ZPE1',
+           c_zpe2  TYPE twkg-kalgr  VALUE 'ZPE2',
+           c_x     TYPE c LENGTH 1  VALUE 'X'.
+DATA: vl_exc TYPE c.
+
+*---------------------------------------------------------------------*
+* Declaração: Field-Symbols
+*---------------------------------------------------------------------*
+FIELD-SYMBOLS: <vl_kerv> TYPE kalp-ekerv.
+
+DATA: lr_ekerv_01   TYPE RANGE OF mtart,
+      lr_ekerv_02   TYPE RANGE OF mtart,
+      lr_ekerv_03   TYPE RANGE OF mtart,
+      lr_ekerv_04   TYPE RANGE OF mtart,
+      lr_ekerv_05   TYPE RANGE OF mtart,
+      lr_ekerv_06   TYPE RANGE OF mtart,
+      lr_ekerv_07   TYPE RANGE OF mtart,
+      lr_ekerv_08   TYPE RANGE OF mtart,
+      lr_mtart_serv TYPE RANGE OF mtart,
+      lr_vkerv      TYPE RANGE OF mtart,
+      lr_vkere      TYPE RANGE OF mtart,
+      lr_vkers      TYPE RANGE OF mtart.
+
+
+lr_ekerv_01   = zcl_parametros=>get_param( iv_processo = 'MM_019_01_SEQ_PRC' iv_name = 'EKERV_M' ).
+lr_ekerv_02   = zcl_parametros=>get_param( iv_processo = 'MM_019_02_SEQ_PRC' iv_name = 'EKERV_M' ).
+lr_ekerv_03   = zcl_parametros=>get_param( iv_processo = 'MM_019_03_SEQ_PRC' iv_name = 'EKERV_M' ).
+lr_ekerv_04   = zcl_parametros=>get_param( iv_processo = 'MM_019_04_SEQ_PRC' iv_name = 'EKERV_M' ).
+lr_ekerv_05   = zcl_parametros=>get_param( iv_processo = 'MM_019_05_SEQ_PRC' iv_name = 'EKERV_M' ).
+lr_ekerv_06   = zcl_parametros=>get_param( iv_processo = 'SD_014_01_BOLJ_SEQ_PRC' iv_name = 'EKERV_M' ).
+lr_ekerv_07   = zcl_parametros=>get_param( iv_processo = 'SD_014_02_BOLJ_SEQ_PRC' iv_name = 'EKERV_M' ).
+lr_ekerv_08   = zcl_parametros=>get_param( iv_processo = 'SD_014_03_BOLJ_SEQ_PRC' iv_name = 'EKERV_M' ).
+lr_mtart_serv = zcl_parametros=>get_param( iv_processo = 'SD_PRECO_SERVICO' iv_name = 'MTART' ).
+lr_vkerv      = zcl_parametros=>get_param( iv_processo = 'MM_019_01_VKERV_ZKPE' iv_name = 'EKERV_V' ).
+lr_vkers      = zcl_parametros=>get_param( iv_processo = 'MM_019_01_VKERV_SERV' iv_name = 'EKERV_V' ).
+lr_vkere      = zcl_parametros=>get_param( iv_processo = 'MM_019_01_VKERV_ZPES_LISTA' iv_name = 'EKERV_V' ).
+
+IF <vl_kerv> IS ASSIGNED.
+  UNASSIGN <vl_kerv>.
+ENDIF.
+
+ASSIGN (c_field) TO <vl_kerv>.                           "#EC CI_SUBRC.
+IF <vl_kerv> IS ASSIGNED.
+  IF <vl_kerv> IN lr_ekerv_01.
+    pe_kalgr = c_zpfs."'ZPFS'.
+    vl_exc = c_x.
+  ELSEIF <vl_kerv> IN lr_ekerv_02.
+    pe_kalgr = c_zpf1."'ZPF1'.
+    vl_exc = c_x.
+  ELSEIF <vl_kerv> IN lr_ekerv_03.
+    pe_kalgr = c_zpf2."'ZPF2'.
+    vl_exc = c_x.
+  ELSEIF <vl_kerv> IN lr_ekerv_04.
+    pe_kalgr = c_zf01."'ZF01'.
+    vl_exc = c_x.
+  ELSEIF <vl_kerv> IN lr_ekerv_05.
+    pe_kalgr = c_zpf9."'ZPF9'.
+    vl_exc = c_x.
+  ELSEIF <vl_kerv> IN lr_ekerv_06.
+    pe_kalgr = c_zpes.
+    vl_exc = c_x.
+  ELSEIF <vl_kerv> IN lr_ekerv_07.
+    pe_kalgr = c_zpe1.
+    vl_exc = c_x.
+  ELSEIF <vl_kerv> IN lr_ekerv_08.
+    pe_kalgr = c_zpe2.
+    vl_exc = c_x.
+  ELSEIF <vl_kerv> IN lr_vkerv.
+    pe_kalgr = 'E001'.
+    vl_exc = c_x.
+  ELSEIF <vl_kerv> IN lr_vkers.
+    pe_kalgr = 'ZSER'.
+    vl_exc = c_x.
+  ELSEIF <vl_kerv> IN lr_vkere.
+    pe_kalgr = 'ZPE1'.
+    vl_exc = c_x.
+  ENDIF.
+
+  IF <vl_kerv> EQ 'ZYM'.
+    CLEAR: vl_exc.
+  ENDIF.
+ENDIF.
+
+
+"Só executa as intruções abaixo caso não tenha
+"sido determinado o Tp. Calc Preço
+IF vl_exc IS INITIAL.
+
+***********************************************************************
+*                                                                     *
+*      *********************************************************      *
+*      *                +---------------------+                *      *
+*      *                | G r u p o | A S S A |                *      *
+*      *                +---------------------+                *      *
+*      *********************************************************      *
+*                                                                     *
+***********************************************************************
+*---------------------------------------------------------------------*
+*** Dados do programa                                                 *
+*---------------------------------------------------------------------*
+* Nome  : Sabrina Guedes Silva                                        *
+* Título: Fórmula de cálculo de preço de transferência Bruto          *
+*          para praça de expedição                                    *
+* Autor : Sabrina Guedes Silva                                        *
+*                                                                     *
+* Objetivos: Permitir que a Fórmula de Cálculo do preço de            *
+*             transferência seja executado de forma correta.          *
+*                                                                     *
+*---------------------------------------------------------------------+
+*** Histórico das modificações                                        |
+*---+--------+----------------+---------------------------------------+
+*Seq|Data    |Autor           |COD/ Descrição da modificação ou erro  |
+*---+--------+----------------+---------------------------------------+
+*001|22112012|Sabrina Guedes  |Desenvolvimento inicial                |
+*---+--------+----------------+---------------------------------------+
+*002|12062017|Anderson Tessitori |Inclusão de material origem 2 com   |
+*                                |compra internacional                |
+*---+--------+----------------+---------------------------------------+
+
+*---------------------------------------------------------------------*
+* Declaração: Variáveis e Constantes
+*---------------------------------------------------------------------*
+
+  DATA: vl_mtorg       TYPE mbew-mtorg,
+        vl_werkst      TYPE t001w-werks,
+        vl_bwscl       TYPE marc-bwscl,
+        vl_zzcompraint TYPE char11, "mara-zzcompraint, TROCAR QUANDO FOR CRIADO OS CAMPOS VIA CUSTOM FIELD
+        vl_mtart       TYPE mara-mtart.
+
+  CONSTANTS: c_a(1) TYPE c VALUE 'A',
+             c_b(1) TYPE c VALUE 'B',
+             c_1(1) TYPE c VALUE '1',
+             c_2(1) TYPE c VALUE '2',
+             c_4(1) TYPE c VALUE '4'.
+
+*---------------------------------------------------------------------*
+* Declaração: Field-Symbols
+*---------------------------------------------------------------------*
+
+  FIELD-SYMBOLS: <vl_matnr> TYPE any,
+                 <vl_werks> TYPE any,
+                 <vl_lifnr> TYPE any.
+
+*---------------------------------------------------------------------*
+* Declaração: Range
+*---------------------------------------------------------------------*
+  DATA: lr_kalgr TYPE RANGE OF kalgr.
+
+*---------------------------------------------------------------------*
+* Declaração: Estruturas
+*---------------------------------------------------------------------*
+  DATA: el_kalgr LIKE LINE OF lr_kalgr.
+
+*---------------------------------------------------------------------*
+* Declaração: Variavel(is)
+*---------------------------------------------------------------------*
+  DATA: vl_werks TYPE marc-werks.
+
+  UNASSIGN: <vl_matnr>, <vl_werks>.
+  REFRESH: lr_kalgr.
+  CLEAR: vl_werkst, vl_mtorg, el_kalgr, vl_bwscl.
+
+***Regra 1
+  vl_werkst = pi_i_t001w-werks.
+
+  ASSIGN ('(SAPLWVK1)g_t_kalp-matnr') TO <vl_matnr>.     "#EC CI_SUBRC.
+
+  IF <vl_matnr> IS ASSIGNED.
+
+    SELECT SINGLE mtorg
+      FROM mbew
+      INTO vl_mtorg
+      WHERE matnr EQ <vl_matnr>
+      AND   bwkey EQ vl_werkst.
+
+    IF sy-subrc EQ 0.
+      CLEAR vl_zzcompraint.
+      SELECT SINGLE 'zzcompraint'
+        INTO @vl_zzcompraint
+        FROM mara
+        WHERE matnr = @<vl_matnr>.                         "#EC CI_SUBRC
+
+      IF ( vl_mtorg EQ c_1 " OR vl_mtorg EQ c_2 )
+      AND pi_i_t001w-vlfkz EQ c_b )
+        OR ( vl_mtorg EQ c_2
+      AND pi_i_t001w-vlfkz EQ c_b
+      AND vl_zzcompraint NE space ).
+
+        lr_kalgr = zcl_parametros=>get_param( iv_processo = 'SD_01_TP_CALC_PRECOS' iv_name = 'KALGR' ).
+
+        IF sy-subrc EQ 0.
+
+          LOOP AT lr_kalgr INTO el_kalgr.
+            pe_kalgr = el_kalgr-low.
+            CLEAR: el_kalgr.
+          ENDLOOP.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+  ENDIF.
+
+***Regra 2
+  IF pi_i_t001w-vlfkz EQ c_a.
+    REFRESH: lr_kalgr.
+
+    lr_kalgr = zcl_parametros=>get_param( iv_processo = 'SD_009_02_TP_CALC_PRECOS' iv_name = 'KALGR' ).
+
+    IF sy-subrc EQ 0.
+
+      LOOP AT lr_kalgr INTO el_kalgr.
+        pe_kalgr = el_kalgr-low.
+        CLEAR: el_kalgr.
+      ENDLOOP.
+    ENDIF.
+  ENDIF.
+
+***Regra 3
+  ASSIGN ('(SAPLWVK1)g_t_kalp-werks') TO <vl_werks>.      "#EC CI_SUBRC
+
+
+  IF <vl_werks> IS ASSIGNED.
+
+    IF pi_i_spr-pltyp IS INITIAL.
+
+      SELECT SINGLE bwscl
+        FROM marc
+        INTO vl_bwscl
+        WHERE matnr EQ <vl_matnr>
+        AND   werks EQ <vl_werks>.
+
+    ELSE.
+      vl_werks = pi_i_spr-kunnr.
+
+      SELECT SINGLE bwscl
+        FROM marc
+        INTO vl_bwscl
+        WHERE matnr EQ <vl_matnr>
+        AND   werks EQ vl_werks.
+
+    ENDIF.
+
+    IF sy-subrc EQ 0.
+
+      IF vl_bwscl EQ c_2 OR
+         vl_bwscl EQ c_4.
+
+        REFRESH: lr_kalgr.
+
+        lr_kalgr = zcl_parametros=>get_param( iv_processo = 'SD_009_03_TP_CALC_PRECOS' iv_name = 'KALGR' ).
+
+        IF sy-subrc EQ 0.
+
+          LOOP AT lr_kalgr INTO el_kalgr.
+            pe_kalgr = el_kalgr-low.
+            CLEAR: el_kalgr.
+          ENDLOOP.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+  ENDIF.
+
+  ASSIGN ('(SAPLWVK1)g_t_kalp-werks') TO <vl_lifnr>.      "#EC CI_SUBRC
+
+  IF <vl_lifnr> IS ASSIGNED.
+
+    SELECT SINGLE werks
+      INTO vl_werkst
+      FROM t001w
+     WHERE werks EQ <vl_lifnr>
+       AND vlfkz EQ c_b.
+
+    IF sy-subrc IS INITIAL
+      AND pi_i_t001w-vlfkz EQ c_b AND vl_bwscl = c_2.
+
+      pe_kalgr = 'Z007'.
+
+    ENDIF.
+
+  ENDIF.
+
+ENDIF.
+
+* Alterações para Criação de Preco de Servico.
+IF <vl_matnr> IS ASSIGNED.
+  CLEAR vl_mtart.
+  SELECT SINGLE mtart
+    INTO vl_mtart
+    FROM mara
+   WHERE matnr = <vl_matnr>.                              "#EC CI_SUBRC
+
+  IF vl_mtart IN lr_mtart_serv.
+
+    FIELD-SYMBOLS : <vl_vkerv> TYPE kalp-vkerv,
+                    <vl_livar> TYPE pispc-livar.
+
+    ASSIGN ('(SAPLWVK1)g_t_kalp-VKERV') TO <vl_vkerv>.
+
+    ASSIGN ('(SAPLWVK1)PISPC-LIVAR')    TO <vl_livar>.
+    IF <vl_vkerv> IS ASSIGNED AND
+       <vl_livar> IS ASSIGNED.
+      IF <vl_vkerv> = 'ZS' AND
+         <vl_livar> = 'ZS'.
+        pe_kalgr = 'ZSER'.
+      ELSEIF <vl_vkerv> = 'SV' AND
+             <vl_livar> = 'SV'.
+        pe_kalgr = 'ZSRV'.
+      ENDIF.
+    ENDIF.
+  ENDIF.
+ENDIF.

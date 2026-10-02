@@ -1,0 +1,61 @@
+
+"*********************************************************************
+" Capgemini - Brazil
+"*********************************************************************
+" Data Execução: 16/09/2026
+" Autor:      Capgemini SAP
+" Projeto:              MOVE2S4
+"*********************************************************************
+
+*&---------------------------------------------------------------------*
+*&  Include           ZRMM_CADASTRO_PRECO_1000_PBO
+*&---------------------------------------------------------------------*
+
+*&---------------------------------------------------------------------*
+*&      MODULE  STATUS_1000  OUTPUT
+*&---------------------------------------------------------------------*
+MODULE status_1000 OUTPUT.
+  SET PF-STATUS 'SCREEN_1000'.
+  SET TITLEBAR 'TITLE_1000'.
+
+ENDMODULE.                 " STATUS_1000  OUTPUT
+
+*&---------------------------------------------------------------------*
+*&      MODULE  STATUS_1000  OUTPUT
+*&---------------------------------------------------------------------*
+*OUTPUT MODULE FOR TS 'TAB_GERAL'. DO NOT CHANGE THIS LINE!
+*SETS ACTIVE TAB
+MODULE tab_geral_active_tab_set OUTPUT.
+  tab_geral-activetab = g_tab_geral-pressed_tab.
+
+** LIMPAR AÇÃO DE BOTÕES APÓS PROCESSAMENTO
+** ANALISAR PROCESSAMENTO FORÇADO
+  IF save_okpr EQ c_repr. "REPROCESSAR FORÇADO
+    save_okpr  = c_enter.
+
+    CLEAR sy-ucomm.
+  ENDIF.
+
+** PROCESSO ANTERIOR
+  CASE g_tab_geral-pressed_tab.
+    WHEN c_tab_geral-tab1.
+      g_tab_geral-subscreen = '1001'.
+
+    WHEN c_tab_geral-tab2.
+      g_tab_geral-subscreen = '1002'.
+
+    WHEN c_tab_geral-tab3.
+      g_tab_geral-subscreen = '1003'.
+
+    WHEN c_tab_geral-tab4.
+      g_tab_geral-subscreen = '1004'.
+
+*    WHEN c_tab_geral-tab5.
+*      g_tab_geral-subscreen = '1005'.
+
+    WHEN OTHERS.
+
+
+  ENDCASE.
+
+ENDMODULE.

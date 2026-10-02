@@ -1,0 +1,16 @@
+[project]
+name = "opuscore-connectors"
+version = "1.0.0"
+description = "OPUSCORE-AI — conectores (servidor MCP): SAP ADT hoje; outros sistemas depois"
+requires-python = ">=3.11"
+dependencies = ["opuscore-core>=1.0", "httpx>=0.27", "lxml>=5.3", "mcp>=1.2,<2", "typer>=0.12", "rich>=13.9"]
+
+[project.scripts]
+opuscore-conectores = "opuscore_connectors.servidor:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["opuscore_connectors*"]

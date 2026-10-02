@@ -1,0 +1,187 @@
+
+"*********************************************************************
+" Capgemini - Brazil
+"*********************************************************************
+" Data Execução: 	16/09/2026
+" Autor:      Capgemini SAP
+" Projeto:              MOVE2S4
+"*********************************************************************
+
+*&---------------------------------------------------------------------*
+*&  Include           ZRMM_CADASTRO_PRECO_1004_PBO
+*&---------------------------------------------------------------------*
+
+*OUTPUT MODULE FOR TC 'TC_1004'. DO NOT CHANGE THIS LINE!
+*COPY DDIC-TABLE TO ITAB
+MODULE tc_1004_init OUTPUT.
+
+  IF g_tc_1004_copied IS INITIAL.
+
+** LIMPAR TABELA INTERNAS
+    REFRESH: g_tc_1004_old, g_tc_1004_itab.
+
+    SELECT *
+      FROM ztmmd_preco_sapr
+      INTO CORRESPONDING FIELDS OF TABLE g_tc_1004_old.
+
+
+    IF sy-subrc EQ 0.
+
+      LOOP AT g_tc_1004_old INTO g_tc_1004_old_wa.
+
+        CLEAR: g_tc_1004_wa.
+
+        g_tc_1004_wa = CORRESPONDING #( g_tc_1004_old_wa ).
+
+        APPEND g_tc_1004_wa TO g_tc_1004_itab.
+
+      ENDLOOP.
+
+    ENDIF.
+
+** MARCA QUE FOI SELECIONADO
+    g_tc_1004_copied = 'X'.
+
+    REFRESH CONTROL 'TC_1004' FROM SCREEN '1004'.
+
+  ENDIF.
+
+** VERIFICAR AUTORIZAÇÃO PARA PROCESSAMENTO
+  IF vg_aut_1004 IS INITIAL. "VERIFICA SE TEM AUTORIZAÇÃO
+    PERFORM f_autorizacao_1004.
+
+  ENDIF.
+
+** NESSE PROCESSO MANTER APENAS VALORES VALIDOS
+  IF vg_sapr IS INITIAL.
+** SELECIONAR DADOS DO CADASTRO PRINCIPAL PARA
+** PARA EXISTIR DADOS QUANDO EXISTE NA PRINCIPAL
+    PERFORM f_selecao_ztmmd_preco_sapr.
+
+  ENDIF.
+
+** PROCESSAR DADOS COMPLEMENTARES
+  PERFORM f_selecao_usuario_sapr.
+
+** ORDENAR TABELA
+  SORT g_tc_1004_itab BY zzdocpr_aprcod
+                         zzdocpr_aprseq
+                         zzdocpr_aprsub
+                         zzdocpr_aprdti
+                         zzdocpr_aprdtf
+                         zzdocpr_mdatum
+                         zzdocpr_muzeit
+                         zzdocpr_muname
+                         zzdocpr_acao
+                         mark.
+
+ENDMODULE.
+
+*OUTPUT MODULE FOR TC 'TC_1004'. DO NOT CHANGE THIS LINE!
+MODULE tc_1004_move OUTPUT.
+
+  zsmm_ztmmd_preco_sapr = CORRESPONDING #( g_tc_1004_wa ).
+
+ENDMODULE.
+
+*OUTPUT MODULE FOR TC 'TC_1004'. DO NOT CHANGE THIS LINE!
+MODULE tc_1004_get_lines OUTPUT.
+  g_tc_1004_lines = sy-loopc.
+
+ENDMODULE.
+*&---------------------------------------------------------------------*
+*&      Form  F_AUTORIZACAO_1004
+*&---------------------------------------------------------------------*
+FORM f_autorizacao_1004 .
+
+  DATA: vl_tabix TYPE sy-tabix.
+
+  CLEAR: vl_botao.
+
+** VALIDAR OBJETO DE AUTORIZAÇÃO PARA AÇÕES
+  "VERIFICA AUTORIZAÇÃO PARA O TIPO DE PROCESSAMENTO
+** SE FOR DIFERENTE BLOQUEAR CAMPOS
+
+  IF lg_mm_008_006_uname-low NE sy-uname.
+
+* AUTORIZAÇÃO PARA TELA DE CONTIGÊNCIA DE APROVADOR
+* ATUALIZAR CONTIGÊNCIA DE APROVADOR MONITOR ADMINISTRADOR PR
+    AUTHORITY-CHECK OBJECT c_zsd_prc_ca
+          ID c_actvt FIELD c_01
+          ID c_actvt FIELD c_todos.
+
+** SE NÃO ENCONTRAR NÃO HABILITA BOTÕES
+    IF sy-subrc NE 0.
+      vl_botao    = c_x.
+      vg_aut_1004 = c_x.
+
+    ENDIF.
+
+** SE ENTRAR NO USUÁRIO DO HARDCODE NÃO VERIFICA
+  ELSE.
+    CLEAR: vl_botao.
+
+  ENDIF.
+
+  LOOP AT tc_1004-cols INTO eg_screen_tc.
+
+    IF eg_screen_tc-screen-group1 = 'MOD'.
+
+      CLEAR: vl_tabix .
+      vl_tabix = sy-tabix.
+
+      CASE vl_botao.
+
+        WHEN ' '.
+          eg_screen_tc-screen-input = '1'.
+
+
+        WHEN c_x.
+          eg_screen_tc-screen-input = '0'.
+
+      ENDCASE.
+
+** Modificar data
+      MODIFY tc_1004-cols FROM eg_screen_tc INDEX vl_tabix.
+
+    ENDIF.
+
+  ENDLOOP.
+
+
+** HABITAR OU NÃO OS CAMPOS DE TELA
+  LOOP AT SCREEN INTO screen_wa.
+
+** HABITAR OU NÃO BOTÕES PARA PROCESSAR
+    IF screen_wa-group1 = 'AUT'.
+
+      CASE vl_botao.
+        WHEN ' '.
+          screen_wa-input = '1'.
+
+        WHEN c_x.
+          screen_wa-input = '0'.
+
+      ENDCASE.
+
+      MODIFY SCREEN FROM screen_wa.
+
+    ENDIF.
+
+  ENDLOOP.
+
+** LIMPAR PROCESSO
+  CLEAR: sy-ucomm, save_ok.
+
+ENDFORM.                    " F_AUTORIZACAO_1004
+*&---------------------------------------------------------------------*
+*&      Module  FILL_TABLE_CONTROL_1004  OUTPUT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+MODULE fill_table_control_1004 OUTPUT.
+
+  READ TABLE g_tc_1004_itab INTO zsmm_ztmmd_preco_sapr
+  INDEX tc_1004-current_line.
+
+ENDMODULE.                 " FILL_TABLE_CONTROL_1004  OUTPUT

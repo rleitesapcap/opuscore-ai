@@ -1,0 +1,32 @@
+{
+  "modo": "híbrido",
+  "chamadas": 1,
+  "cache": false,
+  "entrada_caracteres": 13393,
+  "modelo": "claude-haiku-4-5-20251001",
+  "custo": {
+    "chamadas": 1,
+    "tokens": {
+      "input": 4656,
+      "cache_read": 0,
+      "cache_creation": 0,
+      "output": 1710
+    },
+    "modelo": "claude-haiku-4-5-20251001",
+    "custo_estimado_usd": 0.013206,
+    "economia_cache_usd": 0.0,
+    "observacao": "estimativa pela tabela pública de preços; a fatura oficial é a do console"
+  },
+  "imagens": {
+    "modo": "esbocos",
+    "extraidas": 0,
+    "por_tipo": {
+      "ESBOCO": 0,
+      "ECC": 0,
+      "ILUSTRACAO": 0
+    },
+    "lidas": 0,
+    "do_cache": 0,
+    "erros": []
+  }
+}

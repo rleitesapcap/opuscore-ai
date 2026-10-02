@@ -1,0 +1,12 @@
+/* Design system — tokens (única fonte de cores, fontes e espaçamentos) */
+:root{
+  --bg:#05090c;
+  --text:#eaf4f4; --muted:#90a8b0; --faint:#5f757e;
+  --line:rgba(122,170,178,.14); --line2:rgba(80,224,190,.24);
+  --accent:#34e6bd; --accent2:#6d6bff;
+  --glow:rgba(52,230,189,.35); --glow2:rgba(109,107,255,.30);
+  --ok:#3fe08a; --warn:#ffcf5c; --down:#ff6b7a; --amber:#ffb347;
+  --glass:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,0)),rgba(13,21,26,.62);
+  --sans:"Space Grotesk",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}

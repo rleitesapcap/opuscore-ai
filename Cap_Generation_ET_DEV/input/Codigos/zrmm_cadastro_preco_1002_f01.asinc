@@ -1,0 +1,1304 @@
+
+
+
+ "*********************************************************************
+ " Capgemini - Brazil
+ "*********************************************************************
+ " Data Execução:   16/09/2026
+ " Autor:      Capgemini SAP
+ " Projeto:              MOVE2S4
+ "*********************************************************************
+
+
+
+*&---------------------------------------------------------------------*
+*&  Include           ZRMM_CADASTRO_PRECO_1002_F01
+*&---------------------------------------------------------------------*
+
+*----------------------------------------------------------------------*
+*   INCLUDE TABLECONTROL_FORMS                                         *
+*----------------------------------------------------------------------*
+
+*&---------------------------------------------------------------------*
+*&      Form  USER_OK_TC                                               *
+*&---------------------------------------------------------------------*
+ FORM user_ok_tc USING    p_tc_name TYPE dynfnam
+                          p_table_name
+                          p_mark_name
+                 CHANGING p_ok      LIKE sy-ucomm.
+
+*&SPWIZARD: BEGIN OF LOCAL DATA----------------------------------------*
+   DATA: l_ok     TYPE sy-ucomm,
+         l_offset TYPE i.
+*&SPWIZARD: END OF LOCAL DATA------------------------------------------*
+
+*&SPWIZARD: Table control specific operations                          *
+*&SPWIZARD: evaluate TC name and operations                            *
+   SEARCH p_ok FOR p_tc_name.
+   IF sy-subrc <> 0.
+     EXIT.
+   ENDIF.
+
+   l_offset = strlen( p_tc_name ) + 1.
+   l_ok = p_ok+l_offset.
+*&SPWIZARD: execute general and TC specific operations                 *
+   CASE l_ok.
+     WHEN 'INSR'.                      "insert row
+       PERFORM fcode_insert_row USING    p_tc_name
+                                         p_table_name.
+       CLEAR p_ok.
+
+     WHEN 'DELE'.                      "delete row
+       PERFORM fcode_delete_row USING    p_tc_name
+                                         p_table_name
+                                         p_mark_name.
+       CLEAR p_ok.
+
+     WHEN 'P--' OR                     "top of list
+          'P-'  OR                     "previous page
+          'P+'  OR                     "next page
+          'P++'.                       "bottom of list
+       PERFORM compute_scrolling_in_tc USING p_tc_name
+                                             l_ok.
+       CLEAR p_ok.
+*
+*
+*
+*
+     WHEN 'MARK'.                      "mark all filled lines
+       PERFORM fcode_tc_mark_lines USING p_tc_name
+                                         p_table_name
+                                         p_mark_name   .
+       CLEAR p_ok.
+
+     WHEN 'DMRK'.                      "demark all filled lines
+       PERFORM fcode_tc_demark_lines USING p_tc_name
+                                           p_table_name
+                                           p_mark_name .
+       CLEAR p_ok.
+
+*                                   l_ok.
+
+   ENDCASE.
+
+ ENDFORM.                              " USER_OK_TC
+
+*&---------------------------------------------------------------------*
+*&      Form  FCODE_INSERT_ROW                                         *
+*&---------------------------------------------------------------------*
+ FORM fcode_insert_row
+               USING    p_tc_name           TYPE dynfnam
+                        p_table_name             .
+
+*&SPWIZARD: BEGIN OF LOCAL DATA----------------------------------------*
+   DATA l_lines_name       TYPE feld-name.
+   DATA l_selline          LIKE sy-stepl.
+   DATA l_lastline         TYPE i.
+   DATA l_line             TYPE i.
+
+   DATA l_table_name       TYPE feld-name.
+
+   FIELD-SYMBOLS <tc>                 TYPE cxtab_control.
+   FIELD-SYMBOLS <table>              TYPE STANDARD TABLE.
+   FIELD-SYMBOLS <lines>              TYPE i.
+*&SPWIZARD: END OF LOCAL DATA------------------------------------------*
+
+   ASSIGN (p_tc_name) TO <tc>.
+
+*&SPWIZARD: get the table, which belongs to the tc                     *
+   CONCATENATE p_table_name '[]' INTO l_table_name. "table body
+   ASSIGN (l_table_name) TO <table>.                "not headerline
+
+*&SPWIZARD: get looplines of TableControl                              *
+   CONCATENATE 'G_' p_tc_name '_LINES' INTO l_lines_name.
+
+   ASSIGN (l_lines_name) TO <lines>.
+
+*&SPWIZARD: get current line                                           *
+   GET CURSOR LINE l_selline.
+   IF sy-subrc <> 0.                   " append line to table
+     l_selline = <tc>-lines + 1.
+*&SPWIZARD: set top line                                               *
+     IF l_selline > <lines>.
+       <tc>-top_line = l_selline - <lines> + 1 .
+     ELSE.
+       <tc>-top_line = 1.
+     ENDIF.
+   ELSE.                               " insert line into table
+     l_selline = <tc>-top_line + l_selline - 1.
+     l_lastline = <tc>-top_line + <lines> - 1.
+   ENDIF.
+*&SPWIZARD: set new cursor line                                        *
+   l_line = l_selline - <tc>-top_line + 1.
+
+*&SPWIZARD: insert initial line                                        *
+   INSERT INITIAL LINE INTO <table> INDEX l_selline.
+   <tc>-lines = <tc>-lines + 1.
+*&SPWIZARD: set cursor                                                 *
+   SET CURSOR LINE l_line.
+
+ ENDFORM.                              " FCODE_INSERT_ROW
+
+*&---------------------------------------------------------------------*
+*&      Form  FCODE_DELETE_ROW                                         *
+*&---------------------------------------------------------------------*
+ FORM fcode_delete_row
+               USING    p_tc_name           TYPE dynfnam
+                        p_table_name
+                        p_mark_name   .
+
+*&SPWIZARD: BEGIN OF LOCAL DATA----------------------------------------*
+
+   DATA l_table_name       TYPE string.
+
+   FIELD-SYMBOLS <tc>         TYPE cxtab_control.
+   FIELD-SYMBOLS <table>      TYPE STANDARD TABLE.
+   FIELD-SYMBOLS <wa>.
+   FIELD-SYMBOLS <mark_field>.
+*&SPWIZARD: END OF LOCAL DATA------------------------------------------*
+
+   ASSIGN (p_tc_name) TO <tc>.
+
+*&SPWIZARD: get the table, which belongs to the tc                     *
+   CONCATENATE p_table_name '[]' INTO l_table_name. "table body
+   ASSIGN (l_table_name) TO <table>.                "not headerline
+
+*&SPWIZARD: delete marked lines                                        *
+   DESCRIBE TABLE <table> LINES <tc>-lines.
+
+   LOOP AT <table> ASSIGNING <wa>.
+
+*&SPWIZARD: access to the component 'FLAG' of the table header         *
+     ASSIGN COMPONENT p_mark_name OF STRUCTURE <wa> TO <mark_field>.
+
+     IF <mark_field> = 'X'.
+
+       DELETE <table> INDEX sy-tabix.
+
+       IF sy-subrc = 0.
+         <tc>-lines = <tc>-lines - 1.
+       ENDIF.
+     ENDIF.
+   ENDLOOP.
+
+ ENDFORM.                              " FCODE_DELETE_ROW
+
+*&---------------------------------------------------------------------*
+*&      Form  COMPUTE_SCROLLING_IN_TC
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+*----------------------------------------------------------------------*
+ FORM compute_scrolling_in_tc USING    p_tc_name
+                                       p_ok.
+*&SPWIZARD: BEGIN OF LOCAL DATA----------------------------------------*
+   DATA l_tc_new_top_line     TYPE i.
+
+   DATA l_tc_name             TYPE feld-name.
+   DATA l_tc_lines_name       TYPE feld-name.
+   DATA l_tc_field_name       TYPE feld-name.
+
+
+   FIELD-SYMBOLS <tc>         TYPE cxtab_control.
+   FIELD-SYMBOLS <lines>      TYPE i.
+*&SPWIZARD: END OF LOCAL DATA------------------------------------------*
+
+   ASSIGN (p_tc_name) TO <tc>.
+*&SPWIZARD: get looplines of TableControl                              *
+   CONCATENATE 'G_' p_tc_name '_LINES' INTO l_tc_lines_name.
+   ASSIGN (l_tc_lines_name) TO <lines>.
+
+
+*&SPWIZARD: is no line filled?                                         *
+   IF <tc>-lines = 0.
+*&SPWIZARD: yes, ...                                                   *
+     l_tc_new_top_line = 1.
+   ELSE.
+*&SPWIZARD: no, ...                                                    *
+
+     CALL FUNCTION 'SCROLLING_IN_TABLE'
+       EXPORTING
+         entry_act      = <tc>-top_line
+         entry_from     = 1
+         entry_to       = <tc>-lines
+         last_page_full = 'X'
+         loops          = <lines>
+         ok_code        = p_ok
+         overlapping    = 'X'
+       IMPORTING
+         entry_new      = l_tc_new_top_line
+       EXCEPTIONS
+         OTHERS         = 0.
+
+   ENDIF.
+
+*&SPWIZARD: get actual tc and column                                   *
+   GET CURSOR FIELD l_tc_field_name
+              AREA  l_tc_name.
+
+   IF syst-subrc = 0.
+     IF l_tc_name = p_tc_name.
+*&SPWIZARD: et actual column                                           *
+       SET CURSOR FIELD l_tc_field_name LINE 1.
+     ENDIF.
+   ENDIF.
+
+*&SPWIZARD: set the new top line                                       *
+   <tc>-top_line = l_tc_new_top_line.
+
+
+ ENDFORM.                              " COMPUTE_SCROLLING_IN_TC
+
+*&---------------------------------------------------------------------*
+*&      Form  FCODE_TC_MARK_LINES
+*&---------------------------------------------------------------------*
+*       marks all TableControl lines
+*----------------------------------------------------------------------*
+*----------------------------------------------------------------------*
+ FORM fcode_tc_mark_lines USING p_tc_name
+                                p_table_name
+                                p_mark_name.
+*&SPWIZARD: EGIN OF LOCAL DATA-----------------------------------------*
+   DATA l_table_name       LIKE feld-name.
+
+   FIELD-SYMBOLS <tc>         TYPE cxtab_control.
+   FIELD-SYMBOLS <table>      TYPE STANDARD TABLE.
+   FIELD-SYMBOLS <wa>.
+   FIELD-SYMBOLS <mark_field>.
+*&SPWIZARD: END OF LOCAL DATA------------------------------------------*
+
+   ASSIGN (p_tc_name) TO <tc>.
+
+*&SPWIZARD: get the table, which belongs to the tc                     *
+   CONCATENATE p_table_name '[]' INTO l_table_name. "table body
+   ASSIGN (l_table_name) TO <table>.                "not headerline
+
+*&SPWIZARD: mark all filled lines                                      *
+   LOOP AT <table> ASSIGNING <wa>.
+
+*&SPWIZARD: access to the component 'FLAG' of the table header         *
+     ASSIGN COMPONENT p_mark_name OF STRUCTURE <wa> TO <mark_field>.
+
+     <mark_field> = 'X'.
+   ENDLOOP.
+ ENDFORM.                                          "fcode_tc_mark_lines
+
+*&---------------------------------------------------------------------*
+*&      Form  FCODE_TC_DEMARK_LINES
+*&---------------------------------------------------------------------*
+*       demarks all TableControl lines
+*----------------------------------------------------------------------*
+*----------------------------------------------------------------------*
+ FORM fcode_tc_demark_lines USING p_tc_name
+                                  p_table_name
+                                  p_mark_name .
+*&SPWIZARD: BEGIN OF LOCAL DATA----------------------------------------*
+   DATA l_table_name       LIKE feld-name.
+
+   FIELD-SYMBOLS <tc>         TYPE cxtab_control.
+   FIELD-SYMBOLS <table>      TYPE STANDARD TABLE.
+   FIELD-SYMBOLS <wa>.
+   FIELD-SYMBOLS <mark_field>.
+*&SPWIZARD: END OF LOCAL DATA------------------------------------------*
+
+   ASSIGN (p_tc_name) TO <tc>.
+
+*&SPWIZARD: get the table, which belongs to the tc                     *
+   CONCATENATE p_table_name '[]' INTO l_table_name. "table body
+   ASSIGN (l_table_name) TO <table>.                "not headerline
+
+*&SPWIZARD: demark all filled lines                                    *
+   LOOP AT <table> ASSIGNING <wa>.
+
+*&SPWIZARD: access to the component 'FLAG' of the table header         *
+     ASSIGN COMPONENT p_mark_name OF STRUCTURE <wa> TO <mark_field>.
+
+     <mark_field> = space.
+   ENDLOOP.
+ ENDFORM.                                          "fcode_tc_mark_lines
+*&---------------------------------------------------------------------*
+*&      Form  F_AUTORIZACAO_1002
+*&---------------------------------------------------------------------*
+ FORM f_autorizacao_1002 .
+
+   DATA: vl_tabix TYPE sy-tabix.
+
+   CLEAR: vl_botao.
+
+** VALIDAR OBJETO DE AUTORIZAÇÃO PARA AÇÕES
+   "VERIFICA AUTORIZAÇÃO PARA O TIPO DE PROCESSAMENTO
+** SE FOR DIFERENTE BLOQUEAR CAMPOS
+
+   IF lg_mm_008_006_uname-low NE sy-uname.
+
+* AUTORIZAÇÃO PARA TELA DE CADASTRO DE SUBSTITUTO
+* ATUALIZAR CADASTRO DE REGRAS DE APROVAÇÃO CUSTO
+     AUTHORITY-CHECK OBJECT c_zsd_prc_ra
+           ID c_actvt FIELD c_01
+           ID c_actvt FIELD c_todos.
+
+** SE NÃO ENCONTRAR NÃO HABILITA BOTÕES
+     IF sy-subrc NE 0.
+       vl_botao    = c_x. "SEM AUTORIZAÇÃO
+       vg_aut_1002 = c_x.
+
+     ENDIF.
+
+** SE ENTRAR NO USUÁRIO DO HARDCODE NÃO VERIFICA
+   ELSE.
+     CLEAR: vl_botao.
+
+   ENDIF.
+
+** HABITAR OU NÃO OS CAMPOS DE TELA
+   LOOP AT SCREEN INTO screen_wa.
+
+** HABITAR OU NÃO BOTÕES PARA PROCESSAR
+     IF screen_wa-group1 = 'AUT'.
+
+       CASE vl_botao.
+         WHEN ' '.
+           screen_wa-input = '1'.
+
+         WHEN c_x.
+           screen_wa-input = '0'.
+
+       ENDCASE.
+
+       MODIFY SCREEN FROM screen_wa.
+
+     ENDIF.
+
+   ENDLOOP.
+
+** VERIFICAR SE A TABELA É INICIAL
+** SE FOR DEIXAR OS CAMPOS FECHADOS
+** POIS O ADMINISTRADOR IRÁ INSERIR DADOS PELO BOTÃO
+   IF g_tc_1002_itab[] IS INITIAL AND
+      vl_botao IS INITIAL.
+
+     vl_botao    = c_x. "SEM AUTORIZAÇÃO
+
+   ENDIF.
+
+
+   LOOP AT tc_1002-cols INTO eg_screen_tc.
+
+     IF eg_screen_tc-screen-group1 = 'MOD'.
+
+       CLEAR vl_tabix.
+
+       vl_tabix = sy-tabix.
+
+       CASE vl_botao.
+
+         WHEN ' '.
+           eg_screen_tc-screen-input = '1'.
+
+
+         WHEN c_x.
+           eg_screen_tc-screen-input = '0'.
+
+       ENDCASE.
+
+** Modificar data
+       MODIFY tc_1002-cols FROM eg_screen_tc INDEX vl_tabix.
+
+     ENDIF.
+
+   ENDLOOP.
+
+** LIMPAR PROCESSO
+
+   CLEAR: sy-ucomm.
+   CLEAR: save_ok.
+
+ ENDFORM.                    " F_AUTORIZACAO_1002
+*&---------------------------------------------------------------------*
+*&      Form  F_USER_COMMAND_1002
+*&---------------------------------------------------------------------*
+ FORM f_user_command_1002 .
+
+   CASE save_ok.
+
+** EFETUAR MODIFICAÇÃO DOS DADOS EFETUADOS
+     WHEN 'MODF'.
+       PERFORM f_modifica_t002_tab.
+
+** INSERIR LINHA
+     WHEN 'INSR'.
+       PERFORM f_insert_t002_tab.
+
+** INSERIR LINHA
+     WHEN 'DELE'.
+       PERFORM f_delete_t002_tab.
+
+** PROCESSAR RELATORIO DE LOG HISTORICO DO REGISTRO
+     WHEN 'LOG'.
+       PERFORM f_log_t002_tab.
+
+** OUTROS PROCESSOS
+     WHEN OTHERS.
+
+   ENDCASE.
+
+ ENDFORM.                    " F_USER_COMMAND_1002
+*&---------------------------------------------------------------------*
+*&      Form  F_MODIFICA_T002_TAB
+*&---------------------------------------------------------------------*
+ FORM f_modifica_t002_tab .
+
+** PROCESSAR ATUALIZAÇÃO DOS DADOS
+   LOOP AT g_tc_1002_itab INTO g_tc_1002_wa.
+
+** VERIFICAR OS DADOS QUE FORAM MARCADOS COMO MODIFICADO
+** COM BASE NA SELEÇÃO INICIAL (HOUVE TROCA DE LDAP)
+     CASE g_tc_1002_wa-zzdocpr_acao.
+
+** VERIFICAR O TIPO DE PROCESSO
+       WHEN c_i. "INCLUSÃO
+         PERFORM f_tabela_1002_ins.
+
+       WHEN c_m. "MODIFICAR
+         PERFORM f_tabela_1002_mod.
+
+       WHEN c_d. "DELETAR
+         PERFORM f_tabela_1002_del.
+
+       WHEN OTHERS.
+
+
+     ENDCASE.
+
+   ENDLOOP.
+
+** ATUALIZAR TABELAS GERADAS
+   PERFORM f_atualizar_tabelas_1002.
+
+ ENDFORM.                    " F_MODIFICA_T002_TAB
+*&---------------------------------------------------------------------*
+*&      Form  F_LOG_T002_TAB
+*&---------------------------------------------------------------------*
+ FORM f_log_t002_tab .
+
+** POSICIONA ITEM PARA LOG
+   READ TABLE g_tc_1002_itab INTO g_tc_1002_wa
+                          WITH KEY mark = c_x.
+
+** SE ENCONTRAR PROCESSAR INFORMAÇÃO
+   IF sy-subrc EQ 0.
+
+** LIMPAR TABELA DE LOG
+     REFRESH: tg_raprp, tg_raprl.
+
+** SELECIONAR DADOS PARA PROCESSAR
+
+     SELECT * FROM ztmmd_prlog_rapr
+          INTO TABLE tg_raprl
+          WHERE zzdocpr_tipdoc EQ g_tc_1002_wa-zzdocpr_tipdoc.
+
+     IF sy-subrc EQ 0.
+
+** CHAMAR TELA PARA PROCESSAMENTO
+       CALL SCREEN 9000.
+
+     ELSE.
+       "DADOS DE LOG HISTÓRICO NÃO ENCONTRADOS, ANALISAR!!!
+       MESSAGE s899(mm) WITH TEXT-019 DISPLAY LIKE 'S'.
+       save_ok = c_enter.
+
+     ENDIF.
+
+
+   ELSE.
+** SE NÃO ENCONTRAR MOSTRAR HISTORICO GERAL
+
+** LIMPAR TABELA DE LOG
+     REFRESH: tg_raprp, tg_raprl.
+
+** SELECIONAR DADOS PARA PROCESSAR
+     SELECT * FROM ztmmd_prlog_rapr
+          INTO TABLE tg_raprl
+          FOR ALL ENTRIES IN tg_dd07v
+          WHERE zzdocpr_tipdoc EQ tg_dd07v-domvalue_l(3).
+
+     IF sy-subrc EQ 0.
+
+** CHAMAR TELA PARA PROCESSAMENTO
+       CALL SCREEN 9000.
+
+     ELSE.
+       "DADOS DE LOG HISTÓRICO NÃO ENCONTRADOS, ANALISAR!!!
+       MESSAGE s899(mm) WITH TEXT-019 DISPLAY LIKE 'S'.
+       save_ok = c_enter.
+
+     ENDIF.
+
+   ENDIF.
+
+   save_okpr = c_repr.
+
+ ENDFORM.                    " F_LOG_T002_TAB
+*&---------------------------------------------------------------------*
+*&      Form  F_PREENCHER_DADOS_1002
+*&---------------------------------------------------------------------*
+ FORM f_preencher_dados_1002 .
+
+   LOOP AT g_tc_1002_itab INTO g_tc_1002_wa.
+     CLEAR: vl_tabix.
+     vl_tabix = sy-tabix.
+
+     CLEAR: eg_dd07v.
+     READ TABLE tg_dd07v INTO eg_dd07v
+          WITH KEY ddlanguage = sy-langu
+                   domvalue_l = g_tc_1002_wa-zzdocpr_tipdoc.
+
+     IF sy-subrc EQ 0.
+       g_tc_1002_wa-zzdocpr_tiptxt = eg_dd07v-ddtext.
+
+** ATUALIZAR ESTRUTURA
+       MODIFY g_tc_1002_itab FROM g_tc_1002_wa INDEX vl_tabix.
+
+     ENDIF.
+
+   ENDLOOP.
+
+ ENDFORM.                    " F_PREENCHER_DADOS_1002
+*&---------------------------------------------------------------------*
+*&      Form  F_VALIDAR_DATAS_1002
+*&---------------------------------------------------------------------*
+ FORM f_validar_datas_1002 .
+
+   DATA: vl_dat30 TYPE sy-datum.
+
+** PREENCHER DATA LIMITE
+   CLEAR: vl_dat30.
+   vl_dat30 = sy-datum + 90.
+
+** VALIDAR SE FOI INFORMADO DATA DE INICIO
+   IF zsmm_ztmmd_preco_rapr-zzdocpr_tipdti IS INITIAL.
+     zsmm_ztmmd_preco_rapr-zzdocpr_tipdti = sy-datum + 1.
+
+   ELSEIF zsmm_ztmmd_preco_rapr-zzdocpr_tipdti LE sy-datum.
+     MESSAGE s899(mm) WITH TEXT-034 DISPLAY LIKE 'S'.
+     save_ok = c_enter.
+
+   ELSEIF zsmm_ztmmd_preco_rapr-zzdocpr_tipdti GE vl_dat30.
+     "DATA INICIO NÃO DEVE SER MAIOR QUE DATA DIA + 30 DIAS !!!
+     MESSAGE s899(mm) WITH TEXT-035 DISPLAY LIKE 'S'.
+     save_ok = c_enter.
+
+   ENDIF.
+
+** PREENCHER VALOR DEFAULT PARA DATA FIM
+   IF zsmm_ztmmd_preco_rapr-zzdocpr_tipdtf IS INITIAL.
+     zsmm_ztmmd_preco_rapr-zzdocpr_tipdtf = c_99991231.
+
+** VERIFICAR SE DATA FIM É MAIOR QUE DATA INICIO
+   ELSEIF zsmm_ztmmd_preco_rapr-zzdocpr_tipdtf LT
+          zsmm_ztmmd_preco_rapr-zzdocpr_tipdti.
+     "DATA FIM NÃO PODE SER MENOR QUE DATA INICIO !!!
+     MESSAGE s899(mm) WITH TEXT-036 DISPLAY LIKE 'S'.
+     save_ok = c_enter.
+
+   ENDIF.
+
+ ENDFORM.                    " F_VALIDAR_DATAS_1002
+*&---------------------------------------------------------------------*
+*&      Form  F_ATUALIZAR_TABELAS_1002
+*&---------------------------------------------------------------------*
+ FORM f_atualizar_tabelas_1002 .
+
+** ATUALIZAR DADOS NA TABELA TRANSPARENTE PRINCIPAÇ
+   IF tg_raprp_ins[] IS NOT INITIAL.
+
+     MODIFY ztmmd_preco_rapr FROM TABLE tg_raprp_ins.
+
+** ATUALIZAR DADOS
+     CALL FUNCTION 'BAPI_TRANSACTION_COMMIT'
+       EXPORTING
+         wait = 'X'.
+
+** LIMPAR DADOS DAS TABELAS PARA ATUALIZAÇÃO
+     CLEAR tg_raprp_ins.
+
+   ENDIF.
+
+** ATUALIZAR DADOS NA TABELA TRANSPARENTE PRINCIPAÇ
+   IF tg_raprp_mod[] IS NOT INITIAL.
+
+     MODIFY ztmmd_preco_rapr FROM TABLE tg_raprp_mod.
+
+** ATUALIZAR DADOS
+     CALL FUNCTION 'BAPI_TRANSACTION_COMMIT'
+       EXPORTING
+         wait = 'X'.
+
+** LIMPAR DADOS DAS TABELAS PARA ATUALIZAÇÃO
+     CLEAR tg_raprp_mod.
+
+   ENDIF.
+
+** ATUALIZAR DADOS NA TABELA TRANSPARENTE PRINCIPAÇ
+   IF tg_raprp_del[] IS NOT INITIAL.
+
+     DELETE ztmmd_preco_rapr FROM TABLE tg_raprp_del.
+
+** ATUALIZAR DADOS
+     CALL FUNCTION 'BAPI_TRANSACTION_COMMIT'
+       EXPORTING
+         wait = 'X'.
+
+** LIMPAR DADOS DAS TABELAS PARA ATUALIZAÇÃO
+     CLEAR tg_raprp_del.
+
+   ENDIF.
+
+** ATUALIZAR DADOS NA TABELA TRANSPARENTE PRINCIPAÇ
+   IF tg_raprl[] IS NOT INITIAL.
+
+     MODIFY ztmmd_prlog_rapr FROM TABLE tg_raprl.
+
+** ATUALIZAR DADOS
+     CALL FUNCTION 'BAPI_TRANSACTION_COMMIT'
+       EXPORTING
+         wait = 'X'.
+
+** LIMPAR DADOS DAS TABELAS PARA ATUALIZAÇÃO
+     CLEAR tg_raprl.
+
+   ENDIF.
+
+** LIMPAR CONTROLE PARA NOVA SELEÇÃO
+   CLEAR: g_tc_1002_copied.
+   save_okpr = c_repr.
+
+
+ ENDFORM.                    " F_ATUALIZAR_TABELAS_1002
+*&---------------------------------------------------------------------*
+*&      Form  F_TABELA_1002_INS
+*&---------------------------------------------------------------------*
+ FORM f_tabela_1002_ins .
+
+** PROCESSAR DADOS PARA TABELA PRINCIPAL
+   CLEAR: eg_raprp.
+   MOVE-CORRESPONDING g_tc_1002_wa TO eg_raprp.
+** ATUALIZAR COM A ULTIMA INFORMAÇÃO
+   eg_raprp-mandt          = sy-mandt.
+   eg_raprp-zzdocpr_mdatum = sy-datum.
+   eg_raprp-zzdocpr_muzeit = sy-uzeit.
+   eg_raprp-zzdocpr_muname = sy-uname.
+   APPEND eg_raprp TO tg_raprp_ins.
+
+** PROCESSAR DADOS PARA TABELA LOG
+** COM INFORMAÇÃO DA SELEÇÃO INICIAL SEM ALTERAÇÃO
+   CLEAR: eg_raprl.
+   MOVE-CORRESPONDING g_tc_1002_wa TO eg_raprl.
+   eg_raprl-mandt     = sy-mandt.
+   eg_raprl-zmd_logdt = sy-datum.
+   eg_raprl-zmd_loghr = sy-uzeit.
+   eg_raprl-zzdocpr_acao = c_i.
+   APPEND eg_raprl TO tg_raprl.
+
+ ENDFORM.                    " F_TABELA_1002_INS
+*&---------------------------------------------------------------------*
+*&      Form  F_TABELA_1002_MOD
+*&---------------------------------------------------------------------*
+ FORM f_tabela_1002_mod .
+
+** PROCESSAR DADOS PARA TABELA PRINCIPAL
+   CLEAR: eg_raprp.
+   MOVE-CORRESPONDING g_tc_1002_wa TO eg_raprp.
+** ATUALIZAR COM A ULTIMA INFORMAÇÃO
+   eg_raprp-mandt          = sy-mandt.
+   eg_raprp-zzdocpr_mdatum = sy-datum.
+   eg_raprp-zzdocpr_muzeit = sy-uzeit.
+   eg_raprp-zzdocpr_muname = sy-uname.
+   APPEND eg_raprp TO tg_raprp_mod.
+
+** PROCESSAR DADOS PARA TABELA LOG
+** COM INFORMAÇÃO DA SELEÇÃO INICIAL SEM ALTERAÇÃO
+   CLEAR: eg_raprl.
+   MOVE-CORRESPONDING g_tc_1002_wa TO eg_raprl.
+   eg_raprl-mandt     = sy-mandt.
+   eg_raprl-zmd_logdt = sy-datum.
+   eg_raprl-zmd_loghr = sy-uzeit.
+   eg_raprl-zzdocpr_acao = c_m.
+   APPEND eg_raprl TO tg_raprl.
+
+
+ ENDFORM.                    " F_TABELA_1002_MOD
+*&---------------------------------------------------------------------*
+*&      Form  F_TABELA_1002_DEL
+*&---------------------------------------------------------------------*
+ FORM f_tabela_1002_del .
+
+** PROCESSAR DADOS PARA TABELA PRINCIPAL
+   CLEAR: eg_raprp.
+   MOVE-CORRESPONDING g_tc_1002_wa TO eg_raprp.
+** ATUALIZAR COM A ULTIMA INFORMAÇÃO
+   eg_raprp-mandt          = sy-mandt.
+   eg_raprp-zzdocpr_mdatum = sy-datum.
+   eg_raprp-zzdocpr_muzeit = sy-uzeit.
+   eg_raprp-zzdocpr_muname = sy-uname.
+   APPEND eg_raprp TO tg_raprp_del.
+
+** PROCESSAR DADOS PARA TABELA LOG
+** COM INFORMAÇÃO DA SELEÇÃO INICIAL SEM ALTERAÇÃO
+   CLEAR: eg_raprl.
+   MOVE-CORRESPONDING g_tc_1002_wa TO eg_raprl.
+   eg_raprl-mandt     = sy-mandt.
+   eg_raprl-zmd_logdt = sy-datum.
+   eg_raprl-zmd_loghr = sy-uzeit.
+   eg_raprl-zzdocpr_acao = c_d.
+   APPEND eg_raprl TO tg_raprl.
+
+ ENDFORM.                    " F_TABELA_1002_DEL
+*&---------------------------------------------------------------------*
+*&      Form  F_INSERT_T002_TAB
+*&---------------------------------------------------------------------*
+ FORM f_insert_t002_tab .
+
+   DATA: tl_fields    TYPE STANDARD TABLE OF sval,
+         el_fields    TYPE sval,
+         vl_valida    TYPE c,
+         vl_text(50)  TYPE c,
+         vl_return(1) TYPE c,
+
+         vl_dtini     TYPE  recadatefrom,
+         vl_dtfim     TYPE  recadateto,
+         vl_cancel    TYPE  abap_bool.
+
+
+*** PERGUNTAR PARA ELIMINAR
+   CALL FUNCTION 'POPUP_TO_CONFIRM'
+     EXPORTING
+       titlebar              = TEXT-t16 "INCLUIR NOVA CONDIÇÃO !!!
+       text_question         = TEXT-t17 "CONFIRMAR INCLUSÃO NOVA LINHA ?
+       text_button_1         = c_sim
+       text_button_2         = c_nao
+       default_button        = c_1
+       display_cancel_button = c_x
+       start_column          = 10
+       start_row             = 2
+     IMPORTING
+       answer                = vg_answer
+     EXCEPTIONS
+       text_not_found        = 1
+       OTHERS                = 2.
+
+   "SE A RESPOSTA FOR 'SIM'
+   IF sy-subrc  EQ 0 AND vg_answer EQ c_1.
+
+*** INFORMAR VALOR CORRETO
+     CLEAR: el_fields.
+     el_fields-tabname = 'ZTMMD_PRECO_RAPR'.
+     el_fields-fieldname = 'ZZDOCPR_TIPDOC'.
+     APPEND el_fields TO tl_fields.
+     CALL FUNCTION 'POPUP_GET_VALUES'
+       EXPORTING
+         popup_title     = 'Tipo de Documento Negociação'
+         start_column    = '5'
+         start_row       = '5'
+       IMPORTING
+         returncode      = vl_return
+       TABLES
+         fields          = tl_fields
+       EXCEPTIONS
+         error_in_fields = 1
+         OTHERS          = 2.
+
+     IF sy-subrc EQ 0 AND
+        vl_return IS INITIAL. "CALL FUNCTION 'POPUP_GET_VALUES'
+
+** PROCESSAR DATA DE INICIO E FIM
+** MONTA PROPOSTA PARA DATA
+       CLEAR: vl_cancel.
+       vl_dtini = sy-datum + 1.
+       vl_dtfim = '99991230'.
+
+**** FUNÇÃO PARA INFORMAR A DATA DE INICIO
+       CALL FUNCTION 'RECA_GUI_GENERIC_POPUP_PERIOD'
+         EXPORTING
+           id_title    = 'VIGÊNCIA PARA CONDIÇÃO'
+         IMPORTING
+           ef_cancel   = vl_cancel
+         CHANGING
+           cd_datefrom = vl_dtini
+           cd_dateto   = vl_dtfim.
+
+       IF vl_cancel IS INITIAL.
+
+*** VALIDAR DATA INICIAL
+         IF sy-datum GT vl_dtini OR
+            vl_dtini IS INITIAL.
+           MESSAGE s899(mm) WITH TEXT-049 DISPLAY LIKE 'S'.
+
+         ENDIF.
+
+         IF vl_dtfim EQ '99991230'.
+           vl_dtfim = c_99991231.
+           MESSAGE s899(mm) WITH TEXT-047 DISPLAY LIKE 'S'.
+
+         ELSEIF vl_dtini GE vl_dtfim OR
+                vl_dtfim IS INITIAL.
+           MESSAGE s899(mm) WITH TEXT-048 DISPLAY LIKE 'S'.
+
+         ENDIF.
+
+** POSICIONAR DADOS PARA PROCESSAR
+         CLEAR: el_fields.
+         READ TABLE tl_fields INTO el_fields INDEX 1.
+
+** LIMPAR ESTRUTURA
+         CLEAR: g_tc_1002_wa,
+                g_tc_1002_old_wa.
+
+** ATUALIZAR DADOS FINAIS SE NÃO TEM ERRO
+         g_tc_1002_wa-zzdocpr_tipdoc   = el_fields-value.
+         g_tc_1002_wa-zzdocpr_tipdti   = vl_dtini.
+         g_tc_1002_wa-zzdocpr_tipdtf   = vl_dtfim.
+         g_tc_1002_wa-zzdocpr_mdatum   = sy-datum.
+         g_tc_1002_wa-zzdocpr_muzeit   = sy-uzeit.
+
+         g_tc_1002_wa-zzdocpr_muname   = sy-uname.
+         g_tc_1002_wa-zzdocpr_acao     = c_i.
+
+** VALIDAR SE EXISTE UMA CONDIÇÃO JÁ EXISTENTE
+         CLEAR: vl_valida.
+
+** PROCURAR POR NUMERO DOCUMENTO E DATA INICIO
+         CLEAR: g_tc_1002_wa_old.
+         READ TABLE g_tc_1002_itab INTO g_tc_1002_wa_old
+                 WITH KEY zzdocpr_tipdoc = g_tc_1002_wa-zzdocpr_tipdoc
+                          zzdocpr_tipdti = g_tc_1002_wa-zzdocpr_tipdti.
+
+         IF sy-subrc EQ 0.
+
+           IF g_tc_1002_wa_old-zzdocpr_tipdtf GE
+              g_tc_1002_wa-zzdocpr_tipdti.
+
+             vl_valida = c_x.
+
+           ENDIF.
+
+         ENDIF.
+
+
+** PROCURAR POR NUMERO DOCUMENTO E DATA FIM
+         CLEAR: g_tc_1002_wa_old.
+         READ TABLE g_tc_1002_itab INTO g_tc_1002_wa_old
+                 WITH KEY zzdocpr_tipdoc = g_tc_1002_wa-zzdocpr_tipdoc
+                          zzdocpr_tipdtf = g_tc_1002_wa-zzdocpr_tipdtf.
+
+         IF sy-subrc EQ 0.
+
+           IF g_tc_1002_wa_old-zzdocpr_tipdtf GE
+              g_tc_1002_wa-zzdocpr_tipdti.
+
+             vl_valida = c_x.
+
+           ENDIF.
+
+         ENDIF.
+
+
+** PROCURA POR NUMERO DE DOCUMENTO
+         CLEAR: g_tc_1002_wa_old.
+         READ TABLE g_tc_1002_itab INTO g_tc_1002_wa_old
+                 WITH KEY zzdocpr_tipdoc = g_tc_1002_wa-zzdocpr_tipdoc.
+
+         IF sy-subrc EQ 0.
+
+           IF g_tc_1002_wa_old-zzdocpr_tipdti GE
+              g_tc_1002_wa-zzdocpr_tipdtf.
+
+             vl_valida = c_x.
+
+           ENDIF.
+
+         ENDIF.
+
+** VERIFICA SE NÃO ENCONTROU
+         IF vl_valida EQ c_x. "POSICIONAR DADOS OLD
+
+           CLEAR: vl_text.
+           CONCATENATE TEXT-039
+                       g_tc_1002_wa-zzdocpr_tipdoc
+                       '-'
+                       g_tc_1002_wa-zzdocpr_tipdti
+                       '-'
+                       g_tc_1002_wa-zzdocpr_tipdtf
+                  INTO vl_text.
+
+           MESSAGE s899(mm) WITH vl_text DISPLAY LIKE 'S'.
+           save_ok = c_enter.
+           sy-ucomm = c_enter.
+
+         ELSE.
+** SE ENCONTRAR ATUALIZAR TABELA OLD
+           CLEAR: vl_tabix.
+           vl_tabix = sy-tabix.
+
+           APPEND g_tc_1002_wa TO g_tc_1002_itab.
+
+
+** ATUALIZAR NUMERO DE LINHAS NA TABLE CONTROL
+           DESCRIBE TABLE g_tc_1002_itab LINES tc_1002-lines.
+
+           save_ok  = c_enter.
+           sy-ucomm = c_enter.
+
+** LIMPAR ESTRUTURA
+           CLEAR: g_tc_1002_wa, g_tc_1002_old_wa.
+
+         ENDIF.
+
+       ELSE. "IF SY-SUBRC EQ 0. "CALL FUNCTION 'POPUP_GET_VALUES'
+         "Não informado Data de Inicio e Fim !!!
+         MESSAGE s899(mm) WITH TEXT-043 DISPLAY LIKE 'S'.
+         save_ok = c_enter.
+         sy-ucomm = c_enter.
+
+       ENDIF.
+
+     ELSE. "IF SY-SUBRC EQ 0. "CALL FUNCTION 'POPUP_GET_VALUES'
+       "Tipo de Documento Negociação não informado !!!
+       MESSAGE s899(mm) WITH TEXT-037 DISPLAY LIKE 'S'.
+       save_ok = c_enter.
+       sy-ucomm = c_enter.
+
+     ENDIF. "IF SY-SUBRC EQ 0. "CALL FUNCTION 'POPUP_GET_VALUES'
+
+** SE NÃO TIVER FLAG APRESENTAR MENSAGEM
+   ELSE.
+     "SELECIONAR O UM VALOR PARA FINALIZAR !!!
+     MESSAGE s899(mm) WITH TEXT-021 DISPLAY LIKE 'S'.
+     save_ok = c_enter.
+     sy-ucomm = c_enter.
+
+   ENDIF.
+
+   save_okpr = c_repr.
+
+ ENDFORM.                    " F_INSERT_T002_TAB
+*&---------------------------------------------------------------------*
+*&      Form  F_DELETE_T002_TAB
+*&---------------------------------------------------------------------*
+ FORM f_delete_t002_tab .
+
+   DATA: vl_tabix  TYPE sy-tabix,
+         vl_dtfim  TYPE sy-datum,
+         vl_text   TYPE c LENGTH 60,
+         vl_cancel TYPE abap_bool.
+
+** POSICIONA ITEM PARA LOG
+   CLEAR: g_tc_1002_wa.
+   READ TABLE g_tc_1002_itab INTO g_tc_1002_wa
+                          WITH KEY mark = c_x.
+
+** SE ENCONTRAR PROCESSAR INFORMAÇÃO
+   IF sy-subrc EQ 0.
+
+     CLEAR: vl_tabix.
+     vl_tabix = sy-tabix.
+
+** MONTAR TEXTO PARA POPUP
+     CLEAR: vl_text.
+     vl_text = |{ TEXT-t18 }{ g_tc_1002_wa-zzdocpr_tipdoc }-{ g_tc_1002_wa-zzdocpr_tiptxt }-{ g_tc_1002_wa-zzdocpr_tipdti }|.
+
+*** PERGUNTAR PARA ELIMINAR
+     CALL FUNCTION 'POPUP_TO_CONFIRM'
+       EXPORTING
+         titlebar              = TEXT-t13 "CONFIRMAR DELETAÇÃO DO DADO ABAIXO ?
+         text_question         = vl_text
+         text_button_1         = c_sim
+         text_button_2         = c_nao
+         default_button        = c_1
+         display_cancel_button = c_x
+         start_column          = 10
+         start_row             = 2
+       IMPORTING
+         answer                = vg_answer
+       EXCEPTIONS
+         text_not_found        = 1
+         OTHERS                = 2.
+
+     "SE A RESPOSTA FOR 'SIM'
+     IF sy-subrc  EQ 0 AND vg_answer EQ c_1.
+
+       CLEAR: vl_dtfim.
+
+       IF g_tc_1002_wa-zzdocpr_tipdti LE sy-datum.
+         vl_dtfim = sy-datum + 1.
+
+       ELSE.
+         vl_dtfim = g_tc_1002_wa-zzdocpr_tipdti.
+
+       ENDIF.
+
+       CALL FUNCTION 'RECA_GUI_GENERIC_POPUP_DATE'
+         EXPORTING
+           id_title   = 'DATA FINAL DA CONDIÇÃO!!!'
+         IMPORTING
+           ef_cancel  = vl_cancel
+         CHANGING
+           cd_keydate = vl_dtfim.
+
+       IF vl_cancel IS INITIAL.
+
+*** VALIDAR DATA INICIAL
+         IF g_tc_1002_wa-zzdocpr_tipdti GT
+            g_tc_1002_wa-zzdocpr_tipdtf OR
+            g_tc_1002_wa-zzdocpr_tipdtf IS INITIAL.
+           "DATA FIM NÃO PODE SER MENOR QUE DATA INICIO !!!
+           MESSAGE s899(mm) WITH TEXT-046 DISPLAY LIKE 'S'.
+           save_ok = c_enter.
+           CLEAR: sy-ucomm.
+
+         ELSE.
+
+** MOVE AÇÃO DE DELEÇÃO
+           g_tc_1002_wa-zzdocpr_tipdtf = vl_dtfim.
+
+
+           IF g_tc_1002_wa-zzdocpr_tipdtf GT sy-datum.
+             g_tc_1002_wa-zzdocpr_acao  = c_m.
+
+           ELSE.
+             g_tc_1002_wa-zzdocpr_acao  = c_d.
+
+           ENDIF.
+
+           MODIFY g_tc_1002_itab FROM g_tc_1002_wa INDEX vl_tabix.
+
+** ATUALIZAR NUMERO DE LINHAS NA TABLE CONTROL
+           DESCRIBE TABLE g_tc_1002_itab LINES tc_1002-lines.
+
+** PROCESSA DADOS COMO ENTER
+           save_ok = c_enter.
+           CLEAR: sy-ucomm.
+
+         ENDIF.
+
+       ELSE. "IF VL_CANCEL IS INITIAL.
+         "AÇÃO CANCELADA PELO USUÁRIO !!!
+         MESSAGE s899(mm) WITH TEXT-t11 DISPLAY LIKE 'S'.
+         save_ok = c_enter.
+         CLEAR: sy-ucomm.
+
+       ENDIF. "IF VL_CANCEL IS INITIAL.
+
+     ELSE.
+       "AÇÃO CANCELADA PELO USUÁRIO !!!
+       MESSAGE s899(mm) WITH TEXT-t11 DISPLAY LIKE 'S'.
+       save_ok = c_enter.
+       CLEAR: sy-ucomm.
+
+     ENDIF. "IF SY-SUBRC  EQ 0 AND VG_ANSWER EQ C_1.
+
+** SE NÃO TIVER FLAG APRESENTAR MENSAGEM
+   ELSE.
+     "SELECIONAR O UM VALOR PARA DELETAR !!!
+     MESSAGE s899(mm) WITH TEXT-021 DISPLAY LIKE 'S'.
+     save_ok = c_enter.
+     CLEAR: sy-ucomm.
+
+   ENDIF.
+
+   save_okpr = c_repr.
+
+ ENDFORM.                    " F_DELETE_T002_TAB
+*&---------------------------------------------------------------------*
+*&      Form  F_SELECIONA_OLD_V1
+*&---------------------------------------------------------------------*
+ FORM f_seleciona_old_v1  CHANGING vl_tabix.
+
+** VALIDAR DATAS
+   PERFORM f_valida_data_1002.
+
+** VALIDAR VALORES
+   PERFORM f_valida_valores_1002.
+
+ ENDFORM.                    " F_SELECIONA_OLD_V1
+*&---------------------------------------------------------------------*
+*&      Form  F_SELECIONA_OLD_V2
+*&---------------------------------------------------------------------*
+ FORM f_seleciona_old_v2  CHANGING vl_tabix.
+
+** VALIDAR DATAS
+   PERFORM f_valida_data_1002.
+
+** VALIDAR VALORES
+   PERFORM f_valida_valores_1002.
+
+ ENDFORM.                    " F_SELECIONA_OLD_V2
+*&---------------------------------------------------------------------*
+*&      Form  F_SELECIONA_OLD_V3
+*&---------------------------------------------------------------------*
+ FORM f_seleciona_old_v3  CHANGING p_vl_tabix.
+
+** VALIDAR DATAS
+   PERFORM f_valida_data_1002.
+
+** VALIDAR VALORES
+   PERFORM f_valida_valores_1002.
+
+
+ ENDFORM.                    " F_SELECIONA_OLD_V3
+*&---------------------------------------------------------------------*
+*&      Form  F_SELECIONA_OLD_V4
+*&---------------------------------------------------------------------*
+ FORM f_seleciona_old_v4  CHANGING p_vl_tabix.
+
+** VERIFICAR SE TIPO DE DOCUMENTO FOI ESCOLHIDO
+   IF zsmm_ztmmd_preco_rapr-zzdocpr_tipdoc IS INITIAL.
+
+** VERIFICA SE FOI PREENCHIDO ALGUM VALOR
+     IF zsmm_ztmmd_preco_rapr-zzdocpr_tipdti IS NOT INITIAL OR
+        zsmm_ztmmd_preco_rapr-zzdocpr_tipdtf IS NOT INITIAL OR
+        zsmm_ztmmd_preco_rapr-zzdocpr_progr1 IS NOT INITIAL OR
+        zsmm_ztmmd_preco_rapr-zzdocpr_ssobct IS NOT INITIAL.
+
+** LIMPA ESTRUTURA COMPLETA
+       CLEAR zsmm_ztmmd_preco_rapr.
+
+       "Necesário informar primeiro Tipo Documento !!!
+       MESSAGE e899(mm) WITH TEXT-033 DISPLAY LIKE 'E'.
+       save_ok = c_enter.
+
+     ENDIF.
+
+   ELSE. "** VERIFICAR SE TIPO DE DOCUMENTO FOI ESCOLHIDO
+
+     PERFORM f_validar_datas_1002.
+
+** LIMPAR ESTRUTURA
+
+     CLEAR: g_tc_1002_wa, g_tc_1002_old_wa.
+
+** ATUALIZAR DADOS FINAIS SE NÃO TEM ERRO
+     zsmm_ztmmd_preco_rapr-zzdocpr_mdatum   = sy-datum.
+     zsmm_ztmmd_preco_rapr-zzdocpr_muzeit   = sy-uzeit.
+     zsmm_ztmmd_preco_rapr-zzdocpr_muname   = sy-uname.
+     zsmm_ztmmd_preco_rapr-zzdocpr_acao     = c_i.
+
+     g_tc_1002_wa = CORRESPONDING #( zsmm_ztmmd_preco_rapr ).
+
+     APPEND g_tc_1002_wa TO g_tc_1002_itab.
+
+** MOVE DADOS PARA ESTRUTURA OLD PARA COMPOSIÇÃO
+     g_tc_1002_old_wa = CORRESPONDING #( zsmm_ztmmd_preco_rapr ).
+     g_tc_1002_old_wa-mandt = sy-mandt.
+     APPEND g_tc_1002_old_wa TO g_tc_1002_old.
+
+   ENDIF. "** VERIFICAR SE TIPO DE DOCUMENTO FOI ESCOLHIDO
+
+
+ ENDFORM.                    " F_SELECIONA_OLD_V4
+*&---------------------------------------------------------------------*
+*&      Form  F_ATUALIZA_DADOS_1002
+*&---------------------------------------------------------------------*
+ FORM f_atualiza_dados_1002 .
+
+** VERIFICAR SE FOI ALTERADO VALORES
+   IF vg_modif EQ c_x.
+
+** VERIFICAR PARA MANTER CLASSIFICAÇÃO INICIAL DO REGISTRO
+     IF g_tc_1002_wa-zzdocpr_acao IS INITIAL.
+       zsmm_ztmmd_preco_rapr-zzdocpr_acao = c_m.
+
+     ELSE.
+       zsmm_ztmmd_preco_rapr-zzdocpr_acao = g_tc_1002_wa-zzdocpr_acao.
+
+     ENDIF.
+
+** MOVER VALORES DA TELA PARA TABELA INTERNA
+
+** VALIDAR DATAS DE PROCESSAMENTO
+
+** MODIFICAR ESTRUTURA
+     MODIFY g_tc_1002_itab FROM g_tc_1002_wa INDEX tc_1002-current_line.
+
+
+   ELSE.
+** NESSA OPÇÃO TRATAR APENAS A SELEÇÃO DE VALORES
+     IF zsmm_ztmmd_preco_rapr-mark EQ c_x.
+
+       g_tc_1002_wa-mark = zsmm_ztmmd_preco_rapr-mark.
+
+     ELSE.
+
+       CLEAR: g_tc_1002_wa-mark.
+
+     ENDIF.
+** MODIFICAR ESTRUTURA
+     MODIFY g_tc_1002_itab FROM g_tc_1002_wa INDEX tc_1002-current_line.
+
+   ENDIF. "IF VL_MODIF EQ C_X.
+
+ ENDFORM.                    " F_ATUALIZA_DADOS_1002
+*&---------------------------------------------------------------------*
+*&      Form  F_VALIDA_DATA_1002
+*&---------------------------------------------------------------------*
+ FORM f_valida_data_1002 .
+
+** VERIFICAR SE O REGISTRO É INCLUSÃO
+   IF g_tc_1002_wa-zzdocpr_acao NE c_i. "INCLUSÃO
+
+** VERIFICAR SE TEVE ALTERAÇÃO DE DATA INICIO
+** VERIFICA SE DATA INFORMADA É MENOR QUE DATA HISTORICO
+     IF zsmm_ztmmd_preco_rapr-zzdocpr_tipdti NE
+         g_tc_1002_old_wa-zzdocpr_tipdti.
+
+       zsmm_ztmmd_preco_rapr-zzdocpr_tipdti = g_tc_1002_old_wa-zzdocpr_tipdti.
+       "Data Inicio não pode ser alterada !!!
+       MESSAGE e899(mm) WITH TEXT-040 DISPLAY LIKE 'E'.
+       save_ok = c_enter.
+
+     ENDIF.
+
+     IF g_tc_1002_wa-zzdocpr_acao NE c_d AND "DELEÇÃO
+        g_tc_1002_wa-zzdocpr_acao NE c_m.
+** VERIFICAR SE TEVE ALTERAÇÃO DE DATA FIM
+       IF zsmm_ztmmd_preco_rapr-zzdocpr_tipdtf NE
+           g_tc_1002_old_wa-zzdocpr_tipdtf.
+
+         zsmm_ztmmd_preco_rapr-zzdocpr_tipdti = g_tc_1002_old_wa-zzdocpr_tipdti.
+         "Data Inicio não pode ser alterada !!!
+         MESSAGE e899(mm) WITH TEXT-041 DISPLAY LIKE 'E'.
+         save_ok = c_enter.
+
+       ENDIF.
+
+     ENDIF. "  IF G_TC_1002_WA-ZZDOCPR_ACAO NE C_D. "DELEÇÃO
+
+   ENDIF. "IF G_TC_1002_WA-ZZDOCPR_ACAO NE C_I. "INCLUSÃO
+
+ ENDFORM.                    " F_VALIDA_DATA_1002
+*&---------------------------------------------------------------------*
+*&      Form  F_VALIDA_VALORES_1002
+*&---------------------------------------------------------------------*
+ FORM f_valida_valores_1002 .
+
+** VERIFICAR VALOR ZZDOCPR_PROGR1
+   IF zsmm_ztmmd_preco_rapr-zzdocpr_progr1 NE
+      g_tc_1002_old_wa-zzdocpr_progr1.
+
+     g_tc_1002_wa-zzdocpr_progr1 = zsmm_ztmmd_preco_rapr-zzdocpr_progr1.
+
+     vg_modif = c_x.
+
+   ENDIF. "VERIFICAR VALOR ZZDOCPR_PROGR1
+
+** VERIFICAR VALOR ZZDOCPR_SSOBCT
+   IF zsmm_ztmmd_preco_rapr-zzdocpr_ssobct NE
+      g_tc_1002_old_wa-zzdocpr_ssobct.
+
+     g_tc_1002_wa-zzdocpr_ssobct = zsmm_ztmmd_preco_rapr-zzdocpr_ssobct.
+
+     vg_modif = c_x.
+
+   ENDIF. "VERIFICAR VALOR ZZDOCPR_PROGR1
+
+ ENDFORM.                    " F_VALIDA_VALORES_1002

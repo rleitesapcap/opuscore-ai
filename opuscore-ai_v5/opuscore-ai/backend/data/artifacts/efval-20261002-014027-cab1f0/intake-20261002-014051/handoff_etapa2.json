@@ -1,0 +1,432 @@
+{
+  "etapa_origem": 1,
+  "gerado_em": "2026-10-02T01:40:51.962273+00:00",
+  "executavel_para_etapa2": true,
+  "pacote": "021-Pacote-Entrada-Descoberta-SAP-v4.md",
+  "relatorio_pendencias": null,
+  "ef": {
+    "id": "021",
+    "arquivo": "LEROY_REL_FI-021_Template Especifica_o Funcional_RemSimp_23092026_V04.docx",
+    "versao": "V4",
+    "estado": "RASCUNHO"
+  },
+  "anexos_autorizados": [],
+  "gate": {
+    "status": "VALIDO_COM_RESSALVAS",
+    "justificativa": [
+      "Nenhum bloqueio definitivo identificado pelas regras.",
+      "5 ressalva(s) devem ser tratadas na Etapa 2 ou com o funcional."
+    ],
+    "bloqueantes": [],
+    "bloqueios_a_confirmar": []
+  },
+  "referencias_tecnicas": [
+    {
+      "id": "D117",
+      "valor_original": "BAPI_ACC_DOCUMENT_POST",
+      "valor_normalizado": null,
+      "tipo": "OUTRO",
+      "sistema": null,
+      "escopo": "INCLUIDO",
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S01",
+        "localizacao": [
+          "T1.r0"
+        ]
+      }
+    },
+    {
+      "id": "D118",
+      "valor_original": "CL_NFE_PRINT",
+      "valor_normalizado": null,
+      "tipo": "BADI",
+      "sistema": null,
+      "escopo": "INDEFINIDO",
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S01",
+        "localizacao": [
+          "T1.r0"
+        ]
+      }
+    },
+    {
+      "id": "D119",
+      "valor_original": "NSACAO_RXC",
+      "valor_normalizado": null,
+      "tipo": "OUTRO",
+      "sistema": null,
+      "escopo": "INDEFINIDO",
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S14",
+        "localizacao": [
+          "T6.r1"
+        ]
+      }
+    },
+    {
+      "id": "D120",
+      "valor_original": "POSTING_INTERFACE_CLEARING",
+      "valor_normalizado": null,
+      "tipo": "OUTRO",
+      "sistema": null,
+      "escopo": "INDEFINIDO",
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S01",
+        "localizacao": [
+          "T1.r0"
+        ]
+      }
+    },
+    {
+      "id": "D121",
+      "valor_original": "POSTING_INTERFACE_END",
+      "valor_normalizado": null,
+      "tipo": "OUTRO",
+      "sistema": null,
+      "escopo": "INDEFINIDO",
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S01",
+        "localizacao": [
+          "T1.r0"
+        ]
+      }
+    },
+    {
+      "id": "D122",
+      "valor_original": "POSTING_INTERFACE_START",
+      "valor_normalizado": null,
+      "tipo": "OUTRO",
+      "sistema": null,
+      "escopo": "INDEFINIDO",
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S01",
+        "localizacao": [
+          "T1.r0"
+        ]
+      }
+    },
+    {
+      "id": "D123",
+      "valor_original": "SCFD_REGISTRY",
+      "valor_normalizado": null,
+      "tipo": "OUTRO",
+      "sistema": null,
+      "escopo": "INDEFINIDO",
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S12",
+        "localizacao": [
+          "T4.r7"
+        ]
+      }
+    },
+    {
+      "id": "D124",
+      "valor_original": "ZAP0069",
+      "valor_normalizado": null,
+      "tipo": "TRANSACAO",
+      "sistema": null,
+      "escopo": "INCLUIDO",
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S01",
+        "localizacao": [
+          "T1.r0"
+        ]
+      }
+    },
+    {
+      "id": "D125",
+      "valor_original": "ZFSD_CONSULTA_CLIENTE",
+      "valor_normalizado": null,
+      "tipo": "OUTRO",
+      "sistema": null,
+      "escopo": "INDEFINIDO",
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S08",
+        "localizacao": [
+          "P116"
+        ]
+      }
+    },
+    {
+      "id": "D126",
+      "valor_original": "ZFSD_CRIAR_IDOC_CLIENTE",
+      "valor_normalizado": null,
+      "tipo": "OUTRO",
+      "sistema": null,
+      "escopo": "INDEFINIDO",
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S08",
+        "localizacao": [
+          "P116"
+        ]
+      }
+    },
+    {
+      "id": "D127",
+      "valor_original": "ZFSD_CRIAR_IDOC_OV",
+      "valor_normalizado": null,
+      "tipo": "OUTRO",
+      "sistema": null,
+      "escopo": "INDEFINIDO",
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S08",
+        "localizacao": [
+          "P116"
+        ]
+      }
+    },
+    {
+      "id": "D128",
+      "valor_original": "ZFSD_ITF_BKF_ORDEM_VENDA_TRANS",
+      "valor_normalizado": null,
+      "tipo": "OUTRO",
+      "sistema": null,
+      "escopo": "INDEFINIDO",
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S08",
+        "localizacao": [
+          "P114"
+        ]
+      }
+    },
+    {
+      "id": "D129",
+      "valor_original": "ZRFI_MKTPLACE_COMPE",
+      "valor_normalizado": null,
+      "tipo": "OUTRO",
+      "sistema": null,
+      "escopo": "INDEFINIDO",
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S14",
+        "localizacao": [
+          "T6.r1"
+        ]
+      }
+    },
+    {
+      "id": "D130",
+      "valor_original": "ZRFI_MKTPLACE_COMPENSACAO_RXC",
+      "valor_normalizado": null,
+      "tipo": "PROGRAMA",
+      "sistema": null,
+      "escopo": "INCLUIDO",
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S01",
+        "localizacao": [
+          "T1.r0"
+        ]
+      }
+    },
+    {
+      "id": "D131",
+      "valor_original": "ZTFID_MKTPL_LG",
+      "valor_normalizado": null,
+      "tipo": "TABELA",
+      "sistema": null,
+      "escopo": "INCLUIDO",
+      "classificacao": "FATO_DA_EF",
+      "confianca": "ALTA",
+      "fonte": {
+        "secao": "S04",
+        "localizacao": [
+          "P046"
+        ]
+      }
+    },
+    {
+      "id": "AUTO001",
+      "valor_original": "ZTD_LMB_PARAMETROS",
+      "valor_normalizado": null,
+      "tipo": "OUTRO",
+      "sistema": null,
+      "escopo": "INDEFINIDO",
+      "classificacao": "PONTO_A_CONFIRMAR",
+      "confianca": "BAIXA",
+      "fonte": {
+        "secao": "S10",
+        "localizacao": [
+          "T3.r2"
+        ]
+      }
+    },
+    {
+      "id": "AUTO002",
+      "valor_original": "ZTXXC_PARA_1",
+      "valor_normalizado": null,
+      "tipo": "OUTRO",
+      "sistema": null,
+      "escopo": "INDEFINIDO",
+      "classificacao": "PONTO_A_CONFIRMAR",
+      "confianca": "BAIXA",
+      "fonte": {
+        "secao": "S10",
+        "localizacao": [
+          "T3.r2"
+        ]
+      }
+    },
+    {
+      "id": "AUTO003",
+      "valor_original": "ZTXXC_PARA_2",
+      "valor_normalizado": null,
+      "tipo": "OUTRO",
+      "sistema": null,
+      "escopo": "INDEFINIDO",
+      "classificacao": "PONTO_A_CONFIRMAR",
+      "confianca": "BAIXA",
+      "fonte": {
+        "secao": "S10",
+        "localizacao": [
+          "T3.r2"
+        ]
+      }
+    }
+  ],
+  "ancoras_funcionais": [],
+  "componentes": [
+    {
+      "id": "D086",
+      "descricao": "BAdI CL_NFE_PRINT — Enhancement",
+      "natureza": "REMEDIACAO",
+      "objeto_origem": "BAdI CL_NFE_PRINT",
+      "ancora": null
+    }
+  ],
+  "plano_verificacoes": [
+    {
+      "id": "V01",
+      "objetivo": "Ler a estrutura DDIC (somente leitura)",
+      "alvos": [
+        "D131"
+      ],
+      "tipo": "estrutura DDIC",
+      "prioridade": "ALTA"
+    },
+    {
+      "id": "V02",
+      "objetivo": "Listar implementações ativas da BAdI",
+      "alvos": [
+        "D118"
+      ],
+      "tipo": "existência de objeto",
+      "prioridade": "MEDIA"
+    },
+    {
+      "id": "V03",
+      "objetivo": "Confirmar a transação e o programa/objeto associado",
+      "alvos": [
+        "D124"
+      ],
+      "tipo": "existência de objeto",
+      "prioridade": "ALTA"
+    },
+    {
+      "id": "V04",
+      "objetivo": "Identificar o tipo do objeto no repositório",
+      "alvos": [
+        "D117",
+        "D119",
+        "D120",
+        "D121",
+        "D122",
+        "D123",
+        "D125",
+        "D126",
+        "D127",
+        "D128",
+        "D129"
+      ],
+      "tipo": "identificação",
+      "prioridade": "ALTA"
+    },
+    {
+      "id": "V05",
+      "objetivo": "Ler o código-fonte e localizar os controles citados",
+      "alvos": [
+        "D130"
+      ],
+      "tipo": "leitura de código",
+      "prioridade": "ALTA"
+    }
+  ],
+  "pontos_a_confirmar_nao_bloqueantes": [
+    {
+      "id": "A001",
+      "descricao": "Momento exato de disparo da BAdI e sequência de execução dos function modules não está claro quanto ao tratamento de transações SAP (commit/rollback). Não fica explícito se cada FM é uma transação isolada ou se há uma transação englobante.",
+      "fonte": [
+        "P059",
+        "P060",
+        "P061",
+        "P062"
+      ]
+    },
+    {
+      "id": "A003",
+      "descricao": "Não há detalhamento sobre o comportamento quando a POSTING_INTERFACE_CLEARING falha parcialmente (ex.: compensa parte da fatura). Fica apenas indicado que em caso de erro, a BAPI não executa, mas não há definição de rollback ou compensação de erros.",
+      "fonte": [
+        "P071"
+      ]
+    },
+    {
+      "id": "A005",
+      "descricao": "Não há especificação sobre cenários de reprocessamento: se uma nota fiscal retorna status 100 após ter sido rejeitada, ou se passa de status 100 para outro, como a BAdI deve se comportar. Risco de duplicação de registros.",
+      "fonte": [
+        "P096"
+      ]
+    },
+    {
+      "id": "AUTO001",
+      "descricao": "Identificador técnico presente na EF e não extraído pela IA.",
+      "fonte": [
+        "T3.r2"
+      ]
+    },
+    {
+      "id": "AUTO002",
+      "descricao": "Identificador técnico presente na EF e não extraído pela IA.",
+      "fonte": [
+        "T3.r2"
+      ]
+    },
+    {
+      "id": "AUTO003",
+      "descricao": "Identificador técnico presente na EF e não extraído pela IA.",
+      "fonte": [
+        "T3.r2"
+      ]
+    }
+  ],
+  "politica_sensibilidade": {
+    "contem_dados_sensiveis": false,
+    "localizacoes": [],
+    "regra": "Valores sensíveis não são reproduzidos no pacote. A Etapa 2 não deve copiar dados pessoais ou credenciais para prompts, logs ou entregáveis."
+  }
+}

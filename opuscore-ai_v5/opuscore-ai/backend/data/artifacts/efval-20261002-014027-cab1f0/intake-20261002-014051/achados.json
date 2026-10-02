@@ -1,0 +1,9 @@
+[
+  {
+    "codigo": "REF_NAO_EXTRAIDA",
+    "severidade": "RESSALVA",
+    "mensagem": "3 identificador(es) técnico(s) presentes na EF não foram extraídos pela IA e foram incluídos automaticamente como PONTO_A_CONFIRMAR (escopo a confirmar): ZTD_LMB_PARAMETROS, ZTXXC_PARA_1, ZTXXC_PARA_2.",
+    "item_id": "",
+    "localizacao": []
+  }
+]

@@ -1,0 +1,19 @@
+[project]
+name = "opuscore-consultor-funcional-mm"
+version = "1.0.0"
+description = "OPUSCORE-AI — Consultor Funcional MM: Analisar configuração, Gerar EF, Validar EF, Regras"
+requires-python = ">=3.11"
+dependencies = ["opuscore-core>=1.0", "opuscore-ef>=1.0", "fastapi>=0.115"]
+
+[project.entry-points."opuscore.consultores"]
+funcional-mm = "opuscore_mm.plugin:PLUGIN"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["opuscore_mm*"]
+
+[tool.setuptools.package-data]
+opuscore_mm = ["web/*", "conhecimento/*.md"]

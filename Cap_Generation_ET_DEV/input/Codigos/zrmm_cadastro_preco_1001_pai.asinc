@@ -1,0 +1,589 @@
+
+"*********************************************************************
+" Capgemini - Brazil
+"*********************************************************************
+" Data Execução: 	16/09/2026
+" Autor:      Capgemini SAP
+" Projeto:              MOVE2S4
+"*********************************************************************
+
+
+*&---------------------------------------------------------------------*
+*&  Include           ZRMM_CADASTRO_PRECO_1001_PAI
+*&---------------------------------------------------------------------*
+
+*&---------------------------------------------------------------------*
+*&      MODULE  F_TIPO_PROCESSO_1001  INPUT
+*&---------------------------------------------------------------------*
+*       TEXT
+*----------------------------------------------------------------------*
+MODULE f_tipo_processo_1001 INPUT.
+
+** PROCESSAR DADOS
+  PERFORM f_processo_tela.
+
+ENDMODULE.                 " F_TIPO_PROCESSO_1001  INPUT
+
+*&---------------------------------------------------------------------*
+*&      MODULE  VERIFICAR_DADOS_LT  INPUT
+*&---------------------------------------------------------------------*
+MODULE verificar_dados_lt INPUT.
+
+** MOVER VALORES PARA ESTRUTURA
+  MOVE-CORRESPONDING ztmmc_stat_preco TO eg_bloq.
+
+** PROCESSAR SOMENTE A VERIFICAÇÃO NO PROCESSO DE SALVE
+  IF save_ok EQ c_salve.
+
+** VERIFICA SE O VALOR DO CAMPO PREENCHIDO
+    IF eg_bloq-bloqueio IS NOT INITIAL.
+      IF eg_bloq-bloqueio NE 'X'.
+        "PERMITO SOMENTE O VALOR X !!!!
+        MESSAGE s899(mm) WITH TEXT-007 DISPLAY LIKE 'S'.
+        save_ok = c_enter.
+        RETURN.
+      ENDIF.
+    ENDIF.
+
+
+** VERIFICA SE O VALOR DO CAMPO PREENCHIDO
+    IF eg_bloq-zmonitor IS NOT INITIAL.
+      IF eg_bloq-zmonitor NE 'X'.
+        "PERMITO SOMENTE O VALOR X !!!!
+        MESSAGE s899(mm) WITH TEXT-007 DISPLAY LIKE 'S'.
+        save_ok = c_enter.
+        RETURN.
+      ENDIF.
+    ENDIF.
+
+
+
+** VERIFICA SE O VALOR DO CAMPO PREENCHIDO
+    IF eg_bloq-repassa IS NOT INITIAL.
+      IF eg_bloq-repassa NE 'X'.
+        "PERMITO SOMENTE O VALOR X !!!!
+        MESSAGE s899(mm) WITH TEXT-007 DISPLAY LIKE 'S'.
+        save_ok = c_enter.
+        RETURN.
+      ENDIF.
+    ENDIF.
+
+** VERIFICA SE O VALOR DO CAMPO PREENCHIDO
+    IF eg_bloq-vlmg IS NOT INITIAL.
+      IF eg_bloq-vlmg LT '0.00'.
+        "PERMITO SOMENTE O VALOR POSITIVO !!!
+        MESSAGE s899(mm) WITH TEXT-008 DISPLAY LIKE 'S'.
+        save_ok = c_enter.
+        RETURN.
+      ENDIF.
+    ENDIF.
+
+** VERIFICA SE O VALOR DO CAMPO PREENCHIDO
+    IF eg_bloq-vlmg IS NOT INITIAL.
+      IF eg_bloq-vlpr LT '0.00'.
+        "PERMITO SOMENTE O VALOR POSITIVO !!!
+        MESSAGE s899(mm) WITH TEXT-008 DISPLAY LIKE 'S'.
+        save_ok = c_enter.
+        RETURN.
+      ENDIF.
+    ENDIF.
+
+  ENDIF. "IF SAVE_OK EQ C_SALVE.
+
+ENDMODULE.                 " VERIFICAR_DADOS_LT  INPUT
+
+*&---------------------------------------------------------------------*
+*&      MODULE  VERIFICAR_DADOS_VKP5  INPUT
+*&---------------------------------------------------------------------*
+MODULE verificar_dados_vkp5 INPUT.
+
+*---------------------------------------------------------------------*
+* DECLARAÇÃO: LOCAL
+*---------------------------------------------------------------------*
+  DATA: vl_ident TYPE tfacd-ident,
+        vl_bname TYPE usr21-bname.
+
+** MOVER VALORES PARA ESTRUTURA
+  eg_bloq = CORRESPONDING #( ztmmc_stat_preco ).
+
+** PROCESSAR SOMENTE NO CASO DE MODIFICAÇÃO
+  IF save_ok EQ c_salve.
+
+** VERIFICAR CALENDÁRIO
+    IF eg_bloq-ident IS NOT INITIAL. ""CALENDÁRIO DE FÁBRICA
+      CLEAR: vl_ident.
+
+      SELECT SINGLE ident
+        INTO vl_ident
+        FROM tfacd
+        WHERE ident EQ eg_bloq-ident.
+
+      IF sy-subrc NE 0.
+        "CALENDÁRIO INFORMADO NÃO EXISTE!!!
+        MESSAGE s899(mm) WITH TEXT-010 DISPLAY LIKE 'S'.
+        save_ok = c_enter.
+        RETURN.
+      ENDIF.
+    ELSE.
+      IF eg_bloq-zvdt_vdt IS INITIAL AND "VERIFICAÇÃO DE CALENDÁRIO PREÇO
+         eg_bloq-ident IS NOT INITIAL.   "CALENDÁRIO DE FÁBRICA
+        "FLAG DE CALENDÁRIO DEVE SER INFORMADO!!!
+        MESSAGE s899(mm) WITH TEXT-012 DISPLAY LIKE 'S'.
+        save_ok = c_enter.
+        RETURN.
+      ENDIF.
+    ENDIF.
+
+** FLAG DE VALIDAR CALENDÁRIO
+    IF eg_bloq-zvdt_vdt IS NOT INITIAL. ""CALENDÁRIO DE FÁBRICA
+      IF eg_bloq-zvdt_vdt NE 'X'.       ""CALENDÁRIO DE FÁBRICA
+        "PERMITO SOMENTE O VALOR X !!!!
+        MESSAGE s899(mm) WITH TEXT-057 DISPLAY LIKE 'S'.
+        save_ok = c_enter.
+        RETURN.
+      ELSE.
+        IF eg_bloq-ident IS INITIAL AND     ""CALENDÁRIO DE FÁBRICA
+           eg_bloq-zvdt_vdt IS NOT INITIAL. "VERIFICAÇÃO DE CALENDÁRIO PREÇO
+          "CALENDÁRIO DEVE SER INFORMADO!!!
+          MESSAGE s899(mm) WITH TEXT-011 DISPLAY LIKE 'S'.
+          save_ok = c_enter.
+          RETURN.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+
+** VALIDAR VALOR POSITIVO
+    IF eg_bloq-zvlr_pc_pe1 IS NOT INITIAL. "PERCENTUAL VARIAÇÃO (%) MAIOR
+      IF eg_bloq-zvlr_pc_pe1 LT '0.00'.    "PERCENTUAL VARIAÇÃO (%) MAIOR
+        "PERMITO SOMENTE O VALOR POSITIVO !!!
+        MESSAGE s899(mm) WITH TEXT-008 DISPLAY LIKE 'S'.
+        save_ok = c_enter.
+        RETURN.
+      ENDIF.
+    ENDIF.
+
+** VALIDAR VALOR NEGATIVO
+    IF eg_bloq-zvlr_pc_pe2 IS NOT INITIAL. "PERCENTUAL VARIAÇÃO (%) MENOR
+      IF eg_bloq-zvlr_pc_pe2 GT '0.01'.   "PERCENTUAL VARIAÇÃO (%) MENOR
+        "PERMITO SOMENTE O VALOR NEGATIVO !!!
+        MESSAGE s899(mm) WITH TEXT-017 DISPLAY LIKE 'S'.
+        save_ok = c_enter.
+        RETURN.
+      ENDIF.
+    ENDIF.
+
+** VALIDAR VALOR POSITIVO
+    IF eg_bloq-zvlr_pc_vlr IS NOT INITIAL.   "VALOR DE VARIAÇÃO ($)
+      IF eg_bloq-zvlr_pc_vlr LT '0.00'.      "VALOR DE VARIAÇÃO ($)
+        "PERMITO SOMENTE O VALOR POSITIVO !!!
+        MESSAGE s899(mm) WITH TEXT-008 DISPLAY LIKE 'S'.
+        save_ok = c_enter.
+        RETURN.
+      ENDIF.
+    ENDIF.
+
+
+** VALIDAR VALOR POSITIVO
+    IF eg_bloq-zvlr_per IS NOT INITIAL. "PERCENTUAL VARIAÇÃO (%) MAIOR
+      IF eg_bloq-zvlr_per LT '0.00'.    "PERCENTUAL VARIAÇÃO (%) MAIOR
+        "PERMITO SOMENTE O VALOR POSITIVO !!!
+        MESSAGE s899(mm) WITH TEXT-008 DISPLAY LIKE 'S'.
+        save_ok = c_enter.
+        RETURN.
+      ENDIF.
+    ENDIF.
+
+** VALIDAR VALOR NEGATIVO
+    IF eg_bloq-zvlr_per_m IS NOT INITIAL. "PERCENTUAL VARIAÇÃO (%) MENOR
+      IF eg_bloq-zvlr_per_m GT '0.01'.   "PERCENTUAL VARIAÇÃO (%) MENOR
+        "PERMITO SOMENTE O VALOR NEGATIVO !!!
+        MESSAGE s899(mm) WITH TEXT-017 DISPLAY LIKE 'S'.
+        save_ok = c_enter.
+        RETURN.
+      ENDIF.
+    ENDIF.
+
+** VALIDAR VALOR POSITIVO
+    IF eg_bloq-zvlr_vlr IS NOT INITIAL.   "VALOR DE VARIAÇÃO ($)
+      IF eg_bloq-zvlr_vlr LT '0.00'.      "VALOR DE VARIAÇÃO ($)
+        "PERMITO SOMENTE O VALOR POSITIVO !!!
+        MESSAGE s899(mm) WITH TEXT-008 DISPLAY LIKE 'S'.
+        save_ok = c_enter.
+        RETURN.
+      ENDIF.
+    ENDIF.
+
+** VALIDAR HORA
+    IF eg_bloq-zvd_hora IS NOT INITIAL. "ATIVA VERIFICAÇÃO HORÁRIO
+      IF eg_bloq-zvd_hora NE 'X'.       "ATIVA VERIFICAÇÃO HORÁRIO
+        "PERMITO SOMENTE O VALOR X !!!!
+        MESSAGE s899(mm) WITH TEXT-056 DISPLAY LIKE 'S'.
+        save_ok = c_enter.
+        RETURN.
+      ELSE.
+        IF eg_bloq-zhoralt IS INITIAL AND      "ATIVA VERIFICAÇÃO HORÁRIO
+           eg_bloq-zvd_hora IS NOT INITIAL.    "HORÁRIO LIMITE PARA PRECIFICAÇÃO MESMO DIA
+          "NECESSÁRIO INFORMAR HORA!!!
+          MESSAGE s899(mm) WITH TEXT-013 DISPLAY LIKE 'S'.
+          save_ok = c_enter.
+          RETURN.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+
+    IF eg_bloq-zhoralt IS NOT INITIAL.   "HORÁRIO LIMITE PARA PRECIFICAÇÃO MESMO DIA
+      IF eg_bloq-zhoralt EQ '00:00:00'.  "HORÁRIO LIMITE PARA PRECIFICAÇÃO MESMO DIA
+        "ANALISAR HORÁRIO INFORMADO!!!
+        MESSAGE s899(mm) WITH TEXT-014 DISPLAY LIKE 'S'.
+        save_ok = c_enter.
+        RETURN.
+      ELSE.
+        IF eg_bloq-zvd_hora IS INITIAL.
+          CLEAR: eg_bloq-zhoralt.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+
+
+    IF eg_bloq-zvd_athrex IS NOT INITIAL.   "HORÁRIO LIMITE JOB
+      IF eg_bloq-zvd_athrex EQ '00:00:00'.  "HORÁRIO LIMITE JOB
+        "ANALISAR HORÁRIO INFORMADO!!!
+        MESSAGE s899(mm) WITH TEXT-050 DISPLAY LIKE 'S'.
+        save_ok = c_enter.
+        RETURN.
+      ELSE.
+        IF eg_bloq-zvd_athrex IS INITIAL.
+          CLEAR: eg_bloq-zvd_horaex.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+
+
+    IF eg_bloq-zvd_attpex IS NOT INITIAL.   "TEMPO LIMITE JOB
+      IF eg_bloq-zvd_attpex EQ '00:00:00'.  "TEMPO LIMITE JOB
+        "ANALISAR HORÁRIO INFORMADO!!!
+        MESSAGE s899(mm) WITH TEXT-051 DISPLAY LIKE 'S'.
+        save_ok = c_enter.
+        RETURN.
+      ELSE.
+        IF eg_bloq-zvd_attpex IS INITIAL.
+          CLEAR: eg_bloq-zvd_tphrex.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+
+** VALIDAR USUÁRIO
+    IF s_uslb1[] IS NOT INITIAL.
+      SELECT bname
+        INTO TABLE @DATA(lt_bname_val)
+        FROM usr21
+        WHERE bname IN @s_uslb1.
+
+      LOOP AT s_uslb1 ASSIGNING FIELD-SYMBOL(<fs_uslb1>).
+        IF NOT line_exists( lt_bname_val[ bname = <fs_uslb1>-low ] ).
+          "USUÁRIO INFORMADO NÃO EXISTE!!!
+          MESSAGE s899(mm) WITH TEXT-016 <fs_uslb1>-low DISPLAY LIKE 'S'.
+          save_ok = c_enter.
+          RETURN.
+        ENDIF.
+      ENDLOOP.
+    ENDIF.
+
+    IF eg_bloq-zuserlb1 IS NOT INITIAL.
+      CLEAR: vl_bname.
+
+      SELECT SINGLE bname
+        INTO vl_bname
+        FROM usr21
+        WHERE bname EQ eg_bloq-zuserlb1.
+
+      IF sy-subrc NE 0.
+        "USUÁRIO INFORMADO NÃO EXISTE!!!
+        MESSAGE s899(mm) WITH TEXT-016 DISPLAY LIKE 'S'.
+        save_ok = c_enter.
+        RETURN.
+      ENDIF.
+    ENDIF.
+
+** VALIDAR USUÁRIO
+    IF eg_bloq-zuserlb2 IS NOT INITIAL.
+      CLEAR: vl_bname.
+      SELECT SINGLE bname
+        INTO vl_bname
+        FROM usr21
+        WHERE bname EQ eg_bloq-zuserlb2.
+
+      IF sy-subrc NE 0.
+        "USUÁRIO INFORMADO NÃO EXISTE!!!
+        MESSAGE s899(mm) WITH TEXT-016 DISPLAY LIKE 'S'.
+        save_ok = c_enter.
+        RETURN.
+      ENDIF.
+    ENDIF.
+
+** VALIDAR USUÁRIO
+    IF eg_bloq-zuserlb3 IS NOT INITIAL.
+      CLEAR: vl_bname.
+      SELECT SINGLE bname
+        INTO vl_bname
+        FROM usr21
+        WHERE bname EQ eg_bloq-zuserlb3.
+
+      IF sy-subrc NE 0.
+        "USUÁRIO INFORMADO NÃO EXISTE!!!
+        MESSAGE s899(mm) WITH TEXT-016 DISPLAY LIKE 'S'.
+        save_ok = c_enter.
+        RETURN.
+      ENDIF.
+    ENDIF.
+
+** VALIDAR USUÁRIO
+    IF eg_bloq-zuserlb4 IS NOT INITIAL.
+      CLEAR: vl_bname.
+      SELECT SINGLE bname
+        INTO vl_bname
+        FROM usr21
+        WHERE bname EQ eg_bloq-zuserlb4.
+
+      IF sy-subrc NE 0.
+        "USUÁRIO INFORMADO NÃO EXISTE!!!
+        MESSAGE s899(mm) WITH TEXT-016 DISPLAY LIKE 'S'.
+        save_ok = c_enter.
+        RETURN.
+      ENDIF.
+    ENDIF.
+
+
+** VALIDAR USUÁRIO
+    IF eg_bloq-zuserlb5 IS NOT INITIAL.
+      CLEAR: vl_bname.
+      SELECT SINGLE bname
+        INTO vl_bname
+        FROM usr21
+        WHERE bname EQ eg_bloq-zuserlb5.
+
+      IF sy-subrc NE 0.
+        "USUÁRIO INFORMADO NÃO EXISTE!!!
+        MESSAGE s899(mm) WITH TEXT-016 DISPLAY LIKE 'S'.
+        save_ok = c_enter.
+        RETURN.
+      ENDIF.
+    ENDIF.
+
+
+** VALIDAR USUÁRIO
+    IF eg_bloq-zuserlb6 IS NOT INITIAL.
+      CLEAR: vl_bname.
+      SELECT SINGLE bname
+        INTO vl_bname
+        FROM usr21
+        WHERE bname EQ eg_bloq-zuserlb6.
+
+      IF sy-subrc NE 0.
+        "USUÁRIO INFORMADO NÃO EXISTE!!!
+        MESSAGE s899(mm) WITH TEXT-016 DISPLAY LIKE 'S'.
+        save_ok = c_enter.
+        RETURN.
+      ENDIF.
+    ENDIF.
+
+** VALIDAR USUÁRIO
+    IF eg_bloq-zuserlb7 IS NOT INITIAL.
+      CLEAR: vl_bname.
+      SELECT SINGLE bname
+        INTO vl_bname
+        FROM usr21
+        WHERE bname EQ eg_bloq-zuserlb7.
+
+      IF sy-subrc NE 0.
+        "USUÁRIO INFORMADO NÃO EXISTE!!!
+        MESSAGE s899(mm) WITH TEXT-016 DISPLAY LIKE 'S'.
+        save_ok = c_enter.
+        RETURN.
+      ENDIF.
+    ENDIF.
+** VALIDAR USUÁRIO
+    IF eg_bloq-zuserlb8 IS NOT INITIAL.
+      CLEAR: vl_bname.
+      SELECT SINGLE bname
+        INTO vl_bname
+        FROM usr21
+        WHERE bname EQ eg_bloq-zuserlb8.
+
+      IF sy-subrc NE 0.
+        "USUÁRIO INFORMADO NÃO EXISTE!!!
+        MESSAGE s899(mm) WITH TEXT-016 DISPLAY LIKE 'S'.
+        save_ok = c_enter.
+        RETURN.
+      ENDIF.
+    ENDIF.
+
+    IF eg_bloq-zret_import IS NOT INITIAL.
+      IF eg_bloq-zret_import NE 'X'.       ""IMPORTADO SEM VERIFICAÇÃO DE DATA
+        "PERMITO SOMENTE O VALOR X !!!!
+        MESSAGE s899(mm) WITH TEXT-055 DISPLAY LIKE 'S'.
+        save_ok = c_enter.
+        RETURN.
+      ENDIF.
+    ENDIF.
+
+** FLAG DE VALIDAR STATUS MATERIAL
+    IF eg_bloq-zvd_mstae IS INITIAL. ""STATUS MATERIAL EXCLUÍDO DA LISTA DE COMPRAS
+      IF eg_bloq-zvd_mstae_vl IS NOT INITIAL.  ""VALIDA STATUS MATERIAL - EXCLUSÃO DA LISTA TRABALHO COMPRAS
+        "Limpar Status Material ou Ativar !!!!!
+        MESSAGE s899(mm) WITH TEXT-058 DISPLAY LIKE 'S'.
+        save_ok = c_enter.
+        RETURN.
+
+      ENDIF.
+
+    ELSE.
+      IF eg_bloq-zvd_mstae_vl IS INITIAL.
+        "STATUS DE MATERIAL DEVE SER INFORMADO!!!
+        MESSAGE s899(mm) WITH TEXT-052 DISPLAY LIKE 'S'.
+        save_ok = c_enter.
+        RETURN.
+
+      ENDIF.
+
+    ENDIF.
+
+** FLAG DE VALIDAR STATUS MATERIAL
+    IF eg_bloq-zvd_mstae_vl IS NOT INITIAL. ""STATUS MATERIAL EXCLUÍDO DA LISTA DE COMPRAS
+      IF eg_bloq-zvd_mstae NE 'X'.  ""VALIDA STATUS MATERIAL - EXCLUSÃO DA LISTA TRABALHO COMPRAS
+        "Permito Somente o valor X, Status Material !!!!
+        MESSAGE s899(mm) WITH TEXT-054 DISPLAY LIKE 'S'.
+        save_ok = c_enter.
+        RETURN.
+      ENDIF.
+
+    ELSE.
+      IF eg_bloq-zvd_mstae IS NOT INITIAL. "VALIDA STATUS MATERIAL - EXCLUSÃO DA LISTA TRABALHO COMPRAS
+        "STATUS DE MATERIAL DEVE SER INFORMADO!!!
+        MESSAGE s899(mm) WITH TEXT-052 DISPLAY LIKE 'S'.
+        save_ok = c_enter.
+        RETURN.
+      ENDIF.
+
+    ENDIF.
+
+    IF eg_bloq-zvd_altprcbt IS NOT INITIAL.
+      IF eg_bloq-zvd_altprcbt NE 'X'.       ""Valida Alteração de Preço Compras LT
+        "Permito Somente o valor X, Valida Alteração Preço !!!!
+        MESSAGE s899(mm) WITH TEXT-053 DISPLAY LIKE 'S'.
+        save_ok = c_enter.
+        RETURN.
+      ENDIF.
+    ENDIF.
+
+  ENDIF. "IF SAVE_OK EQ C_SALVE.
+
+ENDMODULE.                 " VERIFICAR_DADOS_VKP5  INPUT
+*&---------------------------------------------------------------------*
+*&      MODULE  USER_COMMAND_1001  INPUT
+*&---------------------------------------------------------------------*
+*       TEXT
+*----------------------------------------------------------------------*
+MODULE user_command_1001 INPUT.
+
+** VERIFICA O TIPO DE PROCESSO
+  CASE save_ok.
+
+    WHEN c_salve.
+*** PERGUNTAR PARA ELIMINAR
+
+      CALL FUNCTION 'POPUP_TO_CONFIRM'
+        EXPORTING
+          titlebar              = TEXT-t05 "DESEJA ATUALIZAR DADOS !!!
+          text_question         = TEXT-t06 "CONFIRMAR A ATUALIZAÇÃO DOS DADOS ?
+          text_button_1         = c_sim
+          text_button_2         = c_nao
+          default_button        = c_1
+          display_cancel_button = c_x
+          start_column          = 10
+          start_row             = 2
+        IMPORTING
+          answer                = vg_answer
+        EXCEPTIONS
+          text_not_found        = 1
+          OTHERS                = 2.
+
+      "SE A RESPOSTA FOR 'SIM'
+      IF sy-subrc  EQ 0 AND
+         vg_answer EQ c_1.
+
+** ATUALIZAR TABELA GERAL, DEVE CONTER APENAS UM VALOR
+** POR ISSO É ELIMINADO E PROCESSADO NOVAMENTE
+        REFRESH: tg_bloq.
+
+        SELECT *
+         FROM ztmmc_stat_preco
+         INTO TABLE tg_bloq.
+
+        IF sy-subrc EQ 0.
+
+          DELETE ztmmc_stat_preco FROM TABLE tg_bloq.
+
+        ENDIF.
+
+** ATUALIZAÇÃO
+        CALL FUNCTION 'BAPI_TRANSACTION_COMMIT'
+          EXPORTING
+            wait = 'X'.
+
+        REFRESH: tg_bloq.
+
+        APPEND eg_bloq TO tg_bloq.
+
+        MODIFY ztmmc_stat_preco FROM TABLE tg_bloq.
+
+** ATUALIZAÇÃO
+        CALL FUNCTION 'BAPI_TRANSACTION_COMMIT'
+          EXPORTING
+            wait = 'X'.
+
+** ATUALIZAR DADOS DE HISTORICO DO ULTIMO VALOR
+        CLEAR: eg_itab.
+
+        eg_itab = CORRESPONDING #( eg_bloq ).
+
+        eg_itab-mandt      = sy-mandt.
+        eg_itab-zzdata     = sy-datum.
+        eg_itab-zzhora     = sy-uzeit.
+        eg_itab-zzuser     = sy-uname.
+
+        MODIFY ztmmc_stat_pr_lg FROM eg_itab.
+
+** ATUALIZAÇÃO
+        CALL FUNCTION 'BAPI_TRANSACTION_COMMIT'
+          EXPORTING
+            wait = 'X'.
+
+        PERFORM f_atual_dados_usuario_lib_1001.
+
+      ELSE.
+        CLEAR: vg_answer.
+
+      ENDIF. "IF SY-SUBRC  EQ 0 AND VG_ANSWER EQ C_1.
+
+* PROCESSAR MENSAGEM DE ATUALIZAÇÃO
+      MESSAGE s899(mm) WITH TEXT-t09 DISPLAY LIKE 'S'.
+
+      CLEAR: vg_sel_1001, vg_sort_1001.
+
+      save_okpr = c_repr.
+
+
+    WHEN 'LOG'.
+      PERFORM f_log_t001_tab.
+
+      CLEAR: vg_sel_1001.
+
+      save_okpr = c_repr.
+
+    WHEN OTHERS.
+
+
+  ENDCASE.
+
+ENDMODULE.                 " USER_COMMAND_1001  INPUT

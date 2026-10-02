@@ -1,0 +1,182 @@
+class ZCL_IM_SPC_SEL_CHECK definition
+  public
+  final
+  create public .
+
+public section.
+
+  interfaces IF_EX_SPC_SEL_CHECK .
+protected section.
+private section.
+ENDCLASS.
+
+
+
+CLASS ZCL_IM_SPC_SEL_CHECK IMPLEMENTATION.
+
+
+METHOD if_ex_spc_sel_check~check_calc_item.
+
+ "*********************************************************************
+ " Capgemini - Brazil
+ "*********************************************************************
+ " Data Execução:   17/09/2026
+ " Autor:      Capgemini SAP
+ " Projeto:              MOVE2S4
+ "*********************************************************************
+
+***********************************************************************
+*                                                                     *
+*      *********************************************************      *
+*      *                +---------------------+                *      *
+*      *                | Leroy Merlin Brasil |                *      *
+*      *                +---------------------+                *      *
+*      *********************************************************      *
+*                                                                     *
+***********************************************************************
+*---------------------------------------------------------------------*
+*** Dados do Desenvolvimento                                          *
+*---------------------------------------------------------------------*
+* Nome: ZCL_IM_SPC_SEL_CHECK                                          *
+* Título: Exit de validação                                           *
+* Autor: Mikaelly A S                                                 *
+* Data: 21/09/2026                                                    *
+* Ticket: SD-034-ENH                                                  *
+* Objetivos: -                                                        *
+*                                                                     *
+*---------------------------------------------------------------------+
+*** Histórico de modificações                                         |
+*---+--------+----------------+---------------------------------------+
+*Seq|Data    |Autor           |COD/ Descrição da modificação ou erro  |
+*---+--------+----------------+---------------------------------------+
+*001|21092026|51073923        |Desenvolvimento inicial                |
+*---+--------+----------------+---------------------------------------+
+
+
+*** Verifica e exclue do calculo materiais que estão marcados como AVS
+
+  DATA: tb_erro    TYPE erro.
+  DATA: v_zzavsavs TYPE char10."mara-zzavsavs."ALTERAR PARA O TIPO CORRETO, QUANDO O CAMPO FOR CRIADO!
+
+  CONSTANTS: lc_brl         TYPE c LENGTH 3 VALUE 'BRL',
+             lc_z7          TYPE c LENGTH 2 VALUE 'Z7',
+             lc_vkp5        TYPE c LENGTH 4 VALUE 'VKP5',
+             lc_interf_code TYPE c LENGTH 4 VALUE '0001',
+             lc_msg_id      TYPE c LENGTH 7 VALUE 'ZMMM_02',
+             lc_msg_ty_w    TYPE c LENGTH 1 VALUE 'W',
+             lc_msg_no_000  TYPE c LENGTH 3 VALUE '000',
+             lc_msg_no_005  TYPE c LENGTH 3 VALUE '005'.
+
+
+  FIELD-SYMBOLS: <fs_kalp> TYPE kalp.
+  UNASSIGN: <fs_kalp>.
+
+  IF pi_i_kalp-ekerv = lc_z7.
+    ASSIGN ('(SAPLWVK1)g_t_kalp') TO <fs_kalp>.           "#EC CI_SUBRC
+
+    IF <fs_kalp> IS ASSIGNED.
+
+      <fs_kalp>-kbetr_ekpgr = pi_i_kalp-ekpgr.
+      <fs_kalp>-waers_ekpgr = lc_brl.
+      <fs_kalp>-kpein_ekpgr = 1.
+      <fs_kalp>-kmein_ekpgr = pi_i_kalp-vrkme.
+
+    ENDIF.
+  ENDIF.
+
+  CHECK sy-tcode EQ lc_vkp5.
+
+  FIELD-SYMBOLS: <fs_ekerv> TYPE pispc-ekerv,
+                 <fs_vkerv> TYPE pispc-vkerv.
+
+  ASSIGN ('(RWVKP007)PISPC-EKERV') TO <fs_ekerv>.         "#EC CI_SUBRC
+  ASSIGN ('(RWVKP007)PISPC-VKERV') TO <fs_vkerv>.         "#EC CI_SUBRC
+
+  IF <fs_ekerv> IS ASSIGNED AND
+     <fs_vkerv> IS ASSIGNED.
+
+    SELECT SINGLE *
+    FROM ztsdd_price_001
+    INTO @DATA(ls_price)
+      WHERE interf_code EQ @lc_interf_code.
+
+    IF ( <fs_ekerv> EQ ls_price-ekerv AND
+       <fs_vkerv> EQ ls_price-vkerv ).
+      DATA(vl_valida) = abap_false.
+    ELSE.
+      vl_valida = abap_true.
+    ENDIF.
+  ENDIF.
+
+  IF vl_valida = abap_true.
+
+    SELECT SINGLE 'zzavsavs' FROM mara INTO @v_zzavsavs
+      WHERE matnr  EQ @pi_i_kalp-matnr.                  "#EC CI_SUBRC
+
+    IF v_zzavsavs EQ 'X'.
+
+      AUTHORITY-CHECK OBJECT 'ZMM_AVS_VK'
+               ID 'ACTVT' FIELD '01'.
+
+      IF sy-subrc <> 0.
+
+        pe_exclude_calc_item = abap_true.
+
+        READ TABLE pe_t_erro INTO tb_erro WITH KEY matnr = pi_i_kalp-matnr
+                                                   msgid = lc_msg_id
+                                                   msgty = lc_msg_ty_w
+                                                   msgno = lc_msg_no_000.
+        IF sy-subrc NE 0.
+          CLEAR: pe_t_erro.
+          tb_erro-matnr = pi_i_kalp-matnr.
+          tb_erro-msgid = lc_msg_id.
+          tb_erro-msgty = lc_msg_ty_w.
+          tb_erro-msgno = lc_msg_no_000.
+          tb_erro-msgv1 = TEXT-001. "Material marcado como AVS'.
+          APPEND tb_erro TO pe_t_erro.
+        ENDIF.
+      ENDIF.
+    ENDIF.
+  ENDIF.
+
+  IF pe_exclude_calc_item <> abap_true.
+    IF NOT pi_i_kalp-pltyp IS INITIAL.
+
+      SELECT SINGLE locnr
+        INTO @DATA(vl_locnr)
+        FROM wrf6
+       WHERE matkl   = @pi_i_kalp-matkl
+         AND pltyp_p = @pi_i_kalp-pltyp.
+
+      IF sy-subrc NE 0. "Não achou para esta lista.
+
+        pe_exclude_calc_item = abap_true.
+
+        READ TABLE pe_t_erro INTO tb_erro WITH KEY matnr = pi_i_kalp-matnr
+                                                   msgid = lc_msg_id
+                                                   msgty = lc_msg_ty_w
+                                                   msgno = lc_msg_no_005
+                                                   msgv2 = pi_i_kalp-pltyp.
+        IF sy-subrc NE 0.
+          CLEAR: pe_t_erro.
+          tb_erro-matnr = pi_i_kalp-matnr.
+          tb_erro-msgid = lc_msg_id.
+          tb_erro-msgty = lc_msg_ty_w.
+          tb_erro-msgno = lc_msg_no_005.
+          tb_erro-msgv1 = TEXT-002. "'Material não pode ser usado na lista'.
+          tb_erro-msgv2 = pi_i_kalp-pltyp.
+          APPEND tb_erro TO pe_t_erro.
+        ENDIF.
+
+      ENDIF.
+
+    ENDIF.
+
+  ENDIF.
+
+ENDMETHOD.
+
+
+method IF_EX_SPC_SEL_CHECK~FILTER_ORGLEVELS.
+endmethod.
+ENDCLASS.

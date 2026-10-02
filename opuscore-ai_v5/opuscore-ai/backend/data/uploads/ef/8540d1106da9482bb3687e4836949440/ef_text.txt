@@ -1,0 +1,213 @@
+Especificação Funcional – Remediação/Simplificação
+Projeto MOVE2S/4
+SUMÁRIO
+Resumo do Desenvolvimento
+Detalhamento da Especificação Funcional
+Objetivo, justificativa e processo de negócio atendido.
+Objetivo: alterar o processo de contabilização da comissão do Marketplace para as operações realizadas por Boleto e PIX, mantendo o faturamento no cliente e substituindo o encontro de contas realizado pela ZAP0069.
+Após a autorização da nota fiscal na Sefaz, quando o status da nota fiscal for igual a 100, a lógica vinculada à BAdI CL_NFE_PRINT deverá executar, em sequência, os function modules POSTING_INTERFACE_START, POSTING_INTERFACE_CLEARING e POSTING_INTERFACE_END para compensar a fatura do cliente contra a nova conta transitória. Após o sucesso da compensação, a BAPI_ACC_DOCUMENT_POST deverá criar a nota de crédito no fornecedor seller contra a mesma conta transitória, permitindo o abatimento no repasse e o pagamento líquido ao seller.
+A alteração permitirá eliminar a transação ZAP0069 e o programa ZRFI_MKTPLACE_COMPENSACAO_RXC.
+Processos Relacionados (Transações do Sistema S4HANA)
+-Marketplace/Mirakl - evento de disparo do período de Repasse e Comissão.
+-Gateway KONG - exposição das APIs chamadas pela Plataforma Marketplace.
+-SAP CPI - roteamento das chamadas recebidas pelo Gateway KONG para o serviço OData criado em ABAP/RAP.
+-API Business Partner - consulta e validação, por CNPJ, da existência do cliente e do fornecedor, sem consulta por CPF, com retorno da informação de cliente ou fornecedor válido.
+-API standard Sales Order - criação da Ordem de Venda no SAP S/4HANA.
+-API Documento Contábil - API integrante do fluxo de integração informado para o processo.
+-VF01 - faturamento e geração da fatura no cliente.
+-BAdI CL_NFE_PRINT - lógica acionada após a autorização da nota fiscal na Sefaz, quando o status da nota fiscal for igual a 100.
+-Function modules POSTING_INTERFACE_START, POSTING_INTERFACE_CLEARING e POSTING_INTERFACE_END - inicialização, compensação da fatura do cliente contra a conta transitória e finalização da interface de compensação.
+-BAPI_ACC_DOCUMENT_POST - criação da nota de crédito no fornecedor seller contra a mesma conta transitória, após o sucesso da compensação.
+-ZTFID_MKTPL_LG - manutenção dos dados dos documentos de repasse e devolução, tipos MP e MC, e monitoramento do processo.
+-ZAP0069 / ZRFI_MKTPLACE_COMPENSACAO_RXC - transação e programa de compensação que serão eliminados.
+-Endpoint KONG: /v1/orders/payment/fee.
+Regras de Negócio
+O novo fluxo de contabilização definido neste GAP será aplicado exclusivamente às operações realizadas por Boleto e PIX. As operações realizadas por cartão não fazem parte do escopo desta alteração. 
+O evento de disparo dos períodos de Repasse, Comissão e Devolução/Reembolso será realizado pela Plataforma Marketplace. Para execução do processo, serão utilizadas três APIs distintas: 
+  API Business Partner: consulta e validação do cliente e do fornecedor por CNPJ, sem consulta por     CPF, com retorno da informação de cliente ou fornecedor válido; 
+  API Documento Contábil; 
+  API standard Sales Order: criação da Ordem de Venda no SAP S/4HANA. 
+As chamadas das três APIs serão realizadas pela Plataforma Marketplace e expostas por meio do Gateway KONG. O fluxo de integração será: 
+Plataforma Marketplace → Gateway KONG → SAP CPI → serviço OData criado em ABAP/RAP no SAP S/4HANA.
+A Mirakl não realizará integração direta com o SAP CPI.
+Será criado em ABAP/RAP o serviço OData que será consumido pelo SAP CPI para execução das validações e das regras atuais no SAP S/4HANA. 
+O faturamento da comissão continuará gerando a fatura no cliente. A nova conta transitória deverá ser utilizada na compensação da fatura do cliente e na contabilização da nota de crédito no fornecedor seller. 
+Após o faturamento e a autorização da nota fiscal na Sefaz, quando o status da nota fiscal for igual a 100, a lógica vinculada à BAdI CL_NFE_PRINT deverá executar, em sequência, os seguintes function modules: 
+POSTING_INTERFACE_START; 
+POSTING_INTERFACE_CLEARING; 
+POSTING_INTERFACE_END. 
+A POSTING_INTERFACE_CLEARING deverá compensar a fatura do cliente contra a nova conta transitória. 
+Após a confirmação do sucesso da compensação, deverá ser chamada a BAPI_ACC_DOCUMENT_POST para criar a nota de crédito no fornecedor seller contra a mesma conta transitória. 
+A compensação da fatura do cliente e a criação da nota de crédito no fornecedor dependerão da autorização da nota fiscal na Sefaz e do status igual a 100. Para status diferente de 100, essas etapas não deverão ser executadas. 
+Após a compensação da fatura do cliente e a contabilização da nota de crédito no fornecedor seller, a conta transitória deverá apresentar saldo zerado. 
+A nota de crédito criada no fornecedor deverá ser abatida do valor do repasse ao seller. 
+A tabela ZTFID_MKTPL_LG deverá ser mantida com os dados dos documentos contábeis de repasse e devolução, correspondentes aos tipos MP e MC. 
+A transação ZAP0069 e o programa ZRFI_MKTPLACE_COMPENSACAO_RXC serão eliminados com a implantação do novo fluxo. 
+Os dados das contas contábeis utilizadas no processo deverão ser mantidos em BRF+. 
+Os erros dos processos deverão ser gravados em log e monitorados na tabela ZTFID_MKTPL_LG. Em caso de erro na compensação da fatura do cliente, a BAPI_ACC_DOCUMENT_POST não deverá ser executada.
+Premissas/Acordos do GAP
+As invoices são geradas em dois ciclos, nos dias 05 e 20, respeitando o intervalo de 15 dias. O ciclo possui valor sumarizado por ciclo e fornecedor, não por pedido.
+O novo fluxo de contabilização será aplicado somente às operações de Boleto e PIX. O processo de cartão não será alterado por este GAP.
+A compensação da fatura do cliente e a criação da nota de crédito no fornecedor dependem da autorização da nota fiscal na Sefaz e do status igual a 100. Para status diferente de 100, essas etapas não deverão ser executadas.
+A tabela ZTFID_MKTPL_LG será mantida para os documentos de repasse e devolução, tipos MP e MC.
+A ZAP0069 será descontinuada.
+A solução utilizará a lógica vinculada à BAdI CL_NFE_PRINT, acionada para nota fiscal com status igual a 100; os function modules POSTING_INTERFACE_START, POSTING_INTERFACE_CLEARING e POSTING_INTERFACE_END para a compensação da fatura do cliente; e a BAPI_ACC_DOCUMENT_POST para criação da nota de crédito no fornecedor seller.
+A compensação e a criação da nota de crédito somente deverão ocorrer após a autorização da nota fiscal na Sefaz e quando o status da nota fiscal for igual a 100.
+Fluxo do Processo do GAP
+A Plataforma Marketplace dispara o período de Repasse e Comissão.
+A Plataforma Marketplace chama as APIs por meio do fluxo Marketplace -> KONG -> SAP CPI -> serviço OData criado em ABAP/RAP no SAP S/4HANA.
+A API Business Partner consulta e valida, por CNPJ, a existência do cliente e do fornecedor. Não haverá consulta por CPF. Após a localização e o retorno da informação de cliente ou fornecedor válido, a API standard Sales Order cria a Ordem de Venda no SAP S/4HANA.
+A VF01 realiza o faturamento e gera a fatura no cliente.
+A nota fiscal é enviada para autorização na Sefaz.
+Quando o status da nota fiscal for igual a 100, é acionada a lógica vinculada à BAdI CL_NFE_PRINT.
+A POSTING_INTERFACE_START inicia a interface de compensação.
+A POSTING_INTERFACE_CLEARING compensa a fatura do cliente contra a nova conta transitória.
+A POSTING_INTERFACE_END finaliza a interface de compensação.
+O retorno da compensação é validado.
+Após o retorno de sucesso da compensação, a BAPI_ACC_DOCUMENT_POST cria a nota de crédito no fornecedor seller contra a mesma conta transitória.
+Os documentos de repasse e devolução dos tipos MP e MC são mantidos na ZTFID_MKTPL_LG.
+ O saldo da conta transitória é validado após a compensação da fatura do cliente e a criação da nota de crédito no fornecedor.
+A conta transitória deverá apresentar saldo zerado.
+A nota de crédito deverá ser abatida do valor do repasse ao seller.
+O repasse líquido deverá ser pago ao seller.
+Para status diferente de 100, a compensação e a criação da nota de crédito não deverão ser executadas. Em caso de erro na compensação, o erro deverá ser registrado e a BAPI_ACC_DOCUMENT_POST não deverá ser executada.
+Com a implantação do novo fluxo, a ZAP0069 e o programa ZRFI_MKTPLACE_COMPENSACAO_RXC deixarão de ser utilizados.
+Sistemas, ambientes e objetos SAP impactados.
+Sistemas envolvidos: Marketplace/Mirakl, Gateway KONG, SAP CPI, serviço OData criado em ABAP/RAP, SAP ECC e SAP S/4HANA. Módulos envolvidos: FI-AR, FI-AP e SD.
+Integração atual: ZFSD_ITF_BKF_ORDEM_VENDA_TRANS.
+Funções/classes atuais: ZFSD_CONSULTA_CLIENTE, ZFSD_CRIAR_IDOC_CLIENTE, ZFSD_CRIAR_IDOC_OV e zcl_itf_bkf_ordem_venda_trans1.
+Transação/programa eliminado: ZAP0069 / ZRFI_MKTPLACE_COMPENSACAO_RXC. Tabela mantida: ZTFID_MKTPL_LG.
+BAdI/lógica de SD: CL_NFE_PRINT. Function modules de compensação: POSTING_INTERFACE_START, POSTING_INTERFACE_CLEARING e POSTING_INTERFACE_END. BAPI de FI: BAPI_ACC_DOCUMENT_POST.
+Objetos do novo fluxo: API Business Partner, API Documento Contábil, API standard Sales Order, Gateway KONG, SAP CPI, serviço OData criado em ABAP/RAP, BAdI/lógica CL_NFE_PRINT na VF01, function modules POSTING_INTERFACE_START, POSTING_INTERFACE_CLEARING e POSTING_INTERFACE_END, BAPI_ACC_DOCUMENT_POST, BRF+ e tabela de log ZTFID_MKTPL_LG.
+Tipos de documentos do processo atual: MP - Repasse do seller; MC - Devolução/Cancelamentos; RM - Documento da nota de comissão.
+Novos Objetos
+Conta transitória nova para compensação da fatura do cliente e contabilização da nota de crédito no fornecedor. Serviço OData criado em ABAP/RAP para consumo pelo SAP CPI e execução das validações e regras atuais.
+BAdI/lógica CL_NFE_PRINT na VF01, acionada após a autorização da nota fiscal com status igual a 100.
+Function modules: POSTING_INTERFACE_START, POSTING_INTERFACE_CLEARING e POSTING_INTERFACE_END.
+BAPI de FI: BAPI_ACC_DOCUMENT_POST.
+Nota de crédito no fornecedor seller contra a conta transitória nova.
+BRF+ para salvar os dados das contas contábeis.
+Material Adicional
+TVARV, BRF+ e Tabelas de Parâmetros
+Desenvolvimentos
+Enhancements
+Enhancements - Implementação de Ampliações SAP (CMOD/BADI)
+Transações/Prog/Jobs/Forms/Aplicações Fiori – Transações, programas de demais objetos a serem remediados e simplificados.
+Enhancements – Objeto Standard SAP com ponto de ampliação implícito
+Enhancements – Regra de negócio
+Script de Testes
+Descrição Funcional do Procedimento de Testes(obrigatório)
+Objetivo do teste é validar o novo fluxo de contabilização da comissão do Marketplace exclusivamente para Boleto e PIX, sem alteração do processo de cartão.
+Pré-requisito: período de Repasse, Comissão E Devolução/cancelamento fechado na Plataforma Marketplace, fornecedor seller e cliente existentes e nota fiscal aprovada na Sefaz.
+Passos do teste:
+Disparar o período de Repasse e Comissão na Plataforma Marketplace.
+Acompanhar o fluxo Marketplace -> KONG -> SAP CPI -> serviço OData criado em ABAP/RAP.
+Validar a consulta e a validação do cliente e do fornecedor por CNPJ na API Business Partner, sem consulta por CPF, incluindo o retorno da informação de cliente ou fornecedor válido; validar também as chamadas da API Documento Contábil e da API standard Sales Order. 
+Validar contabilização da fatura no cliente.
+Validar que a lógica vinculada à CL_NFE_PRINT seja acionada somente quando o status da nota fiscal for igual a 100.
+Validar a execução sequencial de POSTING_INTERFACE_START, POSTING_INTERFACE_CLEARING e POSTING_INTERFACE_END e a compensação da fatura do cliente contra a conta transitória.
+Validar que a BAPI_ACC_DOCUMENT_POST seja executada somente após o sucesso da compensação e crie a nota de crédito no fornecedor seller contra a mesma conta transitória.
+Validar o abatimento da nota de crédito no pagamento do repasse ao seller.
+Validar a manutenção da tabela ZTFID_MKTPL_LG para os documentos de repasse e devolução, tipos MP e MC.
+Validar saldo zerado na conta transitória após os lançamentos a crédito e débito 
+Descrição Funcional dos Resultados Esperados Após o Teste(obrigatório)
+Os dados do período de Repasse e Comissão devem percorrer o fluxo Marketplace -> KONG -> SAP CPI -> serviço OData criado em ABAP/RAP.
+A API Business Partner deve consultar e validar cliente e fornecedor por CNPJ, sem consulta por CPF, e retornar a informação de cliente ou fornecedor válido. A API Documento Contábil e a API standard Sales Order devem ser chamadas conforme o fluxo de integração. Os payloads e mapeamentos deverão seguir o DE/PARA a ser fornecido.
+A comissão será contabilizada no cliente e compensada com lançamento na transitória nova.
+Após a autorização da nota fiscal na Sefaz, com status igual a 100, a fatura do cliente deve ser compensada contra a conta transitória e a nota de crédito deve ser criada no fornecedor seller contra a mesma conta.
+O valor da nota de crédito deve ser abatido no pagamento do repasse ao seller.
+A tabela ZTFID_MKTPL_LG deve manter os documentos de repasse e devolução, tipos MP e MC.
+Material Adicional para os Testes
+Utilizar os fluxos apresentados na seção Material Adicional como referência para os testes.
+Informações Complementares
+Periodicidade de Execução
+As invoices são geradas em dois ciclos, nos dias 05 e 20. A periodicidade da integração está indicada como 3 vezes ao dia.
+Tipo de Execução
+Integração via SAP CPI e APIs.
+Volumetria e frequência de execução.
+Volumes mensais médios: R$ 1,9 milhão em comissão (2.000 NFs).
+Janela para Execução
+NA
+Tratamento de erros, logs, monitoramento e reprocessamento.
+Os erros dos processos de integração, incluindo KONG, SAP CPI e serviço OData ABAP/RAP, criação da Ordem de Venda, autorização da nota fiscal, compensação e criação da nota de crédito deverão ser gravados em log e monitorados na tabela ZTFID_MKTPL_LG. 
+Em caso de erro na compensação, a BAPI_ACC_DOCUMENT_POST não deverá ser executada.
+Processo Crítico
+A ausência da solução mantém a necessidade da compensação entre cliente seller e fornecedor seller e gera falta de informação para gerir o negócio, perda de funcionalidade, mudança de procedimento e impacto relacionado à volumetria.
+Homologação
+Especificação Funcional – Remediação/Simplificação
+Projeto: MOVE2S/4 (Leroy Merlin) | Fase do Projeto: Realize
+Autor: Victor Melo | Módulo: FI
+Cenário empresarial: Contas a Receber | Processo: GAP-FI-021-ENH
+ID GAP: 021 | Descrição GAP: Intermediação: Comissão MktPlace - Boleto e PIX
+Histórico de Revisão
+Versão | Autor | Data | Descrição da Revisão
+V1 | Victor Melo | 09/09/2026 | Elaboração do documento
+V2 | Victor Melo | 11/09/2026 | Atualizações de processos e fluxos, definições sobre tabela de log.
+V3 | Victor Melo | 23/09/2026 | Detalhamento do fluxo de integração, status 100, compensação e criação da nota de crédito.
+V4 | Victor Melo | 23/09/2026 | Inclusão do escopo exclusivo para Boleto e PIX e das regras de validação do Business Partner por CNPJ.
+Descrição | O GAP FI-021 trata da alteração do processo de contabilização da comissão do Marketplace exclusivamente para as operações realizadas por Boleto e PIX. 
+As operações realizadas por cartão não fazem parte do escopo desta alteração. 
+Atualmente, a emissão da nota fiscal de serviço de comissão gera uma partida no cliente, posteriormente compensada pela transação ZAP0069, vinculada ao programa ZRFI_MKTPLACE_COMPENSACAO_RXC, que realiza o encontro de contas entre o cliente seller e o fornecedor seller. Com a alteração do processo, o faturamento da comissão continuará sendo realizado no cliente. Após a autorização da nota fiscal na Sefaz, quando o status da nota fiscal for igual a 100, a lógica vinculada à BAdI CL_NFE_PRINT deverá executar, em sequência, os function modules POSTING_INTERFACE_START, POSTING_INTERFACE_CLEARING e POSTING_INTERFACE_END para compensar a fatura do cliente contra uma nova conta transitória. Após a confirmação do sucesso da compensação, deverá ser chamada a BAPI_ACC_DOCUMENT_POST para criar uma nota de crédito no fornecedor seller contra a mesma conta transitória. 
+Essa nota de crédito será abatida do valor do repasse, permitindo o pagamento líquido ao seller e o encerramento do saldo da conta transitória. Com a implantação desse novo fluxo, a transação ZAP0069 e o programa ZRFI_MKTPLACE_COMPENSACAO_RXC serão eliminados.
+Tipo de programa | (X ) Migração de Dados ( X ) Enhancement ( X ) Interface ( ) App Fiori ( ) Formulário ( ) Modificação SAP standard ( ) Programa online ( ) Fiorização ( ) Outros
+Prioridade | ( X ) Alta / Obrigatório ( ) Média / Recomendável ( ) Baixa / Desejável
+Para migração de dados e interfaces
+1-Qualidade do dado do legado | (X ) Boa	( ) Média	( ) Baixa
+2-Complexidade do dado do legado | ( X) Simples	( ) Médio	( ) Complexo
+3-Complexidade do input manual | ( X) Simples	( ) Médio	( ) Complexo
+4-Número de registros | registros
+Para Interfaces
+1-Tipo de interface | ( X ) Real-Time	( ) Pseudo real-time	( ) Batch
+2-Direção da Interface | ( X ) Entrada S4HANA	( ) Saída S4HANA ( ) Ambas direções
+3-Periodicidade | ( ) Diária	( ) Semanal	( ) Mensal
+( X ) Quinzenal	( ) Eventual	( ) Outros:
+4-Número de registros | 2.000 NFs 	registros
+Impacto caso não seja desenvolvido | ( ) Requerimentos legais não serão atendidos ( X ) Falta de informação para gerir o negócio
+( X ) Perda de funcionalidade em relação ao sistema antigo ( X ) Mudança de procedimento necessário
+( X ) Outros: Volumetria excessiva
+Existe alternativa no S4HANA? | ( ) Sim ( X ) Não
+Descreva a alternativa encontrada
+Razão pela qual esta alternativa não é aceitável:
+Artefato | Quem dá
+manutenção | Objetivo
+TVARV | Somente TI | NA
+BRF+ | Somente TI | 1 - Se tiver alguma definição de Hard Code simples ou lista (TVARV), deverá usar uma única BRF+ (ZTD_LMB_PARAMETROS)
+ 
+ 
+2 - Se tiver referência as tabelas de parâmetros ZTXXC_PARA_1 e ZTXXC_PARA_2  nos programas desse GAP,  será usado a única  BRF+ ZTD_LMB_PARAMETROS.
+SM30 | Somente TI | NA
+App Fiori | TI e usuários | NA
+Requisito mínimo | Preenchimento funcional
+Objetivo da Remediação/Simplificação | Simplificação
+Tipo de ampliação (Custom Field / BAdI / Exit / Enhancement Spot) | BAdI/lógica CL_NFE_PRINT; function modules POSTING_INTERFACE_START, POSTING_INTERFACE_CLEARING e POSTING_INTERFACE_END; BAPI_ACC_DOCUMENT_POST.
+Lista de Transações/programas ou Jobs para Remediação/Simplificação | ZAP0069 / ZRFI_MKTPLACE_COMPENSACAO_RXC -
+ELIMINAR
+
+ZFSD_ITF_BKF_ORDEM_VENDA_TRANS - fluxo atual de integração.
+Existe Fiorização de Transações ? se sim, informar lista, e qual catálogo do Fiori será utilizado , ou caso não
+exista o perfil de acesso | NA
+Objeto ou ponto de extensão conhecido | VF01 - lógica vinculada à CL_NFE_PRINT, acionada após autorização da nota fiscal com status igual a 100.
+Pesquisa de alternativa standard | A alternativa standard apresentada realiza contabilização apenas na visão cliente, sem geração de contabilização em conta de fornecedor. 
+O direcionamento seguirá para implementação via solução Z conforme programa já existente no ECC.
+Validação na SCFD_REGISTRY, quando aplicável | NA
+Campos envolvidos | Status da nota fiscal; CNPJ; dados do cliente e do fornecedor; retorno de cliente ou fornecedor válido; dados da Ordem de Venda; dados da fatura do cliente; conta transitória; dados do fornecedor seller; documentos de repasse e devolução MP e MC.
+Regras e validações | Aplicar o novo fluxo exclusivamente às operações de Boleto e PIX, sem alteração do processo de cartão; consultar e validar cliente e fornecedor por CNPJ, sem consulta por CPF; prosseguir após o retorno de cliente ou fornecedor válido; utilizar a API standard Sales Order para criar a Ordem de Venda; manter a fatura da comissão no cliente; processar somente para nota fiscal com status 100; compensar a fatura contra a conta transitória; criar a nota de crédito no fornecedor somente após o sucesso da compensação; manter a ZTFID_MKTPL_LG; eliminar a ZAP0069.
+Mensagens
+Impactos em interfaces, relatórios ou apps | Marketplace/Mirakl, Gateway KONG, SAP CPI, serviço OData ABAP/RAP, APIs Business Partner, Documento Contábil e Ordem de Venda, VF01, FI-AR, FI-AP, SD e SLG1.
+Cenários de exceção | Status diferente de 100; erro no fluxo KONG/CPI/OData; erro na criação da Ordem de Venda; erro na emissão ou autorização da nota fiscal; erro na compensação; erro na criação da nota de crédito no fornecedor.
+Testes de regressão
+Nome | Componente (**)/ Implementação | Descrição | Tipo (*)
+BAdI CL_NFE_PRINT | Enhancement | Após o faturamento e a autorização da nota fiscal na Sefaz, quando o status for igual a 100, deverá ser executada a lógica vinculada à CL_NFE_PRINT. A compensação da fatura do cliente contra a conta transitória deverá utilizar, em sequência, os function modules POSTING_INTERFACE_START, POSTING_INTERFACE_CLEARING e POSTING_INTERFACE_END. Após o sucesso da compensação, a BAPI_ACC_DOCUMENT_POST deverá criar a nota de crédito no fornecedor seller contra a mesma conta transitória. A BRF+ deverá armazenar os dados das contas contábeis utilizadas no processo.
+Nome | Componente (**)/ Implementação | Descrição | Tipo (*)
+ZAP0069 | ZRFI_MKTPLACE_COMPE NSACAO_RXC | Eliminar a transação/programa de compensação responsável pelo encontro de contas entre fornecedor seller e cliente seller. | Transação/Progra ma
+Objeto standard SAP | Tipo do Objeto | Descrição da alteração (*)
+VF01 | BADI/enhance ment | Acionar a lógica vinculada à CL_NFE_PRINT para nota fiscal com status 100; executar POSTING_INTERFACE_START, POSTING_INTERFACE_CLEARING e POSTING_INTERFACE_END para compensação da fatura do cliente; e executar BAPI_ACC_DOCUMENT_POST para criação da nota de crédito no fornecedor após o sucesso da compensação.
+Objeto | Regra de negócios
+VF01 -
+BADI CL_NFE_PRINT | Após o faturamento e a autorização da nota fiscal na Sefaz, quando o status da nota fiscal for igual a 100, a lógica vinculada à CL_NFE_PRINT deverá executar, em sequência, os function modules POSTING_INTERFACE_START, POSTING_INTERFACE_CLEARING e POSTING_INTERFACE_END. A POSTING_INTERFACE_CLEARING deverá compensar a fatura do cliente contra a nova conta transitória. Após a confirmação do sucesso da compensação, deverá ser chamada a BAPI_ACC_DOCUMENT_POST para criar a nota de crédito no fornecedor seller contra a mesma conta transitória. Para status diferente de 100, a compensação e a criação da nota de crédito não deverão ser executadas. Em caso de erro na compensação, o erro deverá ser registrado e a BAPI_ACC_DOCUMENT_POST não deverá ser executada.
+Responsável
+Consultor Funcional (Capgemini) Victor Melo
+Líder de Desenvolvimento (Capgemini) Fábio Ferri
+Analista Funcional - TI (Leroy Merlin) Ivair Roberto
+Usuário-chave (Leroy Merlin) Hayala Adelino Couto
+Líder de Macroprocesso (Leroy Merlin) Robinson Benoni

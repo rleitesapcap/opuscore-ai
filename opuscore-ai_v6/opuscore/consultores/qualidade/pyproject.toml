@@ -1,0 +1,16 @@
+[project]
+name = "opuscore-consultor-qualidade"
+version = "1.0.0"
+description = "OPUSCORE-AI — Analista de Qualidade (por enquanto: conversa; capacidades próprias a evoluir)"
+requires-python = ">=3.11"
+dependencies = ["opuscore-core>=1.0"]
+
+[project.entry-points."opuscore.consultores"]
+qualidade = "opuscore_qualidade.plugin:PLUGIN"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["opuscore_qualidade*"]

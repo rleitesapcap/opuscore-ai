@@ -1,0 +1,79 @@
+class ZCLSD_ZESD_PRECOS_LEROY_6630 definition
+  public
+  final
+  create public .
+
+public section.
+
+  constants C_HARD_CODE_ID type CHAR30 value 'SD_6630_PRICING_LIBERAR_VKP5' ##NO_TEXT.
+  constants C_HARD_CODE_ACTIVE_ID type CHAR30 value 'SD_6630_VKP5_ACTIVE' ##NO_TEXT.
+
+  class-methods CHECK_IS_ACTIVE
+    returning
+      value(E_IS_ACTIVE) type FLAG .
+protected section.
+private section.
+ENDCLASS.
+
+
+
+CLASS ZCLSD_ZESD_PRECOS_LEROY_6630 IMPLEMENTATION.
+
+
+  METHOD check_is_active.
+
+"*********************************************************************
+" Capgemini - Brazil
+"*********************************************************************
+" Data Execução: 	17/09/2026
+" Autor:      Capgemini SAP
+" Projeto:              MOVE2S4
+"*********************************************************************
+
+
+***********************************************************************
+*                                                                     *
+*      *********************************************************      *
+*      *                +---------------------+                *      *
+*      *                | LEROY MERLIN BRASIL |                *      *
+*      *                +---------------------+                *      *
+*      *********************************************************      *
+*                                                                     *
+***********************************************************************
+*---------------------------------------------------------------------*
+*** Dados do Obejto                                                   *
+*---------------------------------------------------------------------*
+* Nome  : ZCLSD_ZESD_PRECOS_LEROY_6630                                *
+* Título: Exit VKP5                                                   *
+* Autor : Fabiano Bartholomeu (51030312)                              *
+* Data  : 31.05.2021                                                  *
+*                                                                     *
+* Objetivos:                                                          *
+*   Rotinas customizadas para a transação VKP5                        *
+*                                                                     *
+* Demanda:                                                            *
+*   CC.6630 - Liberação de exceção total para alguns usuários         *
+*     (Pricing) alterarem preços para qualquer dia                    *
+*                                                                     *
+*---------------------------------------------------------------------+
+*** Histórico das modificações                                        |
+*---------------------------------------------------------------------+
+*#####+########+###################+##################+###############+
+* Seq |Data    |Autor              |Código Demanda    | Usuário       |
+*#####+########+###################+##################+###############+
+* 01! |31052021|Fabiano Bartholomeu|CC.6630           |51030312       |
+*   Adequação para o modelo OO                                        |
+*-----+--------+-------------------+------------------+---------------*
+
+    DATA: lr_flag TYPE RANGE OF c.
+
+    lr_flag = zcl_parametros=>get_param( iv_processo = c_hard_code_active_id iv_name = 'LOW' ).
+
+    IF sy-subrc = 0 AND line_exists( lr_flag[ low = abap_true ] ).
+      e_is_active = abap_true.
+    ELSE.
+      e_is_active = space.
+    ENDIF.
+
+  ENDMETHOD.
+ENDCLASS.

@@ -1,0 +1,39 @@
+# Monorepo OPUSCORE-AI. Cada pasta em packages/ e consultores/ é um pacote Python
+# independente (pyproject próprio, dono próprio, testes próprios).
+# Instalação: scripts/instalar.sh (pip) ou `uv sync` (workspace do uv).
+
+[project]
+name = "opuscore-monorepo"
+version = "1.0.0"
+requires-python = ">=3.11"
+dependencies = [
+  "opuscore-core", "opuscore-connectors", "opuscore-ef", "opuscore-orchestrator", "opuscore-web", "opuscore-platform",
+  "opuscore-consultor-dev-abap", "opuscore-consultor-funcional-mm", "opuscore-consultor-arquiteto",
+  "opuscore-consultor-funcional-sd", "opuscore-consultor-integracao", "opuscore-consultor-lider-tecnico",
+  "opuscore-consultor-qualidade",
+]
+
+[tool.uv.workspace]
+members = ["packages/*", "consultores/*"]
+
+[tool.uv.sources]
+opuscore-core = { workspace = true }
+opuscore-connectors = { workspace = true }
+opuscore-ef = { workspace = true }
+opuscore-orchestrator = { workspace = true }
+opuscore-web = { workspace = true }
+opuscore-platform = { workspace = true }
+opuscore-consultor-dev-abap = { workspace = true }
+opuscore-consultor-funcional-mm = { workspace = true }
+opuscore-consultor-arquiteto = { workspace = true }
+opuscore-consultor-funcional-sd = { workspace = true }
+opuscore-consultor-integracao = { workspace = true }
+opuscore-consultor-lider-tecnico = { workspace = true }
+opuscore-consultor-qualidade = { workspace = true }
+
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+addopts = "--import-mode=importlib -q"
+testpaths = ["packages", "consultores", "tests"]

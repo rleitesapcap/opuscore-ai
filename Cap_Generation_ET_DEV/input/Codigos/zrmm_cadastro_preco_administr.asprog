@@ -1,0 +1,92 @@
+***********************************************************************
+*                                                                     *
+*      *********************************************************      *
+*      *                +---------------------+                *      *
+*      *                | LMB                 |                *      *
+*      *                +---------------------+                *      *
+*      *********************************************************      *
+*                                                                     *
+***********************************************************************
+*---------------------------------------------------------------------*
+*** DADOS DO PROGRAMA                                                 *
+*---------------------------------------------------------------------*
+* NOME  : ZRMM_CADASTRO_PRECO_ADMINISTR                               *
+* TÍTULO: Monitor para Administrar Atualização de Preços              *
+* AUTOR : MARCELO                                                     *
+* DATA  : 01/04/2014                                                  *
+* OBJETIVOS: Incluir e alterar dados para calculo de preços           *
+*                                                                     *
+*---------------------------------------------------------------------+
+*** HISTÓRICO DAS MODIFICAÇÕES                                        |
+*---+--------+----------------+---------------------------------------+
+*SEQ|DATA    |AUTOR           |COD/ DESCRIÇÃO DA MODIFICAÇÃO OU ERRO  |
+*---+--------+----------------+---------------------------------------+
+*001|01042014|MARCELO MORAES  |DESENVOLVIMENTO INICIAL                |
+*---+--------+----------------+---------------------------------------+
+*002|09032016|Sabrina Guedes  |Inclusão do User 5 e 6                 |
+**---+--------+----------------+---------------------------------------+
+
+REPORT zrmm_cadastro_preco_administr.
+
+*&---------------------------------------------------------------------*
+*&      INCLUDE TOP DECLARACAO GERAL
+*&---------------------------------------------------------------------*
+INCLUDE zrmm_cadastro_preco_top.
+
+*&---------------------------------------------------------------------*
+*&      INCLUDE FORM GERAL DO PROGRAMA COMUM
+*&---------------------------------------------------------------------*
+INCLUDE zrmm_cadastro_preco_f00.
+
+*&---------------------------------------------------------------------*
+*&      INCLUDE TELA 1000
+*&---------------------------------------------------------------------*
+INCLUDE zrmm_cadastro_preco_1000_pbo .
+INCLUDE zrmm_cadastro_preco_1000_pai .
+INCLUDE zrmm_cadastro_preco_1000_f01 .
+
+*&---------------------------------------------------------------------*
+*&      INCLUDE TELA 1001
+*&---------------------------------------------------------------------*
+INCLUDE zemm_cadastro_preco_1001_scr .
+INCLUDE zrmm_cadastro_preco_1001_pbo .
+INCLUDE zrmm_cadastro_preco_1001_pai .
+INCLUDE zrmm_cadastro_preco_1001_f01 .
+
+*&---------------------------------------------------------------------*
+*&      INCLUDE TELA 1002
+*&---------------------------------------------------------------------*
+INCLUDE zrmm_cadastro_preco_1002_pbo .
+INCLUDE zrmm_cadastro_preco_1002_pai .
+INCLUDE zrmm_cadastro_preco_1002_f01 .
+
+*&---------------------------------------------------------------------*
+*&      INCLUDE TELA 1003
+*&---------------------------------------------------------------------*
+INCLUDE zrmm_cadastro_preco_1003_pbo .
+INCLUDE zrmm_cadastro_preco_1003_pai .
+INCLUDE zrmm_cadastro_preco_1003_f01 .
+
+*&---------------------------------------------------------------------*
+*&      INCLUDE TELA 1004
+*&---------------------------------------------------------------------*
+INCLUDE zrmm_cadastro_preco_1004_pbo .
+INCLUDE zrmm_cadastro_preco_1004_pai .
+INCLUDE zrmm_cadastro_preco_1004_f01 .
+
+**Inicio - CC.006 - L.Chagas - 26.07.2016
+**&---------------------------------------------------------------------*
+**&      INCLUDE TELA 1005
+**&---------------------------------------------------------------------*
+**&SPWizard: Include inserted by SP Wizard. DO NOT CHANGE THIS LINE!
+*INCLUDE zrmm_cadastro_preco_1005_pbo .
+*INCLUDE zrmm_cadastro_preco_1005_pai .
+*INCLUDE zrmm_cadastro_preco_1005_f01 .
+**Fim - CC.006 - L.Chagas - 26.07.2016
+
+*&---------------------------------------------------------------------*
+*&      INCLUDE TELA 9000
+*&---------------------------------------------------------------------*
+INCLUDE zrmm_cadastro_preco_9000_pbo.
+INCLUDE zrmm_cadastro_preco_9000_pai.
+INCLUDE zrmm_cadastro_preco_9000_f01.

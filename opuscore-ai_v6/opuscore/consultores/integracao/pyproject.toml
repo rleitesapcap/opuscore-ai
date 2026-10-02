@@ -1,0 +1,16 @@
+[project]
+name = "opuscore-consultor-integracao"
+version = "1.0.0"
+description = "OPUSCORE-AI — Arquiteto de Integração (por enquanto: conversa; capacidades próprias a evoluir)"
+requires-python = ">=3.11"
+dependencies = ["opuscore-core>=1.0"]
+
+[project.entry-points."opuscore.consultores"]
+integracao = "opuscore_integracao.plugin:PLUGIN"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["opuscore_integracao*"]

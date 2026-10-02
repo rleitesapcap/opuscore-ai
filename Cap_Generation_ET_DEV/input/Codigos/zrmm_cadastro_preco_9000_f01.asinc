@@ -1,0 +1,345 @@
+
+"*********************************************************************
+" Capgemini - Brazil
+"*********************************************************************
+" Data Execução: 	16/09/2026
+" Autor:      Capgemini SAP
+" Projeto:              MOVE2S4
+"*********************************************************************
+
+*----------------------------------------------------------------------*
+***INCLUDE ZRMM_CADASTRO_PRECO_9000_F01 .
+*----------------------------------------------------------------------*
+*&---------------------------------------------------------------------*
+*&      Form  F_LOG_PROCESSAMENTO_900
+*&---------------------------------------------------------------------*
+FORM f_log_processamento_9000 .
+
+  DATA: vl_tab    TYPE x030l-tabname,
+        vl_outtab TYPE REF TO	data.
+
+  CLEAR: vl_tab, vl_outtab.
+
+** Processar dados
+  IF NOT tg_caprl[] IS INITIAL.
+    vl_tab    = c_tab1.
+
+** ORDENAR TABELA
+    SORT tg_caprl BY zzdocpr_aprcod
+                     zmd_logdt
+                     zmd_loghr
+                     zzdocpr_aprseq
+                     zzdocpr_aprsub
+                     zzdocpr_aprdti
+                     zzdocpr_aprdtf
+                     zzdocpr_mdatum
+                     zzdocpr_muzeit
+                     zzdocpr_muname
+                     zzdocpr_acao.
+
+
+
+  ELSEIF NOT tg_saprl[] IS INITIAL.
+    vl_tab = c_tab2.
+
+** ORDENAR TABELA
+    SORT tg_saprl BY zzdocpr_aprcod
+                     zmd_logdt
+                     zmd_loghr
+                     zzdocpr_aprseq
+                     zzdocpr_aprsub
+                     zzdocpr_aprdti
+                     zzdocpr_aprdtf
+                     zzdocpr_mdatum
+                     zzdocpr_muzeit
+                     zzdocpr_muname
+                     zzdocpr_acao.
+
+  ELSEIF NOT tg_raprl[] IS INITIAL.
+    vl_tab = c_tab3.
+
+** Ordenar tabela para processar
+    SORT tg_raprl BY zzdocpr_tipdoc
+                     zmd_logdt
+                     zmd_loghr
+                     zzdocpr_tipdti
+                     zzdocpr_tipdtf
+                     zzdocpr_progr1
+                     zzdocpr_ssobct
+                     zzdocpr_mdatum
+                     zzdocpr_muzeit
+                     zzdocpr_muname
+                     zzdocpr_acao.
+
+**
+  ELSEIF NOT tg_itab[] IS INITIAL.
+    vl_tab = c_tab4.
+
+** ORDENAR PARA VISUALIZAÇÃO
+    SORT tg_itab BY zzdata DESCENDING
+                    zzhora DESCENDING.
+
+
+  ENDIF. "IF NOT TG_CAPRL[] IS INITIAL.
+
+** PROCESSAR DADOS GERAIS
+  PERFORM: f_new_obj_cont_alv USING og_cont_alv c_cont,
+           f_new_obj_alv      USING og_cont_alv
+                              CHANGING og_alv.
+
+*...  PREENCHE LAYOUT
+  PERFORM f_layout USING c_x c_x.
+*
+*...  MONTA FIELDCAT
+  REFRESH tg_fieldcat.
+
+  CALL FUNCTION 'DP_GET_FIELDS_FROM_TABLE'
+    EXPORTING
+      tabname          = vl_tab
+    TABLES
+      data             = tg_data
+      fields           = tg_fields
+    EXCEPTIONS
+      dp_invalid_table = 1
+      OTHERS           = 2.
+
+  IF sy-subrc IS INITIAL.
+
+    LOOP AT tg_fields INTO eg_fields.
+
+      IF NOT eg_fields-fieldname EQ c_mandt.
+
+        ADD 1 TO vg_cont.
+
+        vg_field = eg_fields-fieldname.
+
+        CALL FUNCTION 'DDIC_FIELDNAME_GET'
+          EXPORTING
+            iv_strucname         = vl_tab
+            iv_fieldname         = vg_field
+          CHANGING
+            cv_field_description = vg_name
+          EXCEPTIONS
+            no_data              = 1
+            OTHERS               = 2.
+
+        IF sy-subrc IS INITIAL.
+          vg_tam = strlen( vg_name ).
+
+        ENDIF.
+
+        PERFORM f_create_fieldcat TABLES tg_fieldcat USING:
+        vg_cont c_tg_alv eg_fields-fieldname  vg_name vg_tam.
+      ENDIF.
+
+    ENDLOOP.
+
+  ENDIF.
+
+  vg_variant-report   = sy-repid.
+  vg_variant-username = sy-uname.
+
+** VERIFICAR O TIPO DE TABELA PARA PROCESSAR
+  CASE vl_tab.
+
+    WHEN c_tab1.
+      CALL METHOD og_alv->set_table_for_first_display
+        EXPORTING
+          is_variant                    = vg_variant
+          i_save                        = c_a
+          i_default                     = c_x
+          is_layout                     = eg_layout
+        CHANGING
+          it_outtab                     = tg_caprl[]
+          it_fieldcatalog               = tg_fieldcat[]
+        EXCEPTIONS
+          invalid_parameter_combination = 1
+          program_error                 = 2
+          too_many_lines                = 3
+          OTHERS                        = 4.
+
+      IF sy-subrc <> 0.                                     "#EC NEEDED
+        MESSAGE i899(mm) WITH TEXT-e01.
+        CHECK sy-subrc NE 0.
+
+      ENDIF.
+
+
+    WHEN c_tab2.
+      CALL METHOD og_alv->set_table_for_first_display
+        EXPORTING
+          is_variant                    = vg_variant
+          i_save                        = c_a
+          i_default                     = c_x
+          is_layout                     = eg_layout
+        CHANGING
+          it_outtab                     = tg_saprl[]
+          it_fieldcatalog               = tg_fieldcat[]
+        EXCEPTIONS
+          invalid_parameter_combination = 1
+          program_error                 = 2
+          too_many_lines                = 3
+          OTHERS                        = 4.
+
+      IF sy-subrc <> 0.                                     "#EC NEEDED
+        MESSAGE i899(mm) WITH TEXT-e01.
+        CHECK sy-subrc NE 0.
+
+      ENDIF.
+
+    WHEN c_tab3.
+      CALL METHOD og_alv->set_table_for_first_display
+        EXPORTING
+          is_variant                    = vg_variant
+          i_save                        = c_a
+          i_default                     = c_x
+          is_layout                     = eg_layout
+        CHANGING
+          it_outtab                     = tg_raprl[]
+          it_fieldcatalog               = tg_fieldcat[]
+        EXCEPTIONS
+          invalid_parameter_combination = 1
+          program_error                 = 2
+          too_many_lines                = 3
+          OTHERS                        = 4.
+
+      IF sy-subrc <> 0.                                     "#EC NEEDED
+        MESSAGE i899(mm) WITH TEXT-e01.
+        CHECK sy-subrc NE 0.
+
+      ENDIF.
+
+    WHEN c_tab4.
+      CALL METHOD og_alv->set_table_for_first_display
+        EXPORTING
+          is_variant                    = vg_variant
+          i_save                        = c_a
+          i_default                     = c_x
+          is_layout                     = eg_layout
+        CHANGING
+          it_outtab                     = tg_itab[]
+          it_fieldcatalog               = tg_fieldcat[]
+        EXCEPTIONS
+          invalid_parameter_combination = 1
+          program_error                 = 2
+          too_many_lines                = 3
+          OTHERS                        = 4.
+
+      IF sy-subrc <> 0.                                     "#EC NEEDED
+        MESSAGE i899(mm) WITH TEXT-e01.
+        CHECK sy-subrc NE 0.
+
+      ENDIF.
+
+
+    WHEN OTHERS.
+
+  ENDCASE.
+
+
+ENDFORM.                    " F_LOG_PROCESSAMENTO_900
+*&---------------------------------------------------------------------*
+*&      Form  F_NEW_OBJ_CONT_ALV
+*&---------------------------------------------------------------------*
+FORM f_new_obj_cont_alv USING p_cont TYPE REF TO cl_gui_custom_container
+                              p_nome TYPE any.
+
+  CREATE OBJECT p_cont
+    EXPORTING
+      container_name              = p_nome
+    EXCEPTIONS
+      cntl_error                  = 1
+      cntl_system_error           = 2
+      create_error                = 3
+      lifetime_error              = 4
+      lifetime_dynpro_dynpro_link = 5
+      OTHERS                      = 6.
+
+  IF sy-subrc NE 0.
+    MESSAGE i899(mm) WITH TEXT-e01.
+    CHECK sy-subrc NE 0.
+
+  ENDIF.
+
+ENDFORM.                    " F_NEW_OBJ_CONT_ALV
+*&---------------------------------------------------------------------*
+*&      Form  F_NEW_OBJ_ALV
+*&---------------------------------------------------------------------*
+FORM f_new_obj_alv  USING p_cont TYPE REF TO cl_gui_custom_container
+                    CHANGING p_cont_alv TYPE REF TO cl_gui_alv_grid.
+
+  CREATE OBJECT p_cont_alv
+    EXPORTING
+      i_parent          = p_cont
+    EXCEPTIONS
+      error_cntl_create = 1
+      error_cntl_init   = 2
+      error_cntl_link   = 3
+      error_dp_create   = 4
+      OTHERS            = 5.
+
+  IF sy-subrc NE 0.
+    MESSAGE i899(mm) WITH TEXT-e01.
+    CHECK sy-subrc NE 0.
+
+  ENDIF.
+
+ENDFORM.                    " F_NEW_OBJ_ALV
+*&---------------------------------------------------------------------*
+*&      Form  F_LAYOUT
+*&---------------------------------------------------------------------*
+FORM f_layout  USING p_zebra TYPE any p_opt TYPE any.
+
+  DATA: vl_cont(15) TYPE c.
+
+** VERIFICAR TIPO DE TABELA
+  IF tg_caprl[] IS NOT INITIAL.
+** CONTA LINHAS
+    DESCRIBE TABLE tg_caprl LINES vl_cont.
+
+  ELSEIF  tg_saprl[] IS NOT INITIAL.
+** CONTA LINHAS
+    DESCRIBE TABLE tg_saprl LINES vl_cont.
+
+  ELSEIF tg_raprl[] IS NOT INITIAL.
+** CONTA LINHAS
+    DESCRIBE TABLE tg_raprl LINES vl_cont.
+
+  ELSEIF tg_itab[] IS NOT INITIAL.
+** CONTA LINHAS
+    DESCRIBE TABLE tg_itab LINES vl_cont.
+
+  ENDIF.
+
+
+  eg_layout-zebra      = p_zebra.
+  eg_layout-cwidth_opt = p_opt.
+
+  CONCATENATE TEXT-m01  "Número de linhas processadas
+              ' - '
+              vl_cont
+              INTO eg_layout-grid_title.
+
+ENDFORM.                    " F_LAYOUT
+*&---------------------------------------------------------------------*
+*&      FORM  F_CREATE_FIELDCAT
+*&---------------------------------------------------------------------*
+FORM f_create_fieldcat   TABLES t_fieldcat TYPE lvc_t_fcat
+                          USING p_cont  TYPE any
+                                p_tab   TYPE any
+                                p_field TYPE any
+                                p_desc  TYPE any
+                                p_tam   TYPE any.
+
+
+  DATA: el_fieldcat TYPE lvc_s_fcat.
+
+  el_fieldcat-col_pos    = p_cont.
+  el_fieldcat-tabname    = p_tab.
+  el_fieldcat-fieldname  = p_field.
+  el_fieldcat-scrtext_l  = p_desc.
+  el_fieldcat-outputlen  = p_tam.
+
+  APPEND el_fieldcat TO t_fieldcat.
+
+ENDFORM.                    " F_CREATE_FIELDCAT

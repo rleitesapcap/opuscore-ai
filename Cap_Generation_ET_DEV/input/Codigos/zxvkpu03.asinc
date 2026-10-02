@@ -1,0 +1,148 @@
+
+"*********************************************************************
+" Capgemini - Brazil
+"*********************************************************************
+" Data Execução: 	17/09/2026
+" Autor:      Capgemini SAP
+" Projeto:              MOVE2S4
+"*********************************************************************
+
+***********************************************************************
+*                                                                     *
+*      *********************************************************      *
+*      *                +---------------------+                *      *
+*      *                | Leroy Merlin Brasil |                *      *
+*      *                +---------------------+                *      *
+*      *********************************************************      *
+*                                                                     *
+***********************************************************************
+*---------------------------------------------------------------------*
+*** Dados do Desenvolvimento                                          *
+*---------------------------------------------------------------------*
+* Nome: ZXVKPU03                                                      *
+* Título: Exit de validação                                           *
+* Autor: Mikaelly A S                                                 *
+* Data: 21/09/2026                                                    *
+* Ticket: SD-034-ENH                                                  *
+* Objetivos: -                                                        *
+*                                                                     *
+*---------------------------------------------------------------------+
+*** Histórico de modificações                                         |
+*---+--------+----------------+---------------------------------------+
+*Seq|Data    |Autor           |COD/ Descrição da modificação ou erro  |
+*---+--------+----------------+---------------------------------------+
+*001|21092026|51073923        |Desenvolvimento inicial                |
+*---+--------+----------------+---------------------------------------+
+
+*&---------------------------------------------------------------------*
+*&  Include           ZXVKPU03
+*&---------------------------------------------------------------------*
+
+DATA: v_vlfkz TYPE t001w-vlfkz.
+DATA: eg_mara_meins TYPE mara-meins.
+
+DATA: c_e TYPE c VALUE 'E'.
+
+FIELD-SYMBOLS: <fs_ekerv> TYPE pispc-ekerv,
+               <fs_vkerv> TYPE pispc-vkerv,
+               <vl_vrkme> TYPE any.
+
+DATA: vl_ekerv LIKE pispc-ekerv,
+      vl_vkerv LIKE pispc-vkerv.
+
+CONSTANTS: lc_zlibprc  TYPE c LENGTH 7 VALUE 'ZLIBPRC',
+           lc_rwvkp007 TYPE c LENGTH 8 VALUE 'RWVKP007'.
+
+IF sy-cprog = lc_rwvkp007.
+
+  ASSIGN ('(RWVKP007)PISPC-EKERV') TO <fs_ekerv>.         "#EC CI_SUBRC
+  ASSIGN ('(RWVKP007)PISPC-VKERV') TO <fs_vkerv>.         "#EC CI_SUBRC
+
+  IF <fs_ekerv> IS ASSIGNED.
+    vl_ekerv = <fs_ekerv>.
+  ENDIF.
+  IF <fs_vkerv> IS ASSIGNED.
+    vl_vkerv = <fs_vkerv>.
+  ENDIF.
+
+  SELECT SINGLE *
+    FROM ztsdd_price_001
+    INTO @DATA(ls_price)
+      WHERE interf_code EQ '0001'. "Interface Preço
+
+  IF ( vl_ekerv NE ls_price-ekerv OR
+        vl_vkerv NE ls_price-vkerv ).
+
+    IF NOT vl_ekerv IS INITIAL.
+
+      AUTHORITY-CHECK OBJECT 'ZMM_EKERV'
+               ID 'ACTVT' FIELD '*'
+               ID 'EKERV' FIELD vl_ekerv.
+
+      IF sy-subrc <> 0.
+        MESSAGE s014(zmmm_01) DISPLAY LIKE c_e. "Sem autorização para sequencia de determinação de preço de compra
+        STOP.                                           "#EC STOP_IN_FB
+      ENDIF.
+
+    ENDIF.
+
+    IF NOT vl_vkerv IS INITIAL.
+
+      AUTHORITY-CHECK OBJECT 'ZMM_VKERV'
+             ID 'ACTVT' FIELD '*'
+             ID 'VKERV' FIELD vl_vkerv.
+      IF sy-subrc <> 0.
+        MESSAGE s013(zmmm_01) DISPLAY LIKE c_e. "Sem autorização para sequencia de determinação de preço de venda
+        STOP.                                           "#EC STOP_IN_FB
+      ENDIF.
+
+    ENDIF.
+  ENDIF.
+
+ENDIF.
+
+v_vlfkz = pi_i_t001w-vlfkz.
+IF v_vlfkz = 'A'.
+  CLEAR pe_kalgr.
+  pe_kalgr = 'Z001'.
+ENDIF.
+
+INCLUDE zesd_prc_transf_praca_exp.
+
+**** Neste ponto da exit é determinado na tela da transação VKP5 a Unidade de medida básica. Isso foi feito devido ao formato que
+**** o sistema GEMCO recebe as informações do SAP. Após a saída completa do GEMCO este código poderá ser comentado para permitir que
+**** sseja possível criar condições de preços de vendas em diversas unidade de medida.
+
+UNASSIGN: <vl_vrkme>.
+
+** Analisa processo
+IF sy-tcode EQ lc_zlibprc.
+
+  ASSIGN ('(ZRMM_LIBERA_PRECO_MASSA)g_t_kalp-vrkme') TO <vl_vrkme>.
+  ASSIGN ('(ZRMM_LIBERA_PRECO_MASSA)g_t_kalp-matnr') TO <vl_matnr>.
+
+ELSE.
+
+  ASSIGN ('(SAPLWVK1)g_t_kalp-vrkme') TO <vl_vrkme>.
+  ASSIGN ('(SAPLWVK1)g_t_kalp-matnr') TO <vl_matnr>.
+
+ENDIF.
+
+IF sy-subrc EQ 0. "Para não apresentar DUMP
+
+  SELECT SINGLE baseunit
+    FROM i_product
+    INTO @eg_mara_meins
+    WHERE product = @<vl_matnr>.
+
+  IF sy-subrc = 0.
+
+    IF <vl_vrkme> <> eg_mara_meins.
+
+      <vl_vrkme> = eg_mara_meins.
+
+    ENDIF.
+
+  ENDIF.
+
+ENDIF.

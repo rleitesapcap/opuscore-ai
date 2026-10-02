@@ -1,0 +1,136 @@
+
+
+"*********************************************************************
+" Capgemini - Brazil
+"*********************************************************************
+" Data Execução: 	16/09/2026
+" Autor:      Capgemini SAP
+" Projeto:              MOVE2S4
+"*********************************************************************
+
+*&---------------------------------------------------------------------*
+*&  Include           ZRMM_CADASTRO_PRECO_1002_PBO
+*&---------------------------------------------------------------------*
+
+*OUTPUT MODULE FOR TC 'TC_1002'. DO NOT CHANGE THIS LINE!
+*COPY DDIC-TABLE TO ITAB
+MODULE tc_1002_init OUTPUT.
+
+  DATA: vl_tabix TYPE sy-tabix.
+
+  IF g_tc_1002_copied IS INITIAL.
+
+** LIMPAR TABELA INTERNAS
+    REFRESH: g_tc_1002_old, g_tc_1002_itab.
+
+** TABELA NEW
+    SELECT * FROM ztmmd_preco_rapr
+       INTO CORRESPONDING FIELDS
+       OF TABLE g_tc_1002_old.
+
+    IF sy-subrc EQ 0. "SELECT * FROM ZTMMD_PRECO_RAPR
+
+      LOOP AT g_tc_1002_old INTO g_tc_1002_old_wa.
+        CLEAR: vl_tabix.
+        vl_tabix = sy-tabix.
+
+** VERIFICAR SE A DATA FINAL É MENOR QUE DATA DO DIA
+** SE FOR IREMOS COLOCAR O REGISTRO NA TABELA DE
+** HISTORICO PARA PROCESSAMENTO
+        IF g_tc_1002_old_wa-zzdocpr_tipdtf LT sy-datum.
+** NESSE PROCESSO IREMOS ELIMINAR DA TABELA DE SELEÇÃO E COLOCAR
+** DADOS NA TABELA DE HISTORICO
+
+** PROCESSAR DADOS PARA TABELA PRINCIPAL
+          CLEAR: eg_raprp.
+
+          eg_raprp = CORRESPONDING #( g_tc_1002_old_wa ).
+
+** ATUALIZAR COM A ULTIMA INFORMAÇÃO
+          eg_raprp-mandt          = sy-mandt.
+          APPEND eg_raprp TO tg_raprp_del.
+
+** PROCESSAR DADOS PARA TABELA LOG
+** COM INFORMAÇÃO DA SELEÇÃO INICIAL SEM ALTERAÇÃO
+          CLEAR: eg_raprl.
+
+          eg_raprl = CORRESPONDING #( g_tc_1002_old_wa ).
+
+          eg_raprl-mandt     = sy-mandt.
+          eg_raprl-zmd_logdt = sy-datum.
+          eg_raprl-zmd_loghr = sy-uzeit.
+          eg_raprl-zzdocpr_acao = c_d.
+          APPEND eg_raprl TO tg_raprl.
+
+** LIMPAR DA SELEÇÃO ATUAL
+          DELETE g_tc_1002_old INDEX vl_tabix.
+
+        ELSE. "IF G_TC_1002_OLD_WA-ZZDOCPR_TIPDTF LT SY-DATUM.
+** SE FOR MAIOR MANTER O PROCESSO ATUAL
+          CLEAR: g_tc_1002_wa.
+
+          g_tc_1002_wa = CORRESPONDING #( g_tc_1002_old_wa ).
+
+          APPEND g_tc_1002_wa TO g_tc_1002_itab.
+
+        ENDIF. "IF G_TC_1002_OLD_WA-ZZDOCPR_TIPDTF LT SY-DATUM.
+
+      ENDLOOP. "LOOP AT G_TC_1002_OLD INTO G_TC_1002_OLD_WA.
+
+    ENDIF. ""SELECT * FROM ZTMMD_PRECO_RAPR
+
+** PROCESSAR DADOS EXCLUIDOS
+    IF tg_raprp_del[] IS NOT INITIAL.
+      PERFORM f_atualizar_tabelas_1002.
+
+    ENDIF.
+
+** MARCA QUE FOI SELECIONADO
+    g_tc_1002_copied = c_x.
+
+    REFRESH CONTROL 'TC_1002' FROM SCREEN '1002'.
+
+* SELECIONAR DADOS DO DOMINIO
+    REFRESH: tg_dd07v.
+    CALL FUNCTION 'FM_DOMAINVALUE_CHECK'
+      EXPORTING
+        i_tabname         = 'ZTMMD_PRECO_RAPR'
+        i_fieldname       = 'ZZDOCPR_TIPDOC'
+      TABLES
+        t_dd07v           = tg_dd07v
+      EXCEPTIONS
+        input_error       = 1
+        value_not_allowed = 2
+        OTHERS            = 3.
+
+    IF sy-subrc <> 0.
+
+    ENDIF.
+
+  ENDIF.
+
+** VERIFICAR AUTORIZAÇÃO PARA PROCESSAMENTO
+  IF vg_aut_1002 IS INITIAL. "VERIFICA SE TEM AUTORIZAÇÃO
+    PERFORM f_autorizacao_1002.
+
+  ENDIF.
+
+** PREENCHER DADOS DESCRIÇÃO
+  PERFORM f_preencher_dados_1002.
+
+  CLEAR: sy-ucomm.
+
+ENDMODULE.
+
+*OUTPUT MODULE FOR TC 'TC_1002'. DO NOT CHANGE THIS LINE!
+MODULE tc_1002_move OUTPUT.
+
+  zsmm_ztmmd_preco_rapr = CORRESPONDING #( g_tc_1002_wa ).
+
+ENDMODULE.
+
+*OUTPUT MODULE FOR TC 'TC_1002'. DO NOT CHANGE THIS LINE!
+MODULE tc_1002_get_lines OUTPUT.
+  g_tc_1002_lines = sy-loopc.
+
+ENDMODULE.

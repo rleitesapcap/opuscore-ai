@@ -1,0 +1,111 @@
+FUNCTION zfmm_check_condition_date
+  IMPORTING
+    VALUE(i_vkkab) TYPE vkkab
+    VALUE(i_uname) TYPE uname
+  EXPORTING
+    VALUE(e_stat_preco) TYPE ztmmc_stat_preco
+    VALUE(e_workday) TYPE datum
+    VALUE(et_users_lib) TYPE zcsd_users_lib
+  EXCEPTIONS
+    calendar_error
+    no_check.
+
+
+
+
+  "*********************************************************************
+  " Capgemini - Brazil
+  "*********************************************************************
+  " Data Execução: 	17/09/2026
+  " Autor:      Capgemini SAP
+  " Projeto:              MOVE2S4
+  "*********************************************************************
+
+  DATA: eg_stat_preco TYPE ztmmc_stat_preco.
+
+  DATA: vg_workday  TYPE datum,
+        vg_tomorrow TYPE datum,
+        vg_vkkab    TYPE datum,
+        vg_udate    TYPE udate,
+        vg_uzeit    TYPE uzeit.
+
+*Seleciona parametrização
+  SELECT SINGLE *
+    FROM ztmmc_stat_preco
+    INTO eg_stat_preco
+   WHERE zvdt_vdt  EQ abap_true. "Verificação de Calendário Preço
+
+  IF sy-subrc <> 0.
+    RAISE no_check.
+
+  ENDIF.
+
+  SELECT *
+    FROM ztsdd_users_lib
+    INTO TABLE et_users_lib.
+
+*Usuário
+  IF i_uname IS INITIAL.
+    i_uname = sy-uname.
+  ENDIF.
+
+*Data sistema
+  vg_udate = sy-datum.
+
+*Hora
+  vg_uzeit = sy-uzeit.
+
+*Pega data para verificação
+  vg_vkkab = i_vkkab.
+
+  DO.
+
+*Verificar data menor ou igual hoje, se for, calcula hoje + 1
+    IF vg_vkkab <= vg_udate .
+      vg_vkkab =  vg_udate + 1.
+    ENDIF.
+
+*Verificar calendário
+    CALL FUNCTION 'WRF_PSCD_GET_NEXT_WORKDAY'
+      EXPORTING
+        i_date         = vg_vkkab
+        i_calendar1    = eg_stat_preco-ident
+        i_calendar2    = eg_stat_preco-ident
+      IMPORTING
+        e_workday      = vg_workday
+      EXCEPTIONS
+        calendar_error = 1
+        OTHERS         = 2.
+
+    IF sy-subrc <> 0.
+*       Implement suitable error handling here
+      RAISE calendar_error.
+    ENDIF.
+
+*Verifica a hora da tentativa de precificação
+    IF eg_stat_preco-zvd_hora = abap_true AND vg_uzeit > eg_stat_preco-zhoralt.
+
+*Dia depois da data do sistema
+      vg_tomorrow = vg_udate + 1.
+
+*Se forem iguais, joga para o próximo dia
+      IF vg_workday = vg_tomorrow.
+        vg_vkkab = vg_vkkab + 1.
+      ELSE.
+        EXIT. "DO
+      ENDIF.
+
+    ELSE.
+      EXIT. "DO
+    ENDIF.
+
+  ENDDO.
+
+*Move a data de saída
+  e_workday = vg_workday.
+
+*Move a estrutura
+  e_stat_preco = eg_stat_preco.
+
+
+ENDFUNCTION.

@@ -1,0 +1,49 @@
+name: CI
+on: [push, pull_request]
+
+jobs:
+  regras-de-dependencia:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: scripts/instalar.sh --venv .venv
+      - run: .venv/bin/lint-imports --config .importlinter
+
+  pacotes:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        pasta: [packages/core, packages/connectors, packages/ef, packages/orchestrator, packages/web,
+                consultores/arquiteto, consultores/funcional-sd, consultores/integracao,
+                consultores/lider-tecnico, consultores/qualidade]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: scripts/instalar.sh --venv .venv
+      - run: .venv/bin/python -m pytest ${{ matrix.pasta }}
+
+  integracao:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: scripts/instalar.sh --venv .venv
+      - run: .venv/bin/python -m pytest tests/integracao
+
+  telas:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "20" }
+      - run: |
+          ARQS=$(ls packages/web/opuscore_web/static/shell/*.js packages/web/opuscore_web/static/sdk/*.js \
+                    consultores/*/opuscore_*/web/main.js packages/orchestrator/opuscore_orchestrator/web/main.js)
+          for f in $ARQS; do node --check "$f"; done
+          npx --yes eslint@8 --no-eslintrc --env browser,es2022 --parser-options=sourceType:module,ecmaVersion:2022 \
+            --rule 'no-undef: error' --rule 'no-redeclare: error' $ARQS

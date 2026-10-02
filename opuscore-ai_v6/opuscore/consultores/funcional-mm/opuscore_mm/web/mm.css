@@ -1,0 +1,66 @@
+/* CSS do Consultor Funcional MM: toda regra começa com .c-funcional-mm */
+.c-funcional-mm .mmstats{display:flex;flex-wrap:wrap;gap:10px;margin:6px 0 12px}
+.c-funcional-mm .mmstats div{min-width:92px;padding:10px 12px;border-radius:12px;border:1px solid var(--line2);background:var(--glass)}
+.c-funcional-mm .mmstats b{display:block;font-size:20px;line-height:1.1}
+.c-funcional-mm .mmstats span{font-family:var(--mono);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.c-funcional-mm .mmstats .ok b{color:var(--ok)}
+.c-funcional-mm .mmstats .warn b{color:var(--amber)}
+.c-funcional-mm .mmstats .bad b{color:var(--down)}
+.c-funcional-mm .mmobs{font-size:13px;color:var(--muted);font-style:italic;margin:6px 0}
+.c-funcional-mm .mmlist{margin:6px 0 10px 18px;padding:0;font-size:13px;line-height:1.6}
+.c-funcional-mm .mmgate{border-radius:14px;padding:14px 16px;margin-bottom:12px;border:1px solid var(--line2)}
+.c-funcional-mm .mmgate .g1{font-family:var(--mono);font-size:12px;letter-spacing:.06em}
+.c-funcional-mm .mmgate .g2{font-size:14px;margin-top:4px}
+.c-funcional-mm .mmgate.ok{background:rgba(52,230,189,.08);border-color:rgba(52,230,189,.35)}
+.c-funcional-mm .mmgate.mid{background:rgba(255,179,71,.08);border-color:rgba(255,179,71,.35)}
+.c-funcional-mm .mmgate.bad{background:rgba(255,90,110,.08);border-color:rgba(255,90,110,.35)}
+.c-funcional-mm .mmconf{border-left:3px solid var(--amber);background:rgba(255,179,71,.06);padding:10px 12px;border-radius:0 10px 10px 0;
+  margin:8px 0;font-size:13px;line-height:1.5}
+.c-funcional-mm .mmconf.bad{border-left-color:var(--down);background:rgba(255,90,110,.06)}
+.c-funcional-mm .mmsecs{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.c-funcional-mm .mmsec{border:1px solid var(--line2);border-radius:12px;background:var(--glass);overflow:hidden}
+.c-funcional-mm .mmsec.st-CRITICO{border-color:rgba(255,90,110,.45)}
+.c-funcional-mm .mmsec.st-ATENCAO{border-color:rgba(255,179,71,.35)}
+.c-funcional-mm .mmsec-h{display:flex;align-items:center;gap:10px;padding:11px 14px;cursor:pointer;flex-wrap:wrap}
+.c-funcional-mm .mmsec-h b{font-size:13.5px}
+.c-funcional-mm .mmsec-h .res{flex:1 1 260px;font-size:12.5px;color:var(--muted);min-width:0}
+.c-funcional-mm .mmsec-h .chev{color:var(--faint);transition:transform .15s}
+.c-funcional-mm .mmsec.open .chev{transform:rotate(180deg)}
+.c-funcional-mm .mmsec-b{display:none;padding:0 14px 12px 14px}
+.c-funcional-mm .mmsec.open .mmsec-b{display:block}
+.c-funcional-mm .mmach{border-top:1px dashed var(--line);padding:10px 0;font-size:13px;line-height:1.55}
+.c-funcional-mm .mmach .tipo{font-family:var(--mono);font-size:9.5px;padding:2px 6px;border-radius:6px;margin-right:6px;
+  text-transform:uppercase;letter-spacing:.05em;background:rgba(255,255,255,.06)}
+.c-funcional-mm .mmach .t-FALTA{color:var(--down)}
+.c-funcional-mm .mmach .t-AMBIGUIDADE{color:var(--amber)}
+.c-funcional-mm .mmach .t-MELHORIA{color:var(--accent)}
+.c-funcional-mm .mmach .t-CLEAN_CORE{color:#9a7bff}
+.c-funcional-mm .mmach .trecho{margin-top:6px;color:var(--muted);font-style:italic;font-size:12.5px}
+.c-funcional-mm .mmach .trecho em{color:var(--amber);font-style:normal}
+.c-funcional-mm .mmach .sug{margin-top:8px;padding:9px 11px;border-radius:10px;background:rgba(52,230,189,.06);
+  border:1px solid rgba(52,230,189,.22);white-space:pre-wrap}
+.c-funcional-mm .mmach .sug span{display:block;font-family:var(--mono);font-size:9.5px;color:var(--accent);text-transform:uppercase;
+  letter-spacing:.08em;margin-bottom:4px}
+.c-funcional-mm .mmrule{border:1px solid var(--line2);border-radius:12px;background:var(--glass);padding:12px 14px;margin-bottom:10px}
+.c-funcional-mm .mmrule.off{opacity:.55}
+.c-funcional-mm .mmrule-h{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.c-funcional-mm .mmrule-h b{font-size:13.5px}
+.c-funcional-mm .mmrule .mmprompt{min-height:84px;font-size:12.5px}
+.c-funcional-mm .mmrule-f{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:8px;font-size:12.5px;color:var(--muted)}
+.c-funcional-mm .mmrule-f label{display:flex;align-items:center;gap:6px}
+.c-funcional-mm .mmrule-f .mmcond{width:170px;padding:6px 9px;font-size:12px}
+.c-funcional-mm .mmrule-f .sp{flex:1}
+.c-funcional-mm .mmcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.c-funcional-mm .mmcard{text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:6px;padding:13px 14px;border-radius:12px;
+  border:1px solid var(--line2);background:var(--glass);color:var(--text);font:inherit;transition:border-color .15s,transform .15s}
+.c-funcional-mm .mmcard:hover{border-color:var(--accent);transform:translateY(-1px)}
+.c-funcional-mm .mmcard b{font-size:13.5px}
+.c-funcional-mm .mmcard span{font-size:12.5px;color:var(--muted);line-height:1.45}
+.c-funcional-mm .mmcard em{font-style:normal;font-family:var(--mono);font-size:10px;color:var(--faint)}
+.c-funcional-mm .mmans .mmq{margin:4px 0 12px;font-size:13.5px}
+.c-funcional-mm .mmans .md{font-size:13.5px;line-height:1.6}
+.c-funcional-mm .mmans .md p{margin:6px 0}
+.c-funcional-mm .mmans .md ul{margin:6px 0 6px 18px;padding:0}
+.c-funcional-mm .mmans .md code{font-family:var(--mono);font-size:12px;background:rgba(255,255,255,.06);padding:1px 5px;border-radius:5px}
+.c-funcional-mm .mmans .md .mdh{font-weight:600;font-size:14px;margin:12px 0 4px}
+.c-funcional-mm .mmans .md .tblwrap{margin:8px 0}

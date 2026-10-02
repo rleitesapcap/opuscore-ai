@@ -1,0 +1,414 @@
+[
+  {
+    "id": "capa",
+    "titulo": "Identificação (capa)",
+    "obrigatoria": true,
+    "status": "OK",
+    "resumo": "Capa preenchida corretamente com todos os campos obrigatórios. Histórico de revisão bem documentado.",
+    "achados": [],
+    "origem": "IA",
+    "onde": "Capa e cabeçalho"
+  },
+  {
+    "id": "resumo",
+    "titulo": "Resumo do Desenvolvimento",
+    "obrigatoria": true,
+    "status": "ATENCAO",
+    "resumo": "Tipo de programa e prioridade marcados corretamente, mas faltam evidências de pesquisa de alternativa standard e a volumetria de migração não está preenchida.",
+    "achados": [
+      {
+        "tipo": "FALTA",
+        "descricao": "Campo 'Número de registros' para migração de dados está vazio. A EF menciona que é uma interface, mas não deixa claro se há volume de migração associado.",
+        "trecho": "[T1.r7] 4-Número de registros | registros",
+        "sugestao": "Preencha o número de registros migrados ou deixe claro se não há migração: '[T1.r7] 4-Número de registros | 0 (sem migração de dados históricos)' ou com o volume real se aplicável.",
+        "trecho_confirmado": false
+      },
+      {
+        "tipo": "MELHORIA",
+        "descricao": "O campo 'Existe alternativa no S4HANA?' está marcado como 'Não', mas a seção 'Razão pela qual esta alternativa não é aceitável' está vazia. A EF menciona alternativa standard (contabilização na visão cliente), mas não explica por que não é aceitável.",
+        "trecho": "[T2.r0] / Razão pela qual esta alternativa não é aceitável:",
+        "sugestao": "Preencha com: 'A alternativa standard SAP realiza contabilização apenas na visão cliente, sem geração automática de contabilização em conta de fornecedor. O novo fluxo exige a criação de nota de crédito no fornecedor e compensação contra conta transitória, razão pela qual a solução Z é necessária.'",
+        "trecho_confirmado": false
+      }
+    ],
+    "origem": "IA",
+    "onde": "Resumo do Desenvolvimento"
+  },
+  {
+    "id": "objetivo",
+    "titulo": "Objetivo, justificativa e processo atendido",
+    "obrigatoria": true,
+    "status": "OK",
+    "resumo": "Seção clara: problema, objetivo e benefício bem descritos. Critério de sucesso implícito (eliminação da ZAP0069) é verificável.",
+    "achados": [],
+    "origem": "IA",
+    "onde": "Objetivo, justificativa e processo de negócio atendido."
+  },
+  {
+    "id": "processos",
+    "titulo": "Processos relacionados",
+    "obrigatoria": true,
+    "status": "ATENCAO",
+    "resumo": "Processos listados, mas faltam papéis de usuário, transações S/4HANA standard e clareza sobre BAdI/APIs como novos desenvolvimentos vs. standard.",
+    "achados": [
+      {
+        "tipo": "FALTA",
+        "descricao": "Faltam papéis de usuário (usuários que executam cada processo) e transações S/4HANA standard associadas aos processos.",
+        "trecho": "[P028] até [P046]",
+        "sugestao": "Para cada processo, adicione: papel (ex.: 'Analista FI', 'Gerente de Faturamento'), transação (ex.: 'VF01 - Criar Fatura') e se é standard ou custom. Exemplo: 'VF01 - Papel: Analista de Faturamento SD - transação standard S/4HANA'.",
+        "trecho_confirmado": false
+      },
+      {
+        "tipo": "AMBIGUIDADE",
+        "descricao": "As APIs (Business Partner, Documento Contábil, Sales Order) não ficam claras se são standard SAP ou desenvolvimentos Z/RAP novos.",
+        "trecho": "[P034] até [P037]",
+        "sugestao": "Especifique: 'API Business Partner - custom criado em RAP para validação por CNPJ' ou 'API standard Sales Order - utilização de /sap/opu/odata/sap/C_SALESORDER_TP_SRV conforme best practices'.",
+        "trecho_confirmado": false
+      }
+    ],
+    "origem": "IA",
+    "onde": "Processos Relacionados (Transações do Sistema S4HANA)"
+  },
+  {
+    "id": "regras",
+    "titulo": "Regras de negócio",
+    "obrigatoria": true,
+    "status": "ATENCAO",
+    "resumo": "Regras têm condições, ações e exceções, mas estão misturadas em parágrafos longos. Falta estruturação em formato RN-nn e algumas regras carecem de detalhe de tratamento de erro.",
+    "achados": [
+      {
+        "tipo": "MELHORIA",
+        "descricao": "Regras estão descritas em prosa corrida sem numeração/estrutura. Dificulta rastreabilidade e testes.",
+        "trecho": "[P049] até [P071]",
+        "sugestao": "Estruture cada regra em formato RN-nn. Exemplo: 'RN-01: Quando o tipo de operação for Boleto ou PIX, o sistema deve aplicar o novo fluxo de contabilização. Exceção: operações de cartão continuam no fluxo atual (ZAP0069).' 'RN-02: Quando o status da NF for igual a 100, o sistema deve executar sequencialmente POSTING_INTERFACE_START, POSTING_INTERFACE_CLEARING e POSTING_INTERFACE_END. Exceção: se status ≠ 100, não executar.'",
+        "trecho_confirmado": false
+      },
+      {
+        "tipo": "AMBIGUIDADE",
+        "descricao": "Regra sobre erro de compensação não especifica o que 'registrar em log' significa: que campo? que tabela além de ZTFID_MKTPL_LG? qual mensagem de erro?",
+        "trecho": "[P071] Os erros dos processos deverão ser gravados em log e monitorados na tabela ZTFID_MKTPL_LG. Em caso de erro na compensação da fatura do cliente, a BAPI_ACC_DOCUMENT_POST não deverá ser executada.",
+        "sugestao": "Detalhe: 'Os erros deverão ser gravados em log na tabela ZTFID_MKTPL_LG com campo de status, código de erro (Z_ERROR_CODE), mensagem (Z_ERROR_MSG) e timestamp. No SLG1, registrar com nome de objeto ZRFI_MKTPL_LOG. Se erro na POSTING_INTERFACE_CLEARING, status fica em ERRO e BAPI_ACC_DOCUMENT_POST não é chamada.'",
+        "trecho_confirmado": false
+      }
+    ],
+    "origem": "IA",
+    "onde": "Regras de Negócio"
+  },
+  {
+    "id": "premissas",
+    "titulo": "Premissas, escopo e dependências",
+    "obrigatoria": true,
+    "status": "OK",
+    "resumo": "Premissas, escopo incluído e fora de escopo bem definidos, sem contradições. Periodicidade de invoices e condições de execução claras.",
+    "achados": [],
+    "origem": "IA",
+    "onde": "Premissas/Acordos do GAP"
+  },
+  {
+    "id": "fluxo",
+    "titulo": "Fluxo do processo",
+    "obrigatoria": true,
+    "status": "ATENCAO",
+    "resumo": "Fluxo em texto passo a passo, mas faltam quem executa cada passo (usuário, sistema ou job) e pontos de decisão não estão explícitos.",
+    "achados": [
+      {
+        "tipo": "MELHORIA",
+        "descricao": "Fluxo não deixa claro quem executa ou dispara cada passo: é automático (job/BAdI), manual (usuário) ou automático após ação manual?",
+        "trecho": "[P091] até [P108]",
+        "sugestao": "Adicione informação de executor: '[P091] A Plataforma Marketplace (sistema externo) dispara o período de Repasse e Comissão.' '[P094] O sistema (job em background) executa VF01 para faturamento e geração da fatura no cliente.' '[P096] O sistema (BAdI CL_NFE_PRINT) valida se status da NF = 100; se SIM, prossegue; se NÃO, para.'",
+        "trecho_confirmado": false
+      },
+      {
+        "tipo": "MELHORIA",
+        "descricao": "Passos P100 e P103 ('O retorno da compensação é validado', 'O saldo da conta transitória é validado') estão genéricos. Não fica claro quem valida e o que fazer se validação falhar.",
+        "trecho": "[P100] O retorno da compensação é validado. [P103] O saldo da conta transitória é validado após a compensação da fatura do cliente e a criação da nota de crédito no fornecedor.",
+        "sugestao": "Detalhe: '[P100] O sistema valida o retorno da POSTING_INTERFACE_CLEARING. Se RETORNO = SUCESSO, prossegue para P101. Se RETORNO = ERRO, registra erro em ZTFID_MKTPL_LG e para (BAPI_ACC_DOCUMENT_POST não é executada).' '[P103] O sistema valida se saldo da conta transitória = 0. Se SIM, fecha documento. Se NÃO, registra alerta em ZTFID_MKTPL_LG para investigação manual.'",
+        "trecho_confirmado": false
+      }
+    ],
+    "origem": "IA",
+    "onde": "Fluxo do Processo do GAP"
+  },
+  {
+    "id": "sistemas",
+    "titulo": "Sistemas e objetos impactados",
+    "obrigatoria": true,
+    "status": "CRITICO",
+    "resumo": "Sistemas listados mas faltam tipos (S/4HANA, externo, BTP), papéis e mapeamento de integração. Bloco de interfaces do Resumo não está preenchido.",
+    "achados": [
+      {
+        "tipo": "FALTA",
+        "descricao": "Faltam tipos de sistema (S/4HANA, legado, externo, BTP) e papéis claros no processo. Ex.: SAP CPI é BTP? Mirakl é SaaS externo?",
+        "trecho": "[P112] Sistemas envolvidos: Marketplace/Mirakl, Gateway KONG, SAP CPI, serviço OData criado em ABAP/RAP, SAP ECC e SAP S/4HANA.",
+        "sugestao": "Reformule: 'Marketplace/Mirakl (SaaS externo, dispara eventos), Gateway KONG (BTP/API Gateway, expõe APIs), SAP CPI (BTP, roteia requisições), Serviço OData ABAP/RAP (S/4HANA, consome CPI e executa lógica), SAP S/4HANA (ERP target, faturamento e compensação), SAP ECC (legado, descontinuado neste fluxo).'",
+        "trecho_confirmado": false
+      },
+      {
+        "tipo": "FALTA",
+        "descricao": "A seção Resumo não tem bloco de interfaces preenchido (volumetria, direção, periodicidade), mas há interface clara com Mirakl/CPI/OData.",
+        "trecho": "[T1.r3] até [T1.r12]",
+        "sugestao": "Complete o bloco de interfaces da seção Resumo: tipo=Real-time, direção=Entrada S4HANA (Mirakl→S/4HANA), periodicidade=Quinzenal (05 e 20), registros=2.000 NFs/mês (já preenchido).",
+        "trecho_confirmado": false
+      },
+      {
+        "tipo": "AMBIGUIDADE",
+        "descricao": "Não fica claro se SAP ECC é realmente impactado ou apenas mencionado historicamente.",
+        "trecho": "[P112] SAP ECC e SAP S/4HANA",
+        "sugestao": "Se ECC não é parte do novo fluxo: 'SAP ECC (legado, descontinuado - transferência de dados para S/4HANA já realizada)'. Se ainda há integração: detalhe a interface e o mapeamento.",
+        "trecho_confirmado": false
+      }
+    ],
+    "origem": "IA",
+    "onde": "Sistemas, ambientes e objetos SAP impactados."
+  },
+  {
+    "id": "novos_objetos",
+    "titulo": "Novos objetos / campos",
+    "obrigatoria": false,
+    "status": "ATENCAO",
+    "resumo": "Novos objetos listados mas faltam detalhes de campo: tipo, tamanho, tela, obrigatoriedade, F4 e validação. Verificação SCFD_REGISTRY não foi feita.",
+    "achados": [
+      {
+        "tipo": "FALTA",
+        "descricao": "Novo campo 'Conta transitória' não tem definição técnica: tipo, tamanho, onde é armazenado (tabela BSEG? campo custom em nova tabela?).",
+        "trecho": "[P129] Conta transitória nova para compensação da fatura do cliente e contabilização da nota de crédito no fornecedor.",
+        "sugestao": "Detalhe: 'Campo novo Z_ACCT_TRNSIT (tipo C, tamanho 10) será armazenado em BRF+ ou em tabela de configuração Z_MKTPL_CONFIG. Será consultado na POSTING_INTERFACE_CLEARING via parâmetro BAPI_ACC_DOCUMENT_POST.'",
+        "trecho_confirmado": false
+      },
+      {
+        "tipo": "FALTA",
+        "descricao": "Serviço OData não tem informações técnicas: nome do serviço, entidades, campos, tipo de autenticação.",
+        "trecho": "[P129] Serviço OData criado em ABAP/RAP para consumo pelo SAP CPI e execução das validações e regras atuais.",
+        "sugestao": "Especifique: 'Serviço OData Z_MKTPL_ORDER (RAP em Clean Core), entidades C_MKTPL_ORDER e C_MKTPL_SELLER, autenticação OAuth via SAP CPI, publicado em /sap/opu/odata/sap/Z_MKTPL_ORDER.'",
+        "trecho_confirmado": false
+      },
+      {
+        "tipo": "FALTA",
+        "descricao": "BRF+ para contas contábeis não tem estrutura: quais dados? regra de decisão ou tabela de decisão?",
+        "trecho": "[P139] BRF+ para salvar os dados das contas contábeis.",
+        "sugestao": "Detalhe: 'Tabela de Decisão BRF+ Z_MKTPL_ACCT_CONFIG com entradas por tipo operação (Boleto/PIX) e retorno de conta transitória (GL). Expressão: IF TipoOp IN (Boleto, PIX) THEN RetornaContaTransitoria ELSE RetornaContaClienteNormal.'",
+        "trecho_confirmado": false
+      }
+    ],
+    "origem": "IA",
+    "onde": "Novos Objetos"
+  },
+  {
+    "id": "parametros",
+    "titulo": "TVARV, BRF+ e tabelas de parâmetros",
+    "obrigatoria": false,
+    "status": "NAO_SE_APLICA",
+    "resumo": "Seção não presente e não exigida para este tipo de desenvolvimento.",
+    "achados": [],
+    "origem": "regra",
+    "onde": ""
+  },
+  {
+    "id": "enhancements",
+    "titulo": "Enhancements",
+    "obrigatoria": true,
+    "status": "ATENCAO",
+    "resumo": "BAdI identificada (CL_NFE_PRINT), mas sem detalhe de implementação. Function modules listados mas não fica claro se são standard SAP ou custom. Verificação SCFD_REGISTRY não foi feita.",
+    "achados": [
+      {
+        "tipo": "AMBIGUIDADE",
+        "descricao": "BAdI CL_NFE_PRINT é ponto de extensão de qual objeto? Qual interface SAP deve ser implementada? Qual classe Z terá a lógica?",
+        "trecho": "[T4.r2] BAdI/lógica CL_NFE_PRINT; function modules POSTING_INTERFACE_START, POSTING_INTERFACE_CLEARING e POSTING_INTERFACE_END; BAPI_ACC_DOCUMENT_POST.",
+        "sugestao": "Detalhe: 'Implementação da interface BAdI_PRINT_NFSE (SAP standard em SD) na classe Z_MKTPL_NFE_PRINT_IMPL. Hook chamado após VF01 com evento AFTER_POST_DOCUMENT quando NFSE_STATUS=100. Logic chama sequência: POSTING_INTERFACE_START → POSTING_INTERFACE_CLEARING → POSTING_INTERFACE_END → validação → BAPI_ACC_DOCUMENT_POST.'",
+        "trecho_confirmado": false
+      },
+      {
+        "tipo": "MELHORIA",
+        "descricao": "Function modules POSTING_INTERFACE_* não estão claramente identificados como standard SAP ou custom Z. Se são custom, faltam detalhes de entrada/saída.",
+        "trecho": "[T4.r2] function modules POSTING_INTERFACE_START, POSTING_INTERFACE_CLEARING e POSTING_INTERFACE_END",
+        "sugestao": "Esclareça: 'Function modules custom Z_POSTING_INTERFACE_START (entrada: document ID, saída: session ID), Z_POSTING_INTERFACE_CLEARING (entrada: invoice, transit account; saída: clearing ID, status), Z_POSTING_INTERFACE_END (entrada: clearing ID; saída: final status). Simulam fluxo de compensação do ECC.' Se forem adaptações de standard, cite a SAP Note.",
+        "trecho_confirmado": false
+      },
+      {
+        "tipo": "FALTA",
+        "descricao": "SCFD_REGISTRY não foi consultado para validar extensibilidade da VF01 (BAdI liberada em Clean Core nível A?). Campo status da NF pode ser estendido ou é standard?",
+        "trecho": "[T4.r7] Validação na SCFD_REGISTRY, quando aplicável | NA",
+        "sugestao": "Mude para: 'Verificado na SCFD_REGISTRY em [data]: BAdI_PRINT_NFSE liberada para Clean Core nível A em VF01. Nenhuma modificação de tabela standard necessária. Campo NFSE.STATUS é standard SAP, sem extensão.'",
+        "trecho_confirmado": false
+      }
+    ],
+    "origem": "IA",
+    "onde": "Enhancements, Enhancements - Implementação de Ampliações SAP (CMOD/BADI), Enhancements – Objeto Standard SAP com ponto de ampliação implícito, Enhancements – Regra de negócio"
+  },
+  {
+    "id": "fiori",
+    "titulo": "Aplicativo Fiori",
+    "obrigatoria": false,
+    "status": "CRITICO",
+    "resumo": "Seção descreve eliminação de transação (ZAP0069), não um novo app Fiori. Estrutura inadequada para a regra de validação.",
+    "achados": [
+      {
+        "tipo": "FALTA",
+        "descricao": "A seção 'Aplicativo Fiori' deveria descrever um novo app ou modernização, mas só menciona eliminação da ZAP0069. Se há Fiori novo, está faltando. Se não há, a seção está no lugar errado.",
+        "trecho": "[T6.r0] até [T6.r1]",
+        "sugestao": "Se há novo app Fiori para monitoramento (ex.: lista de documentos MKTPL com status de compensação): descreva template (List Report + Object Page), campos (docID, status, saldo transitório, data compensação), filtros (por período, status), ações (reprocessar compensação). Se não há: mude para 'NA - Nenhum app Fiori novo. Monitoramento realizado via tabela ZTFID_MKTPL_LG e SLG1.'",
+        "trecho_confirmado": false
+      }
+    ],
+    "origem": "IA",
+    "onde": "Transações/Prog/Jobs/Forms/Aplicações Fiori – Transações, programas de demais objetos a serem remediados e simplificados."
+  },
+  {
+    "id": "formulario",
+    "titulo": "Formulário",
+    "obrigatoria": false,
+    "status": "NAO_SE_APLICA",
+    "resumo": "Seção não presente e não exigida para este tipo de desenvolvimento.",
+    "achados": [],
+    "origem": "regra",
+    "onde": ""
+  },
+  {
+    "id": "interface_entrada",
+    "titulo": "Interfaces de entrada / conversões",
+    "obrigatoria": true,
+    "status": "CRITICO",
+    "resumo": "Não achei essa seção na EF, e o tipo de desenvolvimento marcado no Resumo pede essa seção.",
+    "achados": [
+      {
+        "tipo": "FALTA",
+        "descricao": "Seção ausente.",
+        "trecho": "",
+        "sugestao": "Inclua a seção “Interfaces de entrada / conversões”."
+      }
+    ],
+    "origem": "regra",
+    "onde": ""
+  },
+  {
+    "id": "interface_saida",
+    "titulo": "Interfaces de saída",
+    "obrigatoria": true,
+    "status": "CRITICO",
+    "resumo": "Não achei essa seção na EF, e o tipo de desenvolvimento marcado no Resumo pede essa seção.",
+    "achados": [
+      {
+        "tipo": "FALTA",
+        "descricao": "Seção ausente.",
+        "trecho": "",
+        "sugestao": "Inclua a seção “Interfaces de saída”."
+      }
+    ],
+    "origem": "regra",
+    "onde": ""
+  },
+  {
+    "id": "programa",
+    "titulo": "Programas on-line",
+    "obrigatoria": false,
+    "status": "NAO_SE_APLICA",
+    "resumo": "Seção não presente e não exigida para este tipo de desenvolvimento.",
+    "achados": [],
+    "origem": "regra",
+    "onde": ""
+  },
+  {
+    "id": "relatorio",
+    "titulo": "Relatórios",
+    "obrigatoria": false,
+    "status": "NAO_SE_APLICA",
+    "resumo": "Seção não presente e não exigida para este tipo de desenvolvimento.",
+    "achados": [],
+    "origem": "regra",
+    "onde": ""
+  },
+  {
+    "id": "workflow",
+    "titulo": "Workflow",
+    "obrigatoria": false,
+    "status": "NAO_SE_APLICA",
+    "resumo": "Seção não presente e não exigida para este tipo de desenvolvimento.",
+    "achados": [],
+    "origem": "regra",
+    "onde": ""
+  },
+  {
+    "id": "teste_proc",
+    "titulo": "Procedimento de testes",
+    "obrigatoria": true,
+    "status": "ATENCAO",
+    "resumo": "Cenários de teste cobrem fluxo principal e exceção (status ≠ 100), mas faltam cenários específicos para erros de integração, reprocessamento e validações de conta.",
+    "achados": [
+      {
+        "tipo": "FALTA",
+        "descricao": "Faltam testes para cenários de erro: falha no KONG, falha no SAP CPI, falha na POSTING_INTERFACE_CLEARING, falha na criação de nota de crédito.",
+        "trecho": "[P192] até [P202]",
+        "sugestao": "Adicione passos de teste: 'CT-05: Validar comportamento quando KONG retorna erro HTTP 500. Esperado: erro registrado em ZTFID_MKTPL_LG, status=ERRO_KONG, Ordem de Venda não criada. CT-06: Validar quando POSTING_INTERFACE_CLEARING falha. Esperado: erro em log, BAPI_ACC_DOCUMENT_POST não é chamada, saldo em conta transitória não zerado.'",
+        "trecho_confirmado": false
+      },
+      {
+        "tipo": "FALTA",
+        "descricao": "Não há teste de reprocessamento: se erro de compensação ocorre, como o fluxo é retomado? Manual via transação? Job em background?",
+        "trecho": "[P192] até [P202]",
+        "sugestao": "Adicione: 'CT-07: Reprocessamento manual. Após correção de erro, usuário executa transação ZTFID_MKTPL_RETRY com docID e nota fiscal. Esperado: POSTING_INTERFACE_* reexecutada, nota de crédito criada, saldo zerado.'",
+        "trecho_confirmado": false
+      },
+      {
+        "tipo": "MELHORIA",
+        "descricao": "Teste de saldo zerado (P202) não especifica: se não zerar, qual é a ação? Quem investigará? Há tolerância?",
+        "trecho": "[P202] Validar saldo zerado na conta transitória após os lançamentos a crédito e débito",
+        "sugestao": "Detalhe: 'Se saldo ≠ 0 após 10 minutos da compensação, registrar alerta em ZTFID_MKTPL_LG com status=SALDO_DIFERENTE_ZERO e notificar via email para [email de operação]. Tolerância: ±0.01.'",
+        "trecho_confirmado": false
+      }
+    ],
+    "origem": "IA",
+    "onde": "Descrição Funcional do Procedimento de Testes(obrigatório)"
+  },
+  {
+    "id": "teste_result",
+    "titulo": "Resultados esperados",
+    "obrigatoria": true,
+    "status": "ATENCAO",
+    "resumo": "Resultados esperados são descritivos mas alguns são vagos (ex.: 'funcionar corretamente', 'conforme fluxo'). Faltam valores esperados e mensagens de sistema.",
+    "achados": [
+      {
+        "tipo": "MELHORIA",
+        "descricao": "Resultado esperado P208 'conforme fluxo de integração' é vago. Não especifica valores esperados, payloads, mapeamento.",
+        "trecho": "[P208] A API Business Partner deve consultar e validar cliente e fornecedor por CNPJ, sem consulta por CPF, e retornar a informação de cliente ou fornecedor válido. A API Documento Contábil e a API standard Sales Order devem ser chamadas conforme o fluxo de integração. Os payloads e mapeamentos deverão seguir o DE/PARA a ser fornecido.",
+        "sugestao": "'A API Business Partner deve retornar JSON com campos: cliente.cnpj, cliente.valido (true/false), fornecedor.cnpj, fornecedor.valido (true/false). Se valido=true, prossegue; se valido=false, registra erro 'PARTNER_NOT_FOUND' e para. Payloads em anexo DE-PARA-v01.xlsx.'",
+        "trecho_confirmado": false
+      },
+      {
+        "tipo": "MELHORIA",
+        "descricao": "Resultado P209 'será contabilizada' é passivo. Não especifica: em qual tabela (BSEG)? com qual conta (GL)? qual valor?",
+        "trecho": "[P209] A comissão será contabilizada no cliente e compensada com lançamento na transitória nova.",
+        "sugestao": "'A comissão será contabilizada em BSEG com linha débito na conta cliente (GL 113000) e crédito na conta receita comissão (GL 540200). Na compensação, novo lançamento débito conta transitória (GL [?]) e crédito cliente (GL 113000). Valores devem bater na NF de origem.'",
+        "trecho_confirmado": false
+      },
+      {
+        "tipo": "FALTA",
+        "descricao": "Faltam resultados esperados para cenários de erro e exceção (status ≠ 100, erro na compensação, erro na BAPI).",
+        "trecho": "[P207] até [P212]",
+        "sugestao": "Adicione: 'P213 - Se status NF ≠ 100: BAdI CL_NFE_PRINT não é acionada, nenhuma compensação ou nota de crédito criada. Status permanece como recebido. P214 - Se POSTING_INTERFACE_CLEARING falha (status=ERRO): mensagem 'COMPENSATION_FAILED_[código]' é gravada em ZTFID_MKTPL_LG, BAPI_ACC_DOCUMENT_POST não é executada, conta transitória não recebe lançamento.'",
+        "trecho_confirmado": false
+      }
+    ],
+    "origem": "IA",
+    "onde": "Descrição Funcional dos Resultados Esperados Após o Teste(obrigatório)"
+  },
+  {
+    "id": "nfr",
+    "titulo": "Informações complementares",
+    "obrigatoria": true,
+    "status": "OK",
+    "resumo": "Seção preenchida com periodicidade, tipo de execução, volumetria, tratamento de erros e criticidade bem definidos.",
+    "achados": [],
+    "origem": "IA",
+    "onde": "Periodicidade de Execução, Tipo de Execução, Volumetria e frequência de execução., Janela para Execução, Tratamento de erros, logs, monitoramento e reprocessamento., Processo Crítico"
+  },
+  {
+    "id": "homologacao",
+    "titulo": "Homologação",
+    "obrigatoria": true,
+    "status": "OK",
+    "resumo": "Todos os papéis de homologação têm pessoas nomeadas, sem lacunas.",
+    "achados": [],
+    "origem": "IA",
+    "onde": "Homologação"
+  }
+]

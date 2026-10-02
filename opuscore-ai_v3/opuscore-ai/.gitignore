@@ -1,0 +1,52 @@
+# ===== OPUSCORE-AI =====
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+
+# Ambientes virtuais
+.venv/
+venv/
+env/
+ENV/
+
+# --- Segredos e config local (versionar apenas os .example) ---
+.env
+backend/.env
+config.yaml
+backend/config.yaml
+
+# --- Trilha de auditoria (local, não versionar) ---
+audit/
+backend/audit/
+
+# --- Caches de ferramentas ---
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# --- Logs ---
+*.log
+
+# --- Node (caso o frontend evolua para um build) ---
+node_modules/
+frontend/node_modules/
+.next/
+
+# --- SO / editores ---
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# NÃO ignorar (precisam ir para o repo):
+#   backend/config.example.yaml
+#   backend/.env.example
+#   frontend/vendor/d3.min.js  (dependência embutida, roda offline)

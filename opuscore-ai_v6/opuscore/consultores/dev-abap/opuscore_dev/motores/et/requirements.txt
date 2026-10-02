@@ -1,0 +1,7 @@
+rank-bm25
+pymupdf
+sentence-transformers
+python-docx
+python-dotenv
+langchain_core
+langchain-openai

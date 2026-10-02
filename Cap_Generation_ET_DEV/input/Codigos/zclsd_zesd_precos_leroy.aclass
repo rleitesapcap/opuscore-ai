@@ -1,0 +1,297 @@
+class ZCLSD_ZESD_PRECOS_LEROY definition
+  public
+  final
+  create public .
+
+public section.
+
+  interfaces YIFXX_CHECK_EXIT .
+
+  class-methods USER_EXIT_EXECUTE
+    importing
+      !P_LIVAR type LIVAR
+      !SO_MATNR type RANGE_T_MATNR
+      !SY_REPID type REPID
+    changing
+      !SO_WERKS type RANGE_T_WERKS
+      !SO_PLTYP type ZRANGE_T_PLTYP
+      !PISPC type PISPC
+      !S_WERKS type RANGE_T_WERKS
+      !S_PLTYP type ZRANGE_T_PLTYP .
+protected section.
+private section.
+
+  class-methods USER_EXIT_OLD_CODE
+    importing
+      !P_LIVAR type LIVAR
+      !SO_MATNR type RANGE_T_MATNR
+      !SY_REPID type REPID
+    changing
+      !PISPC type PISPC
+      !SO_WERKS type RANGE_T_WERKS
+      !SO_PLTYP type ZRANGE_T_PLTYP
+      !S_WERKS type RANGE_T_WERKS
+      !S_PLTYP type ZRANGE_T_PLTYP .
+  class-methods VERIFICA_DATA_FIM
+    importing
+      !I_VKERV type PISPC-VKERV
+      !I_REPID type REPID
+      !I_VKKBI type PISPC-VKKBI .
+ENDCLASS.
+
+
+
+CLASS ZCLSD_ZESD_PRECOS_LEROY IMPLEMENTATION.
+
+
+  METHOD user_exit_execute.
+
+"*********************************************************************
+" Capgemini - Brazil
+"*********************************************************************
+" Data Execução: 	17/09/2026
+" Autor: Capgemini SAP
+" Projeto: MOVE2S4
+"*********************************************************************
+
+
+***********************************************************************
+*                                                                     *
+*      *********************************************************      *
+*      *                +---------------------+                *      *
+*      *                | LEROY MERLIN BRASIL |                *      *
+*      *                +---------------------+                *      *
+*      *********************************************************      *
+*                                                                     *
+***********************************************************************
+*---------------------------------------------------------------------*
+*** Dados do Obejto                                                   *
+*---------------------------------------------------------------------*
+* Nome  : ZESD_PRECOS_LEROY                                           *
+* Título: Exit VKP5                                                   *
+* Autor : Fabiano Bartholomeu (51030312)                              *
+* Data  : 31.05.2021                                                  *
+*                                                                     *
+* Objetivos:                                                          *
+*   Rotinas customizadas para a transação VKP5                        *
+*                                                                     *
+* Demanda:                                                            *
+*   CC.6630 - Liberação de exceção total para alguns usuários         *
+*     (Pricing) alterarem preços para qualquer dia                    *
+*                                                                     *
+*---------------------------------------------------------------------+
+*** Histórico das modificações                                        |
+*---------------------------------------------------------------------+
+*#####+########+###################+##################+###############+
+* Seq |Data    |Autor              |Código Demanda    | Usuário       |
+*#####+########+###################+##################+###############+
+* 01! |31052021|Fabiano Bartholomeu|CC.6630           |51030312       |
+*   Adequação para o modelo OO                                        |
+*-----+--------+-------------------+------------------+---------------*
+
+    " Check if Exti is Active
+    CHECK zcl_check_exit=>check_active_exit(
+          EXPORTING
+            iv_type      = zcl_check_exit=>c_type_ep
+            iv_name      = 'ZESD_PRECOS_LEROY'
+            iv_extension = 'ZCLSD_ZESD_PRECOS_LEROY' ).
+
+    " Old Code in this Exit
+    user_exit_old_code(
+      EXPORTING
+        p_livar	= p_livar
+        so_matnr = so_matnr
+        sy_repid = sy_repid
+      CHANGING
+        pispc = pispc
+        so_werks = so_werks
+        so_pltyp = so_pltyp
+        s_pltyp = s_pltyp
+        s_werks = s_werks ).
+
+    " Para cada nova regra, insira abaixo novos
+    " métodos para as mesmas.
+    verifica_data_fim(
+       EXPORTING
+         i_vkerv = pispc-vkerv
+         i_vkkbi = pispc-vkkbi
+         i_repid = sy_repid ).
+
+  ENDMETHOD.
+
+
+  METHOD user_exit_old_code.
+"*********************************************************************
+" Capgemini - Brazil
+"*********************************************************************
+" Data Execução: 	17/09/2026
+" Autor:      Capgemini SAP
+" Projeto:              MOVE2S4
+"*********************************************************************
+
+***********************************************************************
+*                                                                     *
+*      *********************************************************      *
+*      *                +---------------------+                *      *
+*      *                |      L E R O Y      |                *      *
+*      *                +---------------------+                *      *
+*      *********************************************************      *
+*                                                                     *
+***********************************************************************
+*---------------------------------------------------------------------*
+*** Dados do programa                                                 *
+*---------------------------------------------------------------------*
+* Nome  : ZESD_PRECOS_LEROY                                           *
+* Título: Include para a colocação do código do Enhancement Point     *
+* ZMGV_GENERATED_RWVKP007 para tratamento da VKP5.                    *
+*                                                                     *
+* Autor : Luiz Otavio                                                 *
+*                                                                     *
+* Objetivos: Colocar a codificação inicialmente criada no EP da VKP5  *
+* dentro do include para facilitar a codificação. EP com consistências*
+* específicas da Leroy para a criação de Preço na transacao VKP5.     *
+*                                                                     *
+*---------------------------------------------------------------------+
+*** Histórico das modificações                                        |
+*---+--------+----------------+---------------------------------------+
+*Seq|Data    |Autor           |COD/ Descrição da modificação ou erro  |
+*---+--------+----------------+---------------------------------------+
+*001|06042018|                |Desenvolvimento inicial                |
+*---+--------+----------------+---------------------------------------+
+*---+--------+----------------+---------------------------------------+
+*---+--------+----------------+---------------------------------------+
+
+
+    DATA: l_t_xt001w TYPE TABLE OF t001w.
+
+    DATA: el_wrf1         TYPE wrf1,
+          el_stat_preco   TYPE ztmmc_stat_preco,
+          l_workday       TYPE  sy-datum,
+          l_livar_changed TYPE c,
+          l_only_msg      TYPE c,
+          l_true          TYPE c VALUE 'X',
+          l_werks         TYPE  werks_ran,
+          l_msgv1         TYPE  symsgv,
+          l_msgv2         TYPE  symsgv,
+          l_msgv3         TYPE  symsgv,
+          l_msgv4         TYPE  symsgv.
+
+    FIELD-SYMBOLS: <sel_pltyp> TYPE i.
+
+    DATA: vl_erro_reg_info TYPE char1.
+
+    TYPES: BEGIN OF ty_mara_serv,
+             matnr TYPE mara-matnr,
+             mtart TYPE mara-mtart,
+           END OF ty_mara_serv.
+
+    DATA: lr_mtart_serv TYPE RANGE OF mtart,
+          tl_mara_serv  TYPE TABLE OF ty_mara_serv,
+          tl_mara_serv2 TYPE TABLE OF ty_mara_serv.
+
+    DATA: lt_users_lib TYPE zcsd_users_lib.
+
+    CONSTANTS: lc_rwvkp007 TYPE c LENGTH 8 VALUE 'RWVKP007'.
+
+*<-- GAP-034-ENH
+
+    IF sy_repid = lc_rwvkp007. "VKP5 "Transação
+
+*Liberação de exceção total para alguns
+*usuários (Pricing) alterarem preços para qualquer dia
+
+      IF zclsd_zesd_precos_leroy_6630=>check_is_active( ) = 'X'.
+
+        DATA lr_uname TYPE RANGE OF uname.
+
+        lr_uname = zcl_parametros=>get_param( iv_processo = zclsd_zesd_precos_leroy_6630=>c_hard_code_id iv_name = 'UNAME' ).
+
+        DELETE lr_uname WHERE low = '*'.
+
+      ENDIF.
+
+*Verificar a data de ínicio da validade dos preços conforme
+      CALL FUNCTION 'ZFMM_CHECK_CONDITION_DATE'
+        EXPORTING
+          i_vkkab        = pispc-vkkab
+          i_uname        = sy-uname
+        IMPORTING
+          e_stat_preco   = el_stat_preco
+          e_workday      = l_workday
+          et_users_lib   = lt_users_lib
+        EXCEPTIONS
+          calendar_error = 1
+          no_check       = 2
+          OTHERS         = 3.
+
+      IF sy-subrc = 0.
+
+*Verifica se é usuário master, apenas avisa
+        IF ( line_exists( lt_users_lib[ userlib = sy-uname ] ) ) OR
+             ( lr_uname IS NOT INITIAL AND sy-uname IN lr_uname ).
+
+*Verifica data e hora da tentativa de precificação
+          IF l_workday <> pispc-vkkab.
+
+            l_msgv1 = |{ pispc-vkkab }|.
+            l_msgv2 = TEXT-001. "'não permite precificação!'.
+            l_msgv3 = TEXT-002. "'Próxima data válida é:'.
+            l_msgv4 = |{ l_workday }|.
+
+            MESSAGE i252(s#) WITH l_msgv1 l_msgv2 l_msgv3 l_msgv4 .
+          ENDIF.
+
+        ELSE.
+
+*Verifica data e hora da tentativa de precificação, para usuário comum, avise
+*e trava a VKP5
+          IF l_workday <> pispc-vkkab .
+
+            l_msgv1 = |{ pispc-vkkab }|.
+            l_msgv2 = TEXT-001. "'não permite precificação!'.
+            l_msgv3 = TEXT-002. "'Próxima data válida é:'.
+            l_msgv4 = |{ l_workday }|.
+
+            MESSAGE e252(s#) WITH l_msgv1 l_msgv2 l_msgv3 l_msgv4
+                    DISPLAY LIKE 'S'.
+          ENDIF.
+
+        ENDIF.
+
+      ENDIF.
+
+    ENDIF.
+
+*--> GAP-034-ENH
+
+  ENDMETHOD.
+
+
+  METHOD verifica_data_fim.
+
+    CONSTANTS: lc_rwvkp007 TYPE c LENGTH 8 VALUE 'RWVKP007',
+               lc_vkkbi    TYPE c LENGTH 8 VALUE '99991231'.
+
+    IF i_repid = lc_rwvkp007. "Programa da VKP5
+
+      IF i_vkkbi <> lc_vkkbi.
+
+        DATA(tl_vkerv) = zcl_parametros=>get_param( iv_processo = 'SD_CC_5100_CONTROL_DT_FIM_VKP5' iv_name = 'VKERV' ).
+
+        IF line_exists( tl_vkerv[ low = i_vkerv ] ).
+
+          MESSAGE e110(zmsd_price) DISPLAY LIKE 'S'.
+
+        ENDIF.
+
+      ENDIF.
+
+    ENDIF.
+
+
+  ENDMETHOD.
+
+
+  METHOD yifxx_check_exit~check_active_exit.
+  ENDMETHOD.
+ENDCLASS.
